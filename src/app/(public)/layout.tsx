@@ -3,6 +3,7 @@ import { Footer } from "@/components/Footer";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { apiFetch } from "@/lib/api";
 import type { SiteSetting } from "@/types";
+import type { ReactNode } from "react";
 
 async function getSiteSettings(): Promise<SiteSetting | null> {
   try {
@@ -16,7 +17,7 @@ async function getSiteSettings(): Promise<SiteSetting | null> {
   }
 }
 
-export default async function PublicLayout({ children }: LayoutProps<"/">) {
+export default async function PublicLayout({ children }: { children: ReactNode }) {
   const settings = await getSiteSettings();
 
   return (
