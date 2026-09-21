@@ -1,4 +1,4 @@
-export type UserRole = "admin" | "pharmacist_reviewer";
+export type UserRole = "admin" | "pharmacist_reviewer" | "customer";
 
 export interface User {
   id: string;
@@ -72,7 +72,7 @@ export interface Article {
   content: string;
   featuredImageUrl: string | null;
   category: string | null;
-  tags: string[] | null;
+  tags: string[];
   author: User;
   reviewer: User | null;
   status: ArticleStatus;
@@ -110,6 +110,61 @@ export interface PharmacyLocation {
   latitude: number | null;
   longitude: number | null;
   openingHours: WeeklyOpeningHours | null;
-  availableServices: string[] | null;
+  availableServices: string[];
   isActive: boolean;
+}
+
+export type ContactInquiryStatus = "new" | "in_progress" | "resolved";
+
+export interface ContactInquiry {
+  id: string;
+  fullName: string;
+  phoneNumber: string;
+  email: string;
+  subject: string | null;
+  message: string;
+  preferredContactMethod: string | null;
+  preferredBranch: string | null;
+  status: ContactInquiryStatus;
+  createdAt: string;
+  userId: string | null;
+}
+
+export type RefillRequestStatus = "submitted" | "under_review" | "approved" | "rejected" | "completed";
+
+export interface RefillRequest {
+  id: string;
+  fullName: string;
+  phoneNumber: string;
+  email: string | null;
+  preferredBranch: string | null;
+  prescriptionReference: string | null;
+  medicationName: string | null;
+  additionalNotes: string | null;
+  preferredPickupMethod: string | null;
+  status: RefillRequestStatus;
+  createdAt: string;
+  userId: string | null;
+}
+
+export interface SiteSetting {
+  id: string;
+  pharmacyName: string | null;
+  aboutUs: string | null;
+  mission: string | null;
+  vision: string | null;
+  coreValues: string[];
+  whyChooseUs: string | null;
+  heroHeadline: string | null;
+  heroSubheading: string | null;
+  phone: string | null;
+  email: string | null;
+  address: string | null;
+  facebookUrl: string | null;
+  instagramUrl: string | null;
+  linkedinUrl: string | null;
+  xUrl: string | null;
+  whatsappUrl: string | null;
+  youtubeUrl: string | null;
+  updatedAt: string;
 }
