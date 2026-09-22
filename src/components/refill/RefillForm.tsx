@@ -57,6 +57,10 @@ export function RefillForm({ locations }: { locations: PharmacyLocation[] }) {
         <p className="mt-2 text-sm leading-relaxed text-slate-600">
           A pharmacist will review your refill request and reach out using the information you provided.
         </p>
+        <p className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-xs leading-relaxed text-amber-900">
+          Please note that submission of a request does not constitute prescription approval, renewal or
+          confirmation that the requested medicine is available.
+        </p>
       </div>
     );
   }
@@ -143,6 +147,12 @@ export function RefillForm({ locations }: { locations: PharmacyLocation[] }) {
           {errorMessage}
         </p>
       )}
+
+      <p className="text-xs leading-relaxed text-slate-500">
+        Submitting a prescription or refill request through this website does not constitute prescription
+        approval, renewal, dispensing or confirmation of product availability. All requests are subject to
+        verification and review by authorized pharmacy personnel.
+      </p>
 
       <button
         type="submit"

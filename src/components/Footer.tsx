@@ -17,6 +17,12 @@ const HELP_LINKS = [
   { href: "/faqs", label: "FAQs" },
 ];
 
+const LEGAL_LINKS = [
+  { href: "/privacy-policy", label: "Privacy Policy" },
+  { href: "/terms-and-conditions", label: "Terms & Conditions" },
+  { href: "/medical-disclaimer", label: "Medical Disclaimer" },
+];
+
 const SOCIAL_LINKS = (
   settings: Pick<SiteSetting, "facebookUrl" | "instagramUrl" | "linkedinUrl" | "xUrl" | "youtubeUrl">
 ): { href: string; label: string; Icon: IconType }[] =>
@@ -34,7 +40,7 @@ export function Footer({ settings }: { settings: SiteSetting | null }) {
 
   return (
     <footer className="bg-teal-950 text-white/70">
-      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:px-6 md:grid-cols-[1.3fr_1fr_1fr]">
+      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-14 sm:grid-cols-2 sm:px-6 lg:grid-cols-[1.2fr_0.9fr_0.9fr_0.9fr]">
         <div>
           <span className="font-display text-lg font-medium text-white">
             {settings?.pharmacyName || "Ingata Pharmacy"}
@@ -85,7 +91,24 @@ export function Footer({ settings }: { settings: SiteSetting | null }) {
               </li>
             ))}
           </ul>
-          <ul className="mt-6 space-y-3 text-sm">
+        </div>
+
+        <div>
+          <h3 className="text-sm font-medium text-white">Legal</h3>
+          <ul className="mt-4 space-y-3 text-sm">
+            {LEGAL_LINKS.map((link) => (
+              <li key={link.href}>
+                <Link href={link.href} className="transition-colors hover:text-white">
+                  {link.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        <div>
+          <h3 className="text-sm font-medium text-white">Contact</h3>
+          <ul className="mt-4 space-y-3 text-sm">
             {settings?.phone && (
               <li className="flex items-center gap-2">
                 <Phone className="h-4 w-4 shrink-0 text-white/50" />
