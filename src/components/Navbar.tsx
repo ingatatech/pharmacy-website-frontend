@@ -71,12 +71,12 @@ export function Navbar({
         <Link href="/" className="flex items-center" onClick={() => setMenuOpen(false)}>
           <span className="flex items-center rounded-md bg-white px-2.5 py-1.5">
             <Image
-              src="/images/logo.jpeg"
-              alt="Ingata Technologies"
-              width={1600}
-              height={389}
+              src="/images/ingatalogo.png"
+              alt="Ingata Pharmacies Ltd"
+              width={2170}
+              height={725}
               priority
-              className="h-7 w-auto sm:h-8"
+              className="h-9 w-auto sm:h-10"
             />
           </span>
         </Link>
