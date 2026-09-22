@@ -2,7 +2,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { apiFetch } from "@/lib/api";
-import type { SiteSetting } from "@/types";
+import type { Article, Service, SiteSetting } from "@/types";
 import type { ReactNode } from "react";
 
 async function getSiteSettings(): Promise<SiteSetting | null> {
@@ -17,12 +17,28 @@ async function getSiteSettings(): Promise<SiteSetting | null> {
   }
 }
 
+async function getServices(): Promise<Service[]> {
+  try {
+    return await apiFetch<Service[]>("/api/services", { next: { revalidate: 300 } });
+  } catch {
+    return [];
+  }
+}
+
+async function getArticles(): Promise<Article[]> {
+  try {
+    return await apiFetch<Article[]>("/api/articles", { next: { revalidate: 300 } });
+  } catch {
+    return [];
+  }
+}
+
 export default async function PublicLayout({ children }: { children: ReactNode }) {
-  const settings = await getSiteSettings();
+  const [settings, services, articles] = await Promise.all([getSiteSettings(), getServices(), getArticles()]);
 
   return (
     <>
-      <Navbar />
+      <Navbar services={services} articles={articles} />
       <main className="flex-1 pt-20">{children}</main>
       <Footer settings={settings} />
       <ScrollToTop />

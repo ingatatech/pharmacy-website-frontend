@@ -4,17 +4,19 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { Menu, X } from "lucide-react";
+import { ChevronDown, Menu, X } from "lucide-react";
+import type { Article, Service } from "@/types";
 
-const NAV_LINKS = [
-  { href: "/services", label: "Services" },
-  { href: "/products", label: "Products" },
-  { href: "/articles", label: "Blog" },
-  { href: "/locations", label: "Find a Pharmacy" },
-  { href: "/contact", label: "Contact" },
-];
+type DropdownItem = { href: string; label: string };
+type NavLink = { href: string; label: string; dropdown?: DropdownItem[] };
 
-export function Navbar() {
+export function Navbar({
+  services = [],
+  articles = [],
+}: {
+  services?: Service[];
+  articles?: Article[];
+}) {
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -29,17 +31,39 @@ export function Navbar() {
   // Only the homepage has a dark hero directly behind the header, so only
   // there does the header start fully transparent over it — matching
   // qtglobal.rw, where the nav floats over the hero with no visible seam.
-  // Every other route (and the homepage once scrolled) shows a solid dark
-  // bar for legibility over ordinary content.
+  // Every other route (and the homepage once scrolled) shows a light bar
+  // for legibility over ordinary content, kept airy rather than a heavy
+  // dark band now that most page content sits on white/slate-50.
   const isHome = pathname === "/";
   const solid = scrolled || !isHome;
   const isActive = (href: string) => pathname === href || pathname?.startsWith(`${href}/`);
+
+  // Real sub-items (not placeholder links) — same "hover reveals a white
+  // dropdown panel" pattern as qtglobal.rw's nav, e.g. its Blog menu.
+  const navLinks: NavLink[] = [
+    {
+      href: "/services",
+      label: "Services",
+      dropdown: services.slice(0, 6).map((s) => ({ href: `/services/${s.slug}`, label: s.name })),
+    },
+    { href: "/products", label: "Products" },
+    {
+      href: "/articles",
+      label: "Blog",
+      dropdown: [...articles]
+        .sort((a, b) => new Date(b.publishedAt || b.createdAt).getTime() - new Date(a.publishedAt || a.createdAt).getTime())
+        .slice(0, 5)
+        .map((a) => ({ href: `/articles/${a.slug}`, label: a.title })),
+    },
+    { href: "/locations", label: "Find a Pharmacy" },
+    { href: "/contact", label: "Contact" },
+  ];
 
   return (
     <header
       className={`fixed inset-x-0 top-0 z-50 h-20 backdrop-blur-md transition-[background-color,box-shadow] duration-300 supports-[backdrop-filter]:bg-teal-900/25 ${
         solid
-          ? "bg-teal-900 shadow-lg shadow-teal-950/20 supports-[backdrop-filter]:bg-teal-900/75"
+          ? "bg-white/90 shadow-sm shadow-slate-900/5 supports-[backdrop-filter]:bg-white/80"
           : "bg-transparent"
       }`}
     >
@@ -57,27 +81,63 @@ export function Navbar() {
           </span>
         </Link>
 
-        <nav className="mt-1.5 hidden items-center gap-9 md:flex">
-          {NAV_LINKS.map((link) => {
+        <nav className="mt-1.5 hidden items-center gap-6 lg:flex xl:gap-9">
+          {navLinks.map((link) => {
             const active = isActive(link.href);
+            const hasDropdown = (link.dropdown?.length ?? 0) > 0;
             return (
-              <Link
-                key={link.href}
-                href={link.href}
-                aria-current={active ? "page" : undefined}
-                className={`relative rounded-sm py-2 text-sm font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 after:absolute after:-bottom-[1px] after:left-0 after:h-[2px] after:rounded-full after:bg-emerald-400 after:transition-all after:content-[''] ${
-                  active
-                    ? "text-white after:w-full"
-                    : "text-white/80 after:w-0 hover:text-white hover:after:w-full"
-                }`}
-              >
-                {link.label}
-              </Link>
+              <div key={link.href} className="relative group">
+                <Link
+                  href={link.href}
+                  aria-current={active ? "page" : undefined}
+                  className={`relative inline-flex items-center gap-1 rounded-sm py-2 text-sm font-bold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold after:absolute after:-bottom-[1px] after:left-0 after:h-[2px] after:rounded-full after:bg-gold after:transition-all after:content-[''] ${
+                    solid
+                      ? active
+                        ? "text-slate-900 after:w-full"
+                        : "text-slate-600 after:w-0 hover:text-slate-900 hover:after:w-full"
+                      : active
+                        ? "text-white drop-shadow-sm after:w-full"
+                        : "text-white drop-shadow-sm after:w-0 hover:after:w-full"
+                  }`}
+                >
+                  {link.label}
+                  {hasDropdown && (
+                    <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 group-hover:rotate-180" />
+                  )}
+                </Link>
+
+                {hasDropdown && (
+                  <div className="invisible absolute left-0 top-full z-50 w-64 pt-3 opacity-0 transition-[opacity,visibility] duration-200 ease-out group-hover:visible group-hover:opacity-100">
+                    <div className="-translate-y-1 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-lg transition-transform duration-200 ease-out group-hover:translate-y-0">
+                      <ul className="divide-y divide-slate-100">
+                        {link.dropdown!.map((item) => (
+                          <li key={item.href}>
+                            <Link
+                              href={item.href}
+                              className="block px-5 py-3 text-sm font-medium text-slate-700 transition-colors duration-200 hover:bg-slate-50 hover:text-teal-800"
+                            >
+                              {item.label}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
+                      <Link
+                        href={link.href}
+                        className="block border-t border-slate-100 bg-slate-50 px-5 py-3 text-sm font-bold text-teal-700 transition-colors duration-200 hover:bg-slate-100"
+                      >
+                        View all {link.label.toLowerCase()}
+                      </Link>
+                    </div>
+                  </div>
+                )}
+              </div>
             );
           })}
           <Link
             href="/login"
-            className="rounded-sm text-sm font-semibold text-white/80 transition-colors duration-200 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+            className={`rounded-sm text-sm font-bold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
+              solid ? "text-slate-600 hover:text-slate-900" : "text-white drop-shadow-sm"
+            }`}
           >
             Log in
           </Link>
@@ -85,7 +145,9 @@ export function Navbar() {
 
         <button
           type="button"
-          className="rounded-md p-2 text-white transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 md:hidden"
+          className={`rounded-md p-2 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 lg:hidden ${
+            solid ? "text-slate-700" : "text-white"
+          }`}
           aria-label={menuOpen ? "Close menu" : "Open menu"}
           aria-expanded={menuOpen}
           onClick={() => setMenuOpen((open) => !open)}
@@ -95,19 +157,27 @@ export function Navbar() {
       </div>
 
       {menuOpen && (
-        <nav className="border-t border-white/10 bg-teal-900 px-4 pb-6 pt-2 md:hidden">
+        <nav
+          className={`border-t px-4 pb-6 pt-2 lg:hidden ${
+            solid ? "border-slate-200 bg-white" : "border-white/10 bg-teal-900"
+          }`}
+        >
           <ul className="flex flex-col">
-            {NAV_LINKS.map((link) => {
+            {navLinks.map((link) => {
               const active = isActive(link.href);
               return (
                 <li key={link.href}>
                   <Link
                     href={link.href}
                     aria-current={active ? "page" : undefined}
-                    className={`block border-l-2 py-3 pl-3 text-sm font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400 ${
-                      active
-                        ? "border-emerald-400 text-white"
-                        : "border-transparent text-white/80 hover:text-white"
+                    className={`block border-l-2 py-3 pl-3 text-sm font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
+                      solid
+                        ? active
+                          ? "border-gold text-slate-900"
+                          : "border-transparent text-slate-600 hover:text-slate-900"
+                        : active
+                          ? "border-gold text-white"
+                          : "border-transparent text-white"
                     }`}
                     onClick={() => setMenuOpen(false)}
                   >
@@ -117,10 +187,14 @@ export function Navbar() {
               );
             })}
           </ul>
-          <div className="mt-3 flex flex-col gap-3 border-t border-white/10 pt-4">
+          <div
+            className={`mt-3 flex flex-col gap-3 border-t pt-4 ${
+              solid ? "border-slate-200" : "border-white/10"
+            }`}
+          >
             <Link
               href="/login"
-              className="text-sm text-white/80 hover:text-white"
+              className={`text-sm ${solid ? "text-slate-600 hover:text-slate-900" : "text-white"}`}
               onClick={() => setMenuOpen(false)}
             >
               Log in
