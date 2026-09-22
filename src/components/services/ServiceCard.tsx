@@ -1,0 +1,44 @@
+import Link from "next/link";
+import { HeartPulse, Pill, Stethoscope, Syringe } from "lucide-react";
+import type { Service } from "@/types";
+
+export function serviceIcon(service: Service, className: string) {
+  const text = `${service.name} ${service.shortDescription}`.toLowerCase();
+  const props = { className, strokeWidth: 1.75 };
+  if (text.includes("refill") || text.includes("prescription")) return <Pill {...props} />;
+  if (text.includes("vaccin")) return <Syringe {...props} />;
+  if (text.includes("counsel") || text.includes("consult")) return <Stethoscope {...props} />;
+  return <HeartPulse {...props} />;
+}
+
+// Shared between the homepage teaser and the full /services catalog so the
+// two never drift apart.
+export function ServiceCard({ service }: { service: Service }) {
+  return (
+    <Link
+      href={`/services/${service.slug}`}
+      className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-[box-shadow,border-color] duration-300 hover:border-teal-800 hover:shadow-lg sm:p-8 text-left"
+    >
+      {/* Sweeps in from the right on hover, filling the card before the
+          icon/text invert to white — same mechanic as qtglobal.rw's
+          service cards (a growing panel behind the content, not a plain
+          color swap). */}
+      <span
+        aria-hidden
+        className="pointer-events-none absolute inset-y-0 right-0 z-0 w-0 bg-teal-800 transition-[width] duration-300 ease-out group-hover:w-full"
+      />
+
+      <div className="relative z-10">
+        <div className="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-2xl bg-slate-100 text-ink transition-colors duration-300 group-hover:bg-white">
+          {serviceIcon(service, "h-6 w-6 sm:h-7 sm:w-7")}
+        </div>
+        <h3 className="mt-4 sm:mt-6 font-display text-lg sm:text-xl font-semibold text-slate-900 transition-colors duration-300 group-hover:text-white">
+          {service.name}
+        </h3>
+        <p className="mt-2 text-sm leading-relaxed text-slate-600 transition-colors duration-300 group-hover:text-white/85">
+          {service.shortDescription}
+        </p>
+      </div>
+    </Link>
+  );
+}

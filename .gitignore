@@ -29,6 +29,7 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 .pnpm-debug.log*
+*.log
 
 # env files (can opt-in for committing if needed)
 .env*
@@ -40,3 +41,24 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# turbopack / build caches
+.turbo
+
+# editors / IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files (Windows)
+Thumbs.db
+ehthumbs.db
+desktop.ini
+
+# AI agent / assistant instruction files (auto-generated or local-only)
+AGENTS.md
+CLAUDE.md
+.claude/
+.cursor/
