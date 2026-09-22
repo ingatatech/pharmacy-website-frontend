@@ -21,6 +21,14 @@ export async function apiFetch<T = unknown>(
   options: RequestInit = {},
   token?: string
 ): Promise<T> {
+  if (!API_URL) {
+    // A malformed URL (e.g. "undefined/api/...") doesn't fail fast here —
+    // Next's patched fetch hangs on it until its 60s page-generation
+    // timeout, tripping 3 retries and failing the whole build. Guard
+    // against that explicitly instead of ever calling fetch with one.
+    throw new ApiError(0, `NEXT_PUBLIC_API_URL is not set — cannot fetch ${path}`);
+  }
+
   const headers = new Headers(options.headers);
   if (!headers.has("Content-Type")) {
     headers.set("Content-Type", "application/json");
