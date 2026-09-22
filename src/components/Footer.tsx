@@ -88,7 +88,7 @@ export function Footer({ settings }: { settings: SiteSetting | null }) {
           <ul className="mt-6 space-y-3 text-sm">
             {settings?.phone && (
               <li className="flex items-center gap-2">
-                <Phone className="h-4 w-4 shrink-0 text-emerald-400" />
+                <Phone className="h-4 w-4 shrink-0 text-white/50" />
                 <a href={`tel:${settings.phone}`} className="transition-colors hover:text-white">
                   {settings.phone}
                 </a>
@@ -96,7 +96,7 @@ export function Footer({ settings }: { settings: SiteSetting | null }) {
             )}
             {settings?.email && (
               <li className="flex items-center gap-2">
-                <Mail className="h-4 w-4 shrink-0 text-emerald-400" />
+                <Mail className="h-4 w-4 shrink-0 text-white/50" />
                 <a href={`mailto:${settings.email}`} className="transition-colors hover:text-white">
                   {settings.email}
                 </a>
@@ -104,7 +104,7 @@ export function Footer({ settings }: { settings: SiteSetting | null }) {
             )}
             {settings?.address && (
               <li className="flex items-start gap-2">
-                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-emerald-400" />
+                <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-white/50" />
                 <span>{settings.address}</span>
               </li>
             )}
