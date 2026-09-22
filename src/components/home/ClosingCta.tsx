@@ -3,11 +3,11 @@ import Link from "next/link";
 export function ClosingCta() {
   return (
     <section className="bg-emerald-600">
-      <div className="mx-auto max-w-2xl px-4 py-16 text-center sm:px-6 md:py-24">
-        <h2 className="font-display text-3xl font-medium text-white sm:text-4xl">
+      <div className="mx-auto max-w-3xl px-4 py-12 text-center sm:px-6 md:py-20 lg:py-24">
+        <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-medium text-white">
           Questions about a medication?
         </h2>
-        <p className="mx-auto mt-4 max-w-md text-base leading-relaxed text-white/85">
+        <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-white/85">
           Our pharmacists are available at every branch for guidance on dosage, interactions and
           everyday care.
         </p>

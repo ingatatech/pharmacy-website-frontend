@@ -21,6 +21,17 @@ html {
   transform: translateY(0);
 }
 
+/* Hides the scrollbar on the homepage services slider while keeping it
+   natively scrollable (touch drag, arrow keys, trackpad). */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

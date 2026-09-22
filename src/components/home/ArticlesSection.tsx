@@ -1,4 +1,6 @@
+import Image from "next/image";
 import Link from "next/link";
+import { ArrowRight, Newspaper } from "lucide-react";
 import type { Article } from "@/types";
 
 function formatDate(iso: string): string {
@@ -19,7 +21,7 @@ export function ArticlesSection({ articles }: { articles: Article[] }) {
         : "max-w-md";
 
   return (
-    <section className="bg-white">
+    <section className="border-t border-teal-100 bg-sage">
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24">
         <h2 className="font-display text-3xl font-medium text-slate-900 sm:text-4xl">
           From the pharmacy desk
@@ -27,18 +29,48 @@ export function ArticlesSection({ articles }: { articles: Article[] }) {
 
         <div className={`mt-10 grid gap-x-8 gap-y-10 ${gridClass}`}>
           {shown.map((article) => (
-            <Link key={article.id} href={`/articles/${article.slug}`} className="group block">
-              {article.category && (
-                <span className="rounded-full bg-teal-100 px-3 py-1 text-xs font-medium text-teal-700">
-                  {article.category}
+            <Link
+              key={article.id}
+              href={`/articles/${article.slug}`}
+              className="group block overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm transition-[box-shadow,border-color] duration-300 hover:border-slate-300 hover:shadow-lg"
+            >
+              {/* Image zooms, tilts and darkens on hover, and the category
+                  tag sits in the corner over it — same mechanic as
+                  qtglobal.rw's blog cards. */}
+              <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
+                {article.featuredImageUrl ? (
+                  <Image
+                    src={article.featuredImageUrl}
+                    alt=""
+                    fill
+                    sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                    className="object-cover transition-transform duration-500 ease-out group-hover:rotate-1 group-hover:scale-110"
+                  />
+                ) : (
+                  <div className="flex h-full items-center justify-center transition-transform duration-500 ease-out group-hover:rotate-1 group-hover:scale-110">
+                    <Newspaper className="h-10 w-10 text-slate-300" strokeWidth={1.5} />
+                  </div>
+                )}
+                <div className="pointer-events-none absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/20" />
+                {article.category && (
+                  <span className="absolute left-3 top-3 rounded-full bg-teal-800 px-3 py-1 text-xs font-medium text-white">
+                    {article.category}
+                  </span>
+                )}
+              </div>
+
+              <div className="p-6">
+                <h3 className="font-display text-xl font-semibold leading-snug text-slate-900">
+                  {article.title}
+                </h3>
+                {article.publishedAt && (
+                  <p className="mt-3 text-xs text-slate-400">{formatDate(article.publishedAt)}</p>
+                )}
+                <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-teal-600 transition-colors duration-200 group-hover:text-teal-700">
+                  Read article
+                  <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
                 </span>
-              )}
-              <h3 className="mt-2 font-display text-xl font-semibold leading-snug text-slate-900 group-hover:text-teal-700 group-hover:underline">
-                {article.title}
-              </h3>
-              {article.publishedAt && (
-                <p className="mt-3 text-xs text-slate-400">{formatDate(article.publishedAt)}</p>
-              )}
+              </div>
             </Link>
           ))}
         </div>

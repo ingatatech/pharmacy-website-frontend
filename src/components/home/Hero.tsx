@@ -78,13 +78,13 @@ export function Hero({
         <div className="max-w-3xl">
           <motion.h1
             {...fadeUp(0.05)}
-            className="font-display text-5xl font-bold leading-[1.02] tracking-tight text-white sm:text-6xl lg:text-7xl"
+            className="font-display text-5xl font-bold leading-[1.02] tracking-tight text-white drop-shadow-sm sm:text-6xl lg:text-7xl"
           >
             {headline}
           </motion.h1>
           <motion.p
             {...fadeUp(0.17)}
-            className="mt-6 max-w-md text-base leading-relaxed text-white/70 sm:text-lg"
+            className="mt-6 max-w-md text-base font-medium leading-relaxed text-white drop-shadow-sm sm:text-lg"
           >
             {subheading}
           </motion.p>
@@ -98,7 +98,7 @@ export function Hero({
             </Link>
             <Link
               href="/services"
-              className="text-sm font-semibold text-white/80 transition-colors duration-200 hover:text-white"
+              className="text-sm font-semibold text-white drop-shadow-sm transition-colors duration-200"
             >
               Browse services
             </Link>
