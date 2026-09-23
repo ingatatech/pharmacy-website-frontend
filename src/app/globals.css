@@ -32,6 +32,14 @@ html {
   display: none;
 }
 
+/* A real text-shadow (not Tailwind's ~5%-opacity drop-shadow-sm) so white
+   nav/hero text stays legible no matter what part of the gradient/motif
+   sits behind it — the same technique busy photo/graphic heroes use to
+   keep overlaid text readable. */
+.text-shadow-nav {
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45), 0 1px 12px rgba(0, 0, 0, 0.25);
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;

@@ -45,6 +45,7 @@ function socialLinks(
 export default async function ContactPage() {
   const [settings, locations] = await Promise.all([getSiteSettings(), getLocations()]);
   const socials = settings ? socialLinks(settings) : [];
+  const mappable = locations.find((location) => location.latitude != null && location.longitude != null);
 
   return (
     <>
@@ -107,14 +108,31 @@ export default async function ContactPage() {
               )}
             </div>
 
+            {mappable && (
+              <div className="overflow-hidden rounded-xl border border-slate-200 bg-white">
+                <div className="relative h-48 w-full bg-slate-100">
+                  <iframe
+                    title={`Map of ${mappable.branchName}`}
+                    src={`https://www.google.com/maps?q=${mappable.latitude},${mappable.longitude}&z=15&output=embed`}
+                    loading="lazy"
+                    referrerPolicy="no-referrer-when-downgrade"
+                    className="h-full w-full"
+                  />
+                </div>
+              </div>
+            )}
+
             {locations.length > 0 && (
               <div className="rounded-xl border border-slate-200 bg-white p-7">
                 <h2 className="font-display text-lg font-semibold text-slate-900">Visit a branch</h2>
-                <ul className="mt-4 space-y-3 text-sm text-slate-600">
+                <ul className="mt-4 divide-y divide-slate-100">
                   {locations.map((location) => (
-                    <li key={location.id}>
-                      <p className="font-medium text-slate-900">{location.branchName}</p>
-                      <p>{location.address}</p>
+                    <li key={location.id} className="flex items-start gap-3 py-3 first:pt-0 last:pb-0">
+                      <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-teal-600" strokeWidth={1.75} />
+                      <div className="min-w-0 text-sm text-slate-600">
+                        <p className="font-medium text-slate-900">{location.branchName}</p>
+                        <p className="mt-0.5">{location.address}</p>
+                      </div>
                     </li>
                   ))}
                 </ul>

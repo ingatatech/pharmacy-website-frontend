@@ -1,6 +1,5 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Pill } from "lucide-react";
 import type { Product } from "@/types";
 
 function statusMeta(status: Product["availabilityStatus"]) {
@@ -21,20 +20,13 @@ export function ProductCard({ product }: { product: Product }) {
       className="group flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:border-slate-300 hover:shadow-lg"
     >
       <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden bg-slate-50">
-        {product.imageUrl ? (
-          <Image
-            src={product.imageUrl}
-            alt=""
-            fill
-            sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
-            className="object-contain p-6 transition-transform duration-500 ease-out group-hover:scale-105"
-          />
-        ) : (
-          <Pill
-            className="h-10 w-10 text-slate-300 transition-transform duration-500 ease-out group-hover:scale-105"
-            strokeWidth={1.5}
-          />
-        )}
+        <Image
+          src={product.imageUrl || "/images/bg.png"}
+          alt=""
+          fill
+          sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
+          className="object-contain p-6 transition-transform duration-500 ease-out group-hover:scale-105"
+        />
         {product.requiresPrescription && (
           <span className="absolute left-3 top-3 rounded-full border border-slate-300 bg-white px-2.5 py-1 text-[11px] font-medium text-slate-600">
             Prescription required

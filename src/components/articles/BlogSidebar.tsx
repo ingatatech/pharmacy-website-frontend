@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Calendar, Newspaper, Search } from "lucide-react";
+import { Calendar, Search } from "lucide-react";
 import type { Article } from "@/types";
 
 const widgetClass = "rounded-xl border border-slate-200 bg-white p-6";
@@ -96,13 +96,13 @@ export function BlogSidebar({
               <li key={article.id}>
                 <Link href={`/articles/${article.slug}`} className="group flex items-start gap-3">
                   <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-md bg-slate-100">
-                    {article.featuredImageUrl ? (
-                      <Image src={article.featuredImageUrl} alt="" fill sizes="56px" className="object-cover" />
-                    ) : (
-                      <div className="flex h-full items-center justify-center">
-                        <Newspaper className="h-5 w-5 text-slate-300" strokeWidth={1.5} />
-                      </div>
-                    )}
+                    <Image
+                      src={article.featuredImageUrl || "/images/bg.png"}
+                      alt=""
+                      fill
+                      sizes="56px"
+                      className="object-cover"
+                    />
                   </div>
                   <div className="min-w-0">
                     <p className="flex items-center gap-1.5 text-xs text-slate-500">

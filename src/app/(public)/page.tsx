@@ -1,7 +1,6 @@
 import { apiFetch } from "@/lib/api";
 import type { Article, Faq, PharmacyLocation, Service, SiteSetting } from "@/types";
 import { Hero } from "@/components/home/Hero";
-import { WhyChooseUs } from "@/components/home/WhyChooseUs";
 import { ServicesSection } from "@/components/home/ServicesSection";
 import { ProcessSection } from "@/components/home/ProcessSection";
 import { AboutSection } from "@/components/home/AboutSection";
@@ -46,16 +45,15 @@ export default async function HomePage() {
         <ServicesSection services={services} />
       </Reveal>
       <Reveal>
-        <WhyChooseUs statement={settings?.whyChooseUs || DEFAULT_WHY_CHOOSE_US} />
-      </Reveal>
-      <Reveal>
         <ProcessSection />
       </Reveal>
       <Reveal>
         <AboutSection
           aboutUs={settings?.aboutUs || DEFAULT_ABOUT}
           coreValues={settings?.coreValues ?? []}
+          whyChooseUs={settings?.whyChooseUs || DEFAULT_WHY_CHOOSE_US}
           branchCount={locations.length}
+          serviceCount={services.length}
         />
       </Reveal>
       <Reveal>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { ClipboardList, PackageCheck, ShieldCheck } from "lucide-react";
 
 const STEPS = [
@@ -22,16 +22,43 @@ const STEPS = [
   },
 ];
 
-const AUTOPLAY_MS = 4500;
+const AUTOPLAY_MS = 2800;
 
-// Featured-pricing-card layout: three cards side by side, bottom-aligned,
-// and the active one is simply taller — with more padding, an inverted
-// dark-teal fill (the same "sweep to teal-800" treatment the service cards
-// use on hover) and an eyebrow tag — so it visibly stands in front without
-// stacking behind or overlapping its neighbors.
+// Circular distance from `active`, always in [-1, 0, 1] for a 3-item deck —
+// lets the card immediately "before" and "after" the active one fan out to
+// either side regardless of which index is actually active.
+function fanOffset(index: number, active: number, length: number) {
+  let diff = index - active;
+  if (diff > length / 2) diff -= length;
+  if (diff < -length / 2) diff += length;
+  return diff;
+}
+
+// Fanned card-deck layout, referencing a stacked/rotated testimonial deck:
+// the active step sits upright and in front in solid brand teal, while the
+// neighboring steps peek out rotated behind it on either side. Same "deck"
+// idea as the reference, different palette (brand teal/sage, not blue/
+// lavender) and real step content instead of testimonials.
 export function ProcessCards() {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
+  const prefersReducedMotion = useReducedMotion();
+
+  // Default to the narrower mobile-safe spread (matches the SSR/first-paint
+  // markup, so there's never a flash of the wider desktop fan before this
+  // upgrades on mount). Tied to the same `lg` breakpoint where ProcessSection
+  // switches to its two-column layout — below that, the deck sits in a
+  // full-width block (plenty of room); at `lg`+ it shares the row with the
+  // text column, so the fan needs a narrower spread to stay clear of it.
+  const [isDesktop, setIsDesktop] = useState(false);
+  useEffect(() => {
+    const query = window.matchMedia("(min-width: 1024px)");
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setIsDesktop(query.matches);
+    const onChange = (event: MediaQueryListEvent) => setIsDesktop(event.matches);
+    query.addEventListener("change", onChange);
+    return () => query.removeEventListener("change", onChange);
+  }, []);
 
   useEffect(() => {
     if (paused) return;
@@ -41,75 +68,78 @@ export function ProcessCards() {
     return () => clearTimeout(id);
   }, [active, paused]);
 
+  const spreadX = isDesktop ? 80 : 46;
+  const spreadRotate = isDesktop ? 8 : 6;
+
   return (
-    <div className="mt-14">
+    <div className="mt-10 lg:mt-0">
       <div
-        className="grid items-end gap-5 sm:grid-cols-3"
+        className="relative mx-auto flex h-[360px] items-center justify-center sm:h-[400px]"
         onMouseEnter={() => setPaused(true)}
         onMouseLeave={() => setPaused(false)}
       >
         {STEPS.map((step, index) => {
-          const isActive = index === active;
+          const offset = fanOffset(index, active, STEPS.length);
+          const isActive = offset === 0;
+
+          const x = prefersReducedMotion ? 0 : offset * spreadX;
+          const rotate = prefersReducedMotion ? 0 : offset * spreadRotate;
+          const y = isActive ? 0 : 18;
+          const scale = isActive ? 1 : 0.9;
+          const zIndex = isActive ? 30 : offset < 0 ? 20 : 10;
 
           return (
-            <button
+            <motion.button
               key={step.title}
               type="button"
               onClick={() => setActive(index)}
               aria-current={isActive ? "step" : undefined}
-              className={`flex flex-col items-center rounded-2xl border text-center transition-[background-color,border-color,box-shadow,padding] duration-500 ease-out ${
+              animate={{ x, y, rotate, scale }}
+              transition={{ type: "spring", stiffness: 420, damping: 32 }}
+              style={{ zIndex }}
+              className={`absolute flex w-44 flex-col rounded-3xl border text-left transition-[background-color,border-color,box-shadow,padding] duration-300 ease-out sm:w-72 ${
                 isActive
-                  ? "cursor-default border-teal-900 bg-teal-900 px-8 py-12 shadow-xl"
-                  : "cursor-pointer border-slate-200 bg-white px-6 py-8 shadow-sm hover:border-teal-200 hover:shadow-md"
+                  ? "cursor-default border-teal-900 bg-teal-800 px-5 py-6 shadow-2xl shadow-teal-900/25 sm:px-8 sm:py-10"
+                  : offset < 0
+                    ? "cursor-pointer border-slate-200 bg-white px-4 py-5 shadow-lg hover:-translate-y-0.5 sm:px-6 sm:py-7"
+                    : "cursor-pointer border-sage bg-sage px-4 py-5 shadow-lg hover:-translate-y-0.5 sm:px-6 sm:py-7"
               }`}
             >
-              {isActive && (
-                <span className="mb-4 inline-flex items-center gap-1.5 rounded-full bg-gold/15 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-gold">
-                  Current step
-                </span>
-              )}
-
-              <div
-                className={`flex h-14 w-14 items-center justify-center rounded-2xl transition-colors duration-500 ${
-                  isActive ? "bg-white/10 text-white" : "bg-slate-100 text-ink"
+              <span
+                className={`flex h-12 w-12 items-center justify-center rounded-2xl transition-colors duration-300 ${
+                  isActive ? "bg-white/10 text-white" : "bg-white text-ink"
                 }`}
               >
-                <step.icon className="h-6 w-6" strokeWidth={1.75} />
-              </div>
-
-              <h3
-                className={`mt-5 font-display text-lg font-semibold transition-colors duration-500 ${
-                  isActive ? "text-xl text-white" : "text-slate-900"
-                }`}
-              >
-                {step.title}
-              </h3>
+                <step.icon className="h-5 w-5" strokeWidth={1.75} />
+              </span>
 
               <p
-                className={`mt-1 font-display text-sm transition-colors duration-500 ${
-                  isActive ? "text-white/60" : "text-slate-400"
+                className={`mt-5 text-xs font-semibold uppercase tracking-wide transition-colors duration-300 ${
+                  isActive ? "text-gold" : "text-teal-700/70"
                 }`}
               >
                 Step {index + 1} of {STEPS.length}
               </p>
 
-              <div
-                className={`mt-6 h-px w-full transition-colors duration-500 ${
-                  isActive ? "bg-white/15" : "bg-slate-100"
+              <h3
+                className={`mt-2 font-display text-lg font-semibold leading-snug transition-colors duration-300 sm:text-xl ${
+                  isActive ? "text-white" : "text-slate-900"
                 }`}
-              />
+              >
+                {step.title}
+              </h3>
 
               {isActive && (
                 <motion.p
                   initial={{ opacity: 0, y: 6 }}
                   animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.4, delay: 0.2 }}
-                  className="mt-6 text-sm leading-relaxed text-white/80"
+                  transition={{ duration: 0.25, delay: 0.1 }}
+                  className="mt-4 text-sm leading-relaxed text-white/75"
                 >
                   {step.description}
                 </motion.p>
               )}
-            </button>
+            </motion.button>
           );
         })}
       </div>

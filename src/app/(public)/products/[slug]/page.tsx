@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Pill } from "lucide-react";
 import { apiFetch, ApiError } from "@/lib/api";
 import type { Product } from "@/types";
 import { PageHeader } from "@/components/PageHeader";
@@ -78,17 +77,13 @@ export default async function ProductDetailPage({
         <div className="mx-auto grid max-w-6xl gap-12 px-4 py-16 sm:px-6 md:grid-cols-[1fr_1.2fr] md:py-24">
           <div>
             <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-white">
-              {product.imageUrl ? (
-                <Image
-                  src={product.imageUrl}
-                  alt=""
-                  fill
-                  sizes="(min-width: 768px) 40vw, 90vw"
-                  className="object-contain p-10"
-                />
-              ) : (
-                <Pill className="h-16 w-16 text-slate-300" strokeWidth={1.5} />
-              )}
+              <Image
+                src={product.imageUrl || "/images/bg.png"}
+                alt=""
+                fill
+                sizes="(min-width: 768px) 40vw, 90vw"
+                className="object-contain p-10"
+              />
               {product.requiresPrescription && (
                 <span className="absolute left-4 top-4 rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-medium text-slate-600">
                   Prescription required

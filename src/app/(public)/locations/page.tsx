@@ -3,6 +3,7 @@ import { apiFetch } from "@/lib/api";
 import type { PharmacyLocation, Service } from "@/types";
 import { PageHeader } from "@/components/PageHeader";
 import { LocationCard } from "@/components/locations/LocationCard";
+import { ClosingCta } from "@/components/home/ClosingCta";
 
 export const metadata: Metadata = {
   title: "Locations | Ingata Pharmacy",
@@ -62,6 +63,8 @@ export default async function LocationsPage() {
           )}
         </div>
       </section>
+
+      <ClosingCta />
     </>
   );
 }

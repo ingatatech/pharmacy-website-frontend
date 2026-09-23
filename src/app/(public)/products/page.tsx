@@ -3,6 +3,7 @@ import { apiFetch } from "@/lib/api";
 import type { Product } from "@/types";
 import { PageHeader } from "@/components/PageHeader";
 import { ProductCard } from "@/components/products/ProductCard";
+import { ClosingCta } from "@/components/home/ClosingCta";
 
 export const metadata: Metadata = {
   title: "Products | Ingata Pharmacy",
@@ -44,6 +45,8 @@ export default async function ProductsPage() {
           )}
         </div>
       </section>
+
+      <ClosingCta />
     </>
   );
 }

@@ -168,3 +168,11 @@ export interface SiteSetting {
   youtubeUrl: string | null;
   updatedAt: string;
 }
+
+export interface AuthUser {
+  id: string;
+  email: string;
+  fullName: string;
+  role: string;
+  createdAt: string;
+}

@@ -2,6 +2,8 @@
 
 import { useState, type FormEvent } from "react";
 import { apiFetch, ApiError } from "@/lib/api";
+import { useAuth } from "@/lib/auth-context";
+import type { AuthUser } from "@/types";
 
 const inputClass =
   "w-full rounded-md border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 transition-colors duration-200 focus:border-teal-600 focus:outline-none focus:ring-1 focus:ring-teal-600";
@@ -10,7 +12,7 @@ const labelClass = "block text-sm font-medium text-slate-700";
 
 type AuthResponse = {
   token: string;
-  user: { id: string; email: string; fullName: string; role: string };
+  user: AuthUser;
 };
 
 // Pure form — no card chrome, no mode switcher. Shared by the login page
@@ -22,6 +24,7 @@ export function AuthForm({
   mode: "login" | "register";
   onSuccess: () => void;
 }) {
+  const { login } = useAuth();
   const [status, setStatus] = useState<"idle" | "submitting" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -40,8 +43,7 @@ export function AuthForm({
       const path = mode === "login" ? "/api/auth/login" : "/api/auth/register";
       const result = await apiFetch<AuthResponse>(path, { method: "POST", body: JSON.stringify(payload) });
 
-      localStorage.setItem("ingata_token", result.token);
-      localStorage.setItem("ingata_user", JSON.stringify(result.user));
+      login(result.token, result.user);
       setStatus("idle");
       onSuccess();
     } catch (error) {

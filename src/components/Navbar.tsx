@@ -3,10 +3,14 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import Image from "next/image";
-import { usePathname } from "next/navigation";
-import { ChevronDown, Menu, X } from "lucide-react";
+import { usePathname, useRouter } from "next/navigation";
+import { AnimatePresence, motion } from "framer-motion";
+import { ChevronDown, LogOut, Menu, Settings, User, X } from "lucide-react";
 import type { Article, Service } from "@/types";
 import { AuthModal } from "@/components/auth/AuthModal";
+import { UserMenu } from "@/components/auth/UserMenu";
+import { useAuth } from "@/lib/auth-context";
+import { initials } from "@/lib/text";
 
 type DropdownItem = { href: string; label: string };
 type NavLink = { href: string; label: string; dropdown?: DropdownItem[] };
@@ -19,6 +23,8 @@ export function Navbar({
   articles?: Article[];
 }) {
   const pathname = usePathname();
+  const router = useRouter();
+  const { user, logout, ready } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [authOpen, setAuthOpen] = useState(false);
@@ -99,8 +105,8 @@ export function Navbar({
                           ? "text-slate-900 after:w-full"
                           : "text-slate-600 after:w-0 hover:text-slate-900 hover:after:w-full"
                         : active
-                          ? "text-white drop-shadow-sm after:w-full"
-                          : "text-white drop-shadow-sm after:w-0 hover:after:w-full"
+                          ? "text-white text-shadow-nav after:w-full"
+                          : "text-white text-shadow-nav after:w-0 hover:after:w-full"
                     }`}
                   >
                     {link.label}
@@ -136,16 +142,29 @@ export function Navbar({
                 </div>
               );
             })}
-            <button
-              type="button"
-              onClick={() => setAuthOpen(true)}
-              className={`rounded-sm text-sm font-bold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
-                solid ? "text-slate-600 hover:text-slate-900" : "text-white drop-shadow-sm"
-              }`}
-            >
-              Log in
-            </button>
           </nav>
+
+          {/* A third flex child, separate from the link list above, so the
+              outer justify-between spreads Logo / Links / Login as three
+              distinct groups (links landing near the middle) instead of
+              bunching links and Login together at the right edge. */}
+          <div className="hidden items-center lg:flex">
+            {ready && user ? (
+              <span className={solid ? "text-slate-700" : "text-white text-shadow-nav"}>
+                <UserMenu user={user} />
+              </span>
+            ) : (
+              <button
+                type="button"
+                onClick={() => setAuthOpen(true)}
+                className={`rounded-sm text-sm font-bold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
+                  solid ? "text-slate-600 hover:text-slate-900" : "text-white text-shadow-nav"
+                }`}
+              >
+                Log in
+              </button>
+            )}
+          </div>
 
           <button
             type="button"
@@ -160,62 +179,117 @@ export function Navbar({
           </button>
         </div>
 
-        {menuOpen && (
-          <nav
-            className={`border-t px-4 pb-6 pt-2 lg:hidden ${
-              solid ? "border-slate-200 bg-white" : "border-white/10 bg-teal-900"
-            }`}
-          >
-            <ul className="flex flex-col">
-              {navLinks.map((link) => {
-                const active = isActive(link.href);
-                return (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      aria-current={active ? "page" : undefined}
-                      className={`block border-l-2 py-3 pl-3 text-sm font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
-                        solid
-                          ? active
-                            ? "border-gold text-slate-900"
-                            : "border-transparent text-slate-600 hover:text-slate-900"
-                          : active
-                            ? "border-gold text-white"
-                            : "border-transparent text-white"
-                      }`}
-                      onClick={() => setMenuOpen(false)}
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                );
-              })}
-            </ul>
-            <div
-              className={`mt-3 flex flex-col gap-3 border-t pt-4 ${
-                solid ? "border-slate-200" : "border-white/10"
+        <AnimatePresence initial={false}>
+          {menuOpen && (
+            <motion.nav
+              initial={{ height: 0, opacity: 0 }}
+              animate={{ height: "auto", opacity: 1 }}
+              exit={{ height: 0, opacity: 0 }}
+              transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
+              className={`overflow-hidden border-t lg:hidden ${
+                solid ? "border-slate-200 bg-white" : "border-white/10 bg-teal-900"
               }`}
             >
-              <button
-                type="button"
-                className={`text-left text-sm ${solid ? "text-slate-600 hover:text-slate-900" : "text-white"}`}
-                onClick={() => {
-                  setMenuOpen(false);
-                  setAuthOpen(true);
-                }}
-              >
-                Log in
-              </button>
-              <Link
-                href="/prescription-refill"
-                className="rounded-md bg-emerald-600 px-4 py-2 text-center text-sm font-medium text-white transition-colors duration-200 hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
-                onClick={() => setMenuOpen(false)}
-              >
-                Refill a prescription
-              </Link>
-            </div>
-          </nav>
-        )}
+              <div className="px-4 pb-6 pt-2">
+                <ul className="flex flex-col">
+                  {navLinks.map((link) => {
+                    const active = isActive(link.href);
+                    return (
+                      <li key={link.href}>
+                        <Link
+                          href={link.href}
+                          aria-current={active ? "page" : undefined}
+                          className={`block border-l-2 py-3 pl-3 text-sm font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
+                            solid
+                              ? active
+                                ? "border-gold text-slate-900"
+                                : "border-transparent text-slate-600 hover:text-slate-900"
+                              : active
+                                ? "border-gold text-white"
+                                : "border-transparent text-white"
+                          }`}
+                          onClick={() => setMenuOpen(false)}
+                        >
+                          {link.label}
+                        </Link>
+                      </li>
+                    );
+                  })}
+                </ul>
+                <div
+                  className={`mt-3 flex flex-col gap-3 border-t pt-4 ${
+                    solid ? "border-slate-200" : "border-white/10"
+                  }`}
+                >
+                  {ready && user ? (
+                    <>
+                      <div className="flex items-center gap-3 pb-1">
+                        <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-teal-700 text-xs font-semibold text-white">
+                          {initials(user.fullName)}
+                        </span>
+                        <div className="min-w-0">
+                          <p className={`truncate text-sm font-semibold ${solid ? "text-slate-900" : "text-white"}`}>
+                            {user.fullName}
+                          </p>
+                          <p className={`truncate text-xs ${solid ? "text-slate-500" : "text-white/60"}`}>
+                            {user.email}
+                          </p>
+                        </div>
+                      </div>
+                      <Link
+                        href="/account"
+                        className={`flex items-center gap-2.5 text-sm ${solid ? "text-slate-600 hover:text-slate-900" : "text-white"}`}
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        <User className="h-4 w-4" strokeWidth={1.75} />
+                        Profile
+                      </Link>
+                      <Link
+                        href="/account/settings"
+                        className={`flex items-center gap-2.5 text-sm ${solid ? "text-slate-600 hover:text-slate-900" : "text-white"}`}
+                        onClick={() => setMenuOpen(false)}
+                      >
+                        <Settings className="h-4 w-4" strokeWidth={1.75} />
+                        Settings
+                      </Link>
+                      <button
+                        type="button"
+                        className="flex items-center gap-2.5 text-left text-sm font-medium text-red-500"
+                        onClick={() => {
+                          logout();
+                          setMenuOpen(false);
+                          router.push("/");
+                          router.refresh();
+                        }}
+                      >
+                        <LogOut className="h-4 w-4" strokeWidth={1.75} />
+                        Log out
+                      </button>
+                    </>
+                  ) : (
+                    <button
+                      type="button"
+                      className={`text-left text-sm ${solid ? "text-slate-600 hover:text-slate-900" : "text-white"}`}
+                      onClick={() => {
+                        setMenuOpen(false);
+                        setAuthOpen(true);
+                      }}
+                    >
+                      Log in
+                    </button>
+                  )}
+                  <Link
+                    href="/prescription-refill"
+                    className="rounded-md bg-emerald-600 px-4 py-2 text-center text-sm font-medium text-white transition-colors duration-200 hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
+                    onClick={() => setMenuOpen(false)}
+                  >
+                    Refill a prescription
+                  </Link>
+                </div>
+              </div>
+            </motion.nav>
+          )}
+        </AnimatePresence>
       </header>
 
       <AuthModal open={authOpen} onClose={() => setAuthOpen(false)} />

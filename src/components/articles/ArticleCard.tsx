@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Clock, Newspaper, Tag } from "lucide-react";
+import { ArrowRight, Clock, Tag } from "lucide-react";
 import type { Article } from "@/types";
 import { estimateReadMinutes, excerpt, initials, roleLabel } from "@/lib/text";
 
@@ -20,19 +20,13 @@ export function ArticleCard({ article }: { article: Article }) {
         href={`/articles/${article.slug}`}
         className="group relative block aspect-[16/9] overflow-hidden bg-slate-100"
       >
-        {article.featuredImageUrl ? (
-          <Image
-            src={article.featuredImageUrl}
-            alt=""
-            fill
-            sizes="(min-width: 1024px) 60vw, 100vw"
-            className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-          />
-        ) : (
-          <div className="flex h-full items-center justify-center transition-transform duration-500 ease-out group-hover:scale-105">
-            <Newspaper className="h-10 w-10 text-slate-300" strokeWidth={1.5} />
-          </div>
-        )}
+        <Image
+          src={article.featuredImageUrl || "/images/bg.png"}
+          alt=""
+          fill
+          sizes="(min-width: 1024px) 60vw, 100vw"
+          className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+        />
         <div className="absolute left-4 top-4 flex flex-col items-center justify-center rounded-md bg-teal-900 px-3.5 py-2 leading-none text-white">
           <span className="font-display text-xl font-bold">{day}</span>
           <span className="mt-0.5 text-[11px] uppercase tracking-wide">{month}</span>

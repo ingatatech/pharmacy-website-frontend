@@ -3,6 +3,7 @@
 import { useState, type FormEvent } from "react";
 import { CheckCircle2 } from "lucide-react";
 import { apiFetch, ApiError } from "@/lib/api";
+import { useAuth } from "@/lib/auth-context";
 import type { PharmacyLocation } from "@/types";
 
 const inputClass =
@@ -11,6 +12,7 @@ const inputClass =
 const labelClass = "block text-sm font-medium text-slate-700";
 
 export function ContactForm({ locations }: { locations: PharmacyLocation[] }) {
+  const { user, token } = useAuth();
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -38,7 +40,7 @@ export function ContactForm({ locations }: { locations: PharmacyLocation[] }) {
     if (preferredBranch) payload.preferredBranch = preferredBranch;
 
     try {
-      await apiFetch("/api/contact", { method: "POST", body: JSON.stringify(payload) });
+      await apiFetch("/api/contact", { method: "POST", body: JSON.stringify(payload) }, token || undefined);
       setStatus("success");
     } catch (error) {
       setStatus("error");
@@ -60,13 +62,24 @@ export function ContactForm({ locations }: { locations: PharmacyLocation[] }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5 rounded-xl border border-slate-200 bg-white p-8">
+    <form
+      key={user?.id || "guest"}
+      onSubmit={handleSubmit}
+      className="space-y-5 rounded-xl border border-slate-200 bg-white p-8"
+    >
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="fullName" className={labelClass}>
             Full name
           </label>
-          <input id="fullName" name="fullName" type="text" required className={`mt-1.5 ${inputClass}`} />
+          <input
+            id="fullName"
+            name="fullName"
+            type="text"
+            required
+            defaultValue={user?.fullName}
+            className={`mt-1.5 ${inputClass}`}
+          />
         </div>
         <div>
           <label htmlFor="phoneNumber" className={labelClass}>
@@ -80,7 +93,14 @@ export function ContactForm({ locations }: { locations: PharmacyLocation[] }) {
         <label htmlFor="email" className={labelClass}>
           Email
         </label>
-        <input id="email" name="email" type="email" required className={`mt-1.5 ${inputClass}`} />
+        <input
+          id="email"
+          name="email"
+          type="email"
+          required
+          defaultValue={user?.email}
+          className={`mt-1.5 ${inputClass}`}
+        />
       </div>
 
       <div className="grid gap-5 sm:grid-cols-2">

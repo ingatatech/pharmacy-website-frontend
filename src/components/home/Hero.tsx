@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, type MouseEvent } from "react";
+import Image from "next/image";
 import Link from "next/link";
 import {
   motion,
@@ -10,8 +11,7 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import { ArrowRight } from "lucide-react";
-import { CapsuleMotif } from "./CapsuleMotif";
+import { ArrowRight, ShieldCheck } from "lucide-react";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -33,25 +33,25 @@ export function Hero({
   const sectionRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = useReducedMotion();
 
-  // Scroll-linked parallax: the motif drifts down slightly slower than the
-  // page scrolls past the hero, giving it a sense of depth.
+  // Scroll-linked parallax: the trust card drifts down slightly slower
+  // than the page scrolls past the hero, giving it a sense of depth.
   const { scrollYProgress } = useScroll({
     target: sectionRef,
     offset: ["start start", "end start"],
   });
-  const motifScrollY = useTransform(scrollYProgress, [0, 1], [0, prefersReducedMotion ? 0 : 100]);
+  const cardScrollY = useTransform(scrollYProgress, [0, 1], [0, prefersReducedMotion ? 0 : 60]);
 
-  // Mouse-parallax: the motif leans gently toward the cursor.
+  // Mouse-parallax: the trust card leans gently toward the cursor.
   const mouseX = useMotionValue(0);
   const mouseY = useMotionValue(0);
-  const motifX = useSpring(mouseX, { stiffness: 60, damping: 20, mass: 0.5 });
-  const motifTiltY = useSpring(mouseY, { stiffness: 60, damping: 20, mass: 0.5 });
+  const cardX = useSpring(mouseX, { stiffness: 60, damping: 20, mass: 0.5 });
+  const cardTiltY = useSpring(mouseY, { stiffness: 60, damping: 20, mass: 0.5 });
 
   function handleMouseMove(event: MouseEvent<HTMLElement>) {
     if (prefersReducedMotion) return;
     const rect = event.currentTarget.getBoundingClientRect();
-    mouseX.set(((event.clientX - rect.left) / rect.width - 0.5) * 28);
-    mouseY.set(((event.clientY - rect.top) / rect.height - 0.5) * 28);
+    mouseX.set(((event.clientX - rect.left) / rect.width - 0.5) * 16);
+    mouseY.set(((event.clientY - rect.top) / rect.height - 0.5) * 16);
   }
 
   function handleMouseLeave() {
@@ -64,31 +64,45 @@ export function Hero({
       ref={sectionRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative -mt-20 overflow-hidden bg-gradient-to-br from-teal-950 via-teal-900 to-teal-800"
+      className="relative -mt-20 overflow-hidden"
     >
-      <div className="pointer-events-none absolute inset-y-0 -right-24 flex items-center sm:-right-10 md:right-0">
-        <motion.div style={{ y: motifScrollY }}>
-          <motion.div style={{ x: motifX, y: motifTiltY }}>
-            <CapsuleMotif className="h-[620px] w-[620px] opacity-90" />
-          </motion.div>
-        </motion.div>
-      </div>
+      <Image
+        src="/images/page-bg.jpg"
+        alt=""
+        fill
+        priority
+        sizes="100vw"
+        className="object-cover"
+        style={{ objectPosition: "75% center" }}
+      />
+      {/* A much lighter wash than a typical dark hero scrim — lets the
+          photo's own pale-blue tone read through instead of flattening it
+          to near-black, while staying just dark enough for white text. */}
+      <div className="absolute inset-0 bg-gradient-to-br from-teal-900/55 via-teal-800/40 to-teal-700/25" />
 
       <div className="relative mx-auto max-w-6xl px-4 pb-20 pt-32 sm:px-6 sm:pb-24 sm:pt-36 lg:pb-28 lg:pt-40">
         <div className="max-w-3xl">
+          <motion.span
+            {...fadeUp(0)}
+            className="inline-flex items-center gap-2 rounded-full bg-teal-950/40 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-white text-shadow-nav ring-1 ring-white/25 backdrop-blur-sm"
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+            Trusted pharmacy care
+          </motion.span>
+
           <motion.h1
-            {...fadeUp(0.05)}
-            className="font-display text-5xl font-bold leading-[1.02] tracking-tight text-white drop-shadow-sm sm:text-6xl lg:text-7xl"
+            {...fadeUp(0.1)}
+            className="mt-5 font-display text-5xl font-bold leading-[1.02] tracking-tight text-white text-shadow-nav sm:text-6xl lg:text-7xl"
           >
             {headline}
           </motion.h1>
           <motion.p
-            {...fadeUp(0.17)}
-            className="mt-6 max-w-md text-base font-medium leading-relaxed text-white drop-shadow-sm sm:text-lg"
+            {...fadeUp(0.2)}
+            className="mt-6 max-w-md text-base font-medium leading-relaxed text-white text-shadow-nav sm:text-lg"
           >
             {subheading}
           </motion.p>
-          <motion.div {...fadeUp(0.29)} className="mt-10 flex flex-wrap items-center gap-6">
+          <motion.div {...fadeUp(0.3)} className="mt-10 flex flex-wrap items-center gap-6">
             <Link
               href="/prescription-refill"
               className="group inline-flex items-center gap-2 rounded-md bg-emerald-500 px-7 py-3.5 text-sm font-semibold text-teal-950 transition-colors duration-200 hover:bg-emerald-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
@@ -98,13 +112,50 @@ export function Hero({
             </Link>
             <Link
               href="/services"
-              className="text-sm font-semibold text-white drop-shadow-sm transition-colors duration-200"
+              className="text-sm font-semibold text-white text-shadow-nav transition-colors duration-200"
             >
               Browse services
             </Link>
           </motion.div>
+
+          {/* Mobile gets its own inline trust badge instead of losing the
+              content entirely — the floating card below is absolutely
+              positioned and would overlap the headline at narrow widths,
+              so this sits safely in normal flow under the CTAs instead. */}
+          <motion.div
+            {...fadeUp(0.4)}
+            className="mt-8 inline-flex items-center gap-3 rounded-xl bg-white/95 p-3.5 shadow-lg backdrop-blur-md sm:hidden"
+          >
+            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-teal-100 text-teal-800">
+              <ShieldCheck className="h-5 w-5" strokeWidth={1.75} />
+            </span>
+            <div>
+              <p className="font-display text-sm font-semibold text-slate-900">Licensed pharmacists</p>
+              <p className="text-xs text-slate-500">On every shift</p>
+            </div>
+          </motion.div>
         </div>
       </div>
+
+      {/* Floating trust card — real content (no invented ratings), echoing
+          the "card overlaid on the photo" detail from the reference. */}
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, ease: EASE, delay: 0.4 }}
+        style={{ y: cardScrollY, x: cardX, rotateX: cardTiltY }}
+        className="absolute right-6 top-28 hidden rounded-2xl bg-white/95 p-4 shadow-xl backdrop-blur-md sm:right-10 sm:top-32 sm:block"
+      >
+        <div className="flex items-center gap-3">
+          <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-teal-100 text-teal-800">
+            <ShieldCheck className="h-5 w-5" strokeWidth={1.75} />
+          </span>
+          <div>
+            <p className="font-display text-sm font-semibold text-slate-900">Licensed pharmacists</p>
+            <p className="text-xs text-slate-500">On every shift</p>
+          </div>
+        </div>
+      </motion.div>
     </section>
   );
 }

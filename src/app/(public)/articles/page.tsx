@@ -51,6 +51,7 @@ export default async function ArticlesPage({
         eyebrow="Our blog"
         title="Blog"
         description="Health tips, medication guidance and news from the Ingata Pharmacy team."
+        variant="image"
       />
 
       <section className="bg-slate-50">

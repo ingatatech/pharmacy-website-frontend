@@ -17,7 +17,7 @@ export function ServiceCard({ service }: { service: Service }) {
   return (
     <Link
       href={`/services/${service.slug}`}
-      className="group relative overflow-hidden rounded-2xl border border-slate-200 bg-white p-6 shadow-sm transition-[box-shadow,border-color] duration-300 hover:border-teal-800 hover:shadow-lg sm:p-8 text-left"
+      className="group relative flex min-h-[19rem] flex-col overflow-hidden rounded-2xl border border-slate-200 bg-white p-8 text-left shadow-sm transition-[box-shadow,border-color] duration-300 hover:border-teal-800 hover:shadow-lg sm:min-h-[22rem] sm:p-11"
     >
       {/* Sweeps in from the right on hover, filling the card before the
           icon/text invert to white — same mechanic as qtglobal.rw's
@@ -29,13 +29,13 @@ export function ServiceCard({ service }: { service: Service }) {
       />
 
       <div className="relative z-10">
-        <div className="flex h-12 w-12 sm:h-16 sm:w-16 items-center justify-center rounded-2xl bg-slate-100 text-ink transition-colors duration-300 group-hover:bg-white">
-          {serviceIcon(service, "h-6 w-6 sm:h-7 sm:w-7")}
+        <div className="flex h-14 w-14 sm:h-20 sm:w-20 items-center justify-center rounded-2xl bg-slate-100 text-ink transition-colors duration-300 group-hover:bg-white">
+          {serviceIcon(service, "h-7 w-7 sm:h-9 sm:w-9")}
         </div>
-        <h3 className="mt-4 sm:mt-6 font-display text-lg sm:text-xl font-semibold text-slate-900 transition-colors duration-300 group-hover:text-white">
+        <h3 className="mt-6 sm:mt-8 font-display text-xl sm:text-2xl font-semibold text-slate-900 transition-colors duration-300 group-hover:text-white">
           {service.name}
         </h3>
-        <p className="mt-2 text-sm leading-relaxed text-slate-600 transition-colors duration-300 group-hover:text-white/85">
+        <p className="mt-3 text-sm sm:text-base leading-relaxed text-slate-600 transition-colors duration-300 group-hover:text-white/85">
           {service.shortDescription}
         </p>
       </div>
