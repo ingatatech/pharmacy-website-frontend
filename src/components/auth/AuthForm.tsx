@@ -23,7 +23,7 @@ export function AuthForm({
   onSuccess,
 }: {
   mode: "login" | "register";
-  onSuccess: () => void;
+  onSuccess: (user: AuthUser) => void;
 }) {
   const { login } = useAuth();
   const [status, setStatus] = useState<"idle" | "submitting" | "error">("idle");
@@ -46,7 +46,7 @@ export function AuthForm({
 
       login(result.token, result.user);
       setStatus("idle");
-      onSuccess();
+      onSuccess(result.user);
     } catch (error) {
       setStatus("error");
       setErrorMessage(error instanceof ApiError ? error.message : "Something went wrong. Please try again.");

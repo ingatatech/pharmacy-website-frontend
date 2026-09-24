@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { LogIn, UserPlus } from "lucide-react";
 import { AuthForm } from "@/components/auth/AuthForm";
 import { T } from "@/lib/language-context";
+import type { AuthUser } from "@/types";
 
 const COPY = {
   login: {
@@ -28,17 +29,27 @@ const COPY = {
 // Shared between the standalone /login page and AuthModal so the two
 // never drift apart. Manages its own mode so each mount starts fresh on
 // "login" — which is what we want when the modal remounts on open.
-export function AuthPanel({ onSuccess }: { onSuccess?: () => void }) {
+export function AuthPanel({
+  onSuccess,
+  next = "/",
+}: {
+  onSuccess?: (user: AuthUser) => void;
+  next?: string;
+}) {
   const router = useRouter();
   const [mode, setMode] = useState<"login" | "register">("login");
   const copy = COPY[mode];
 
-  function handleSuccess() {
+  function handleSuccess(user: AuthUser) {
     if (onSuccess) {
-      onSuccess();
+      onSuccess(user);
       return;
     }
-    router.push("/");
+    // Staff accounts always land in the admin dashboard, regardless of
+    // where the login form was reached from — a customer-facing `next`
+    // (e.g. back to /prescription-refill) would be meaningless for them.
+    const isStaff = user.role === "admin" || user.role === "pharmacist_reviewer";
+    router.push(isStaff ? (next.startsWith("/admin") ? next : "/admin") : next);
     router.refresh();
   }
 
