@@ -6,6 +6,7 @@ import type { SiteSetting } from "@/types";
 import { T } from "@/lib/language-context";
 
 const EXPLORE_LINKS = [
+  { href: "/about", label: "About us" },
   { href: "/services", label: "Services" },
   { href: "/products", label: "Products" },
   { href: "/articles", label: "Blog" },

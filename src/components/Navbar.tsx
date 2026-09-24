@@ -51,6 +51,7 @@ export function Navbar({
   // Real sub-items (not placeholder links) — same "hover reveals a white
   // dropdown panel" pattern as qtglobal.rw's nav, e.g. its Blog menu.
   const navLinks: NavLink[] = [
+    { href: "/about", label: "About" },
     {
       href: "/services",
       label: "Services",
