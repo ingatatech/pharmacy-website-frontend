@@ -169,6 +169,15 @@ export interface SiteSetting {
   updatedAt: string;
 }
 
+export interface AuditLog {
+  id: string;
+  method: string;
+  path: string;
+  statusCode: number;
+  createdAt: string;
+  actor: User | null;
+}
+
 export interface AuthUser {
   id: string;
   email: string;
