@@ -5,6 +5,7 @@ import { notFound } from "next/navigation";
 import { apiFetch, ApiError } from "@/lib/api";
 import type { Product } from "@/types";
 import { PageHeader } from "@/components/PageHeader";
+import { T } from "@/lib/language-context";
 
 async function getProduct(slug: string): Promise<Product | null> {
   try {
@@ -86,7 +87,7 @@ export default async function ProductDetailPage({
               />
               {product.requiresPrescription && (
                 <span className="absolute left-4 top-4 rounded-full border border-slate-300 bg-white px-3 py-1 text-xs font-medium text-slate-600">
-                  Prescription required
+                  <T text="Prescription required" />
                 </span>
               )}
             </div>
@@ -95,7 +96,9 @@ export default async function ProductDetailPage({
               <dl className="mt-6 divide-y divide-slate-200 rounded-xl border border-slate-200 bg-white">
                 {specs.map(({ key, label }) => (
                   <div key={key} className="flex justify-between gap-4 px-5 py-3 text-sm">
-                    <dt className="text-slate-500">{label}</dt>
+                    <dt className="text-slate-500">
+                      <T text={label} />
+                    </dt>
                     <dd className="text-right font-medium text-slate-900">{String(product[key])}</dd>
                   </div>
                 ))}
@@ -104,7 +107,7 @@ export default async function ProductDetailPage({
 
             <div className="mt-6 flex items-center gap-1.5 text-sm text-slate-500">
               <span className={`h-1.5 w-1.5 rounded-full ${status.dot}`} />
-              {status.label}
+              <T text={status.label} />
             </div>
           </div>
 
@@ -121,8 +124,12 @@ export default async function ProductDetailPage({
                 if (!value || typeof value !== "string") return null;
                 return (
                   <div key={key}>
-                    <h2 className="font-display text-xl font-semibold text-slate-900">{label}</h2>
-                    <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-600">{value}</p>
+                    <h2 className="font-display text-xl font-semibold text-slate-900">
+                      <T text={label} />
+                    </h2>
+                    <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-600">
+                      <T text={value} />
+                    </p>
                   </div>
                 );
               })}
@@ -133,13 +140,13 @@ export default async function ProductDetailPage({
                 href="/contact"
                 className="inline-flex items-center justify-center rounded-md bg-teal-800 px-5 py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-teal-900"
               >
-                Ask about this product
+                <T text="Ask about this product" />
               </Link>
               <Link
                 href="/products"
                 className="inline-flex items-center justify-center rounded-md border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 transition-colors duration-200 hover:border-slate-400 hover:text-slate-900"
               >
-                ← Back to products
+                ← <T text="Back to products" />
               </Link>
             </div>
           </div>

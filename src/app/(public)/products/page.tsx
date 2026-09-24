@@ -4,6 +4,7 @@ import type { Product } from "@/types";
 import { PageHeader } from "@/components/PageHeader";
 import { ProductCard } from "@/components/products/ProductCard";
 import { ClosingCta } from "@/components/home/ClosingCta";
+import { T } from "@/lib/language-context";
 
 export const metadata: Metadata = {
   title: "Products | Ingata Pharmacy",
@@ -34,7 +35,7 @@ export default async function ProductsPage() {
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24">
           {products.length === 0 ? (
             <p className="text-center text-sm text-slate-500">
-              Products will be listed here shortly. In the meantime, call your nearest branch for availability.
+              <T text="Products will be listed here shortly. In the meantime, call your nearest branch for availability." />
             </p>
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-4">

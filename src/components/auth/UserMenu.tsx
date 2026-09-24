@@ -6,6 +6,7 @@ import { ChevronDown, LogOut, Settings, User } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { initials } from "@/lib/text";
 import type { AuthUser } from "@/types";
+import { T } from "@/lib/language-context";
 
 // Same hover-reveals-a-white-panel mechanic as the Services/Blog nav
 // dropdowns, just with an avatar trigger instead of a text link.
@@ -46,7 +47,7 @@ export function UserMenu({ user, onNavigate }: { user: AuthUser; onNavigate?: ()
                 className="flex items-center gap-2.5 px-5 py-3 text-sm text-slate-700 transition-colors duration-200 hover:bg-slate-50 hover:text-teal-800"
               >
                 <User className="h-4 w-4 text-slate-400" strokeWidth={1.75} />
-                Profile
+                <T text="Profile" />
               </Link>
             </li>
             <li>
@@ -56,7 +57,7 @@ export function UserMenu({ user, onNavigate }: { user: AuthUser; onNavigate?: ()
                 className="flex items-center gap-2.5 px-5 py-3 text-sm text-slate-700 transition-colors duration-200 hover:bg-slate-50 hover:text-teal-800"
               >
                 <Settings className="h-4 w-4 text-slate-400" strokeWidth={1.75} />
-                Settings
+                <T text="Settings" />
               </Link>
             </li>
           </ul>
@@ -66,7 +67,7 @@ export function UserMenu({ user, onNavigate }: { user: AuthUser; onNavigate?: ()
             className="flex w-full items-center gap-2.5 border-t border-slate-100 bg-slate-50 px-5 py-3 text-left text-sm font-medium text-red-600 transition-colors duration-200 hover:bg-red-50"
           >
             <LogOut className="h-4 w-4" strokeWidth={1.75} />
-            Log out
+            <T text="Log out" />
           </button>
         </div>
       </div>

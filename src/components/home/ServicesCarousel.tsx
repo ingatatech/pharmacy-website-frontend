@@ -4,12 +4,15 @@ import { useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import type { Service } from "@/types";
 import { ServiceCard } from "@/components/services/ServiceCard";
+import { useTranslated } from "@/lib/language-context";
 
 // A horizontal slider instead of a paginated "view all" link — used once
 // there are more services than comfortably fit in a static grid, so every
 // service stays reachable right on the homepage.
 export function ServicesCarousel({ services }: { services: Service[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
+  const prevLabel = useTranslated("Previous services");
+  const nextLabel = useTranslated("Next services");
 
   function scrollByCard(direction: 1 | -1) {
     const track = trackRef.current;
@@ -60,7 +63,7 @@ export function ServicesCarousel({ services }: { services: Service[] }) {
         <button
           type="button"
           onClick={() => scrollByCard(-1)}
-          aria-label="Previous services"
+          aria-label={prevLabel}
           className="flex items-center justify-center rounded-full border border-slate-200 bg-white p-2.5 text-ink shadow-sm transition-colors duration-200 hover:border-teal-800 hover:text-teal-800"
         >
           <ChevronLeft className="h-5 w-5" />
@@ -68,7 +71,7 @@ export function ServicesCarousel({ services }: { services: Service[] }) {
         <button
           type="button"
           onClick={() => scrollByCard(1)}
-          aria-label="Next services"
+          aria-label={nextLabel}
           className="flex items-center justify-center rounded-full border border-slate-200 bg-white p-2.5 text-ink shadow-sm transition-colors duration-200 hover:border-teal-800 hover:text-teal-800"
         >
           <ChevronRight className="h-5 w-5" />

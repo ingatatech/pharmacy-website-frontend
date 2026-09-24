@@ -1,6 +1,7 @@
 import { Clock, MapPin, Navigation, Phone } from "lucide-react";
 import type { PharmacyLocation } from "@/types";
 import { groupOpeningHours } from "@/lib/opening-hours";
+import { T } from "@/lib/language-context";
 
 // Shared between the homepage teaser and the full /locations directory.
 export function LocationCard({
@@ -57,7 +58,9 @@ export function LocationCard({
               <Clock className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
               <div className="space-y-0.5">
                 {hourLines.map((line) => (
-                  <p key={line}>{line}</p>
+                  <p key={line}>
+                    <T text={line} />
+                  </p>
                 ))}
               </div>
             </div>
@@ -71,7 +74,7 @@ export function LocationCard({
                 key={name}
                 className="rounded-full border border-slate-200 px-2.5 py-1 text-xs font-medium text-slate-600"
               >
-                {name}
+                <T text={name} />
               </span>
             ))}
           </div>
@@ -85,7 +88,7 @@ export function LocationCard({
             className="mt-5 inline-flex items-center gap-1.5 text-sm font-medium text-teal-600 transition-colors duration-200 hover:text-teal-700"
           >
             <Navigation className="h-3.5 w-3.5" />
-            Get directions
+            <T text="Get directions" />
           </a>
         )}
       </div>

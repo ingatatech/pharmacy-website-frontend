@@ -9,7 +9,9 @@ import { ChevronDown, LogOut, Menu, Settings, User, X } from "lucide-react";
 import type { Article, Service } from "@/types";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { UserMenu } from "@/components/auth/UserMenu";
+import { LanguageSwitcher, MobileLanguageSwitcher } from "@/components/LanguageSwitcher";
 import { useAuth } from "@/lib/auth-context";
+import { T } from "@/lib/language-context";
 import { initials } from "@/lib/text";
 
 type DropdownItem = { href: string; label: string };
@@ -109,7 +111,7 @@ export function Navbar({
                           : "text-white text-shadow-nav after:w-0 hover:after:w-full"
                     }`}
                   >
-                    {link.label}
+                    <T text={link.label} />
                     {hasDropdown && (
                       <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 group-hover:rotate-180" />
                     )}
@@ -125,7 +127,7 @@ export function Navbar({
                                 href={item.href}
                                 className="block px-5 py-3 text-sm font-medium text-slate-700 transition-colors duration-200 hover:bg-slate-50 hover:text-teal-800"
                               >
-                                {item.label}
+                                <T text={item.label} />
                               </Link>
                             </li>
                           ))}
@@ -134,7 +136,7 @@ export function Navbar({
                           href={link.href}
                           className="block border-t border-slate-100 bg-slate-50 px-5 py-3 text-sm font-bold text-teal-700 transition-colors duration-200 hover:bg-slate-100"
                         >
-                          View all {link.label.toLowerCase()}
+                          <T text={`View all ${link.label.toLowerCase()}`} />
                         </Link>
                       </div>
                     </div>
@@ -148,7 +150,8 @@ export function Navbar({
               outer justify-between spreads Logo / Links / Login as three
               distinct groups (links landing near the middle) instead of
               bunching links and Login together at the right edge. */}
-          <div className="hidden items-center lg:flex">
+          <div className="hidden items-center gap-1 lg:flex">
+            <LanguageSwitcher solid={solid} />
             {ready && user ? (
               <span className={solid ? "text-slate-700" : "text-white text-shadow-nav"}>
                 <UserMenu user={user} />
@@ -161,7 +164,7 @@ export function Navbar({
                   solid ? "text-slate-600 hover:text-slate-900" : "text-white text-shadow-nav"
                 }`}
               >
-                Log in
+                <T text="Log in" />
               </button>
             )}
           </div>
@@ -210,7 +213,7 @@ export function Navbar({
                           }`}
                           onClick={() => setMenuOpen(false)}
                         >
-                          {link.label}
+                          <T text={link.label} />
                         </Link>
                       </li>
                     );
@@ -221,6 +224,7 @@ export function Navbar({
                     solid ? "border-slate-200" : "border-white/10"
                   }`}
                 >
+                  <MobileLanguageSwitcher solid={solid} />
                   {ready && user ? (
                     <>
                       <div className="flex items-center gap-3 pb-1">
@@ -242,7 +246,7 @@ export function Navbar({
                         onClick={() => setMenuOpen(false)}
                       >
                         <User className="h-4 w-4" strokeWidth={1.75} />
-                        Profile
+                        <T text="Profile" />
                       </Link>
                       <Link
                         href="/account/settings"
@@ -250,7 +254,7 @@ export function Navbar({
                         onClick={() => setMenuOpen(false)}
                       >
                         <Settings className="h-4 w-4" strokeWidth={1.75} />
-                        Settings
+                        <T text="Settings" />
                       </Link>
                       <button
                         type="button"
@@ -263,7 +267,7 @@ export function Navbar({
                         }}
                       >
                         <LogOut className="h-4 w-4" strokeWidth={1.75} />
-                        Log out
+                        <T text="Log out" />
                       </button>
                     </>
                   ) : (
@@ -275,7 +279,7 @@ export function Navbar({
                         setAuthOpen(true);
                       }}
                     >
-                      Log in
+                      <T text="Log in" />
                     </button>
                   )}
                   <Link
@@ -283,7 +287,7 @@ export function Navbar({
                     className="rounded-md bg-emerald-600 px-4 py-2 text-center text-sm font-medium text-white transition-colors duration-200 hover:bg-emerald-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-400"
                     onClick={() => setMenuOpen(false)}
                   >
-                    Refill a prescription
+                    <T text="Refill a prescription" />
                   </Link>
                 </div>
               </div>

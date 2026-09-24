@@ -4,6 +4,7 @@ import { useState, type FormEvent } from "react";
 import { apiFetch, ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import type { AuthUser } from "@/types";
+import { T } from "@/lib/language-context";
 
 const inputClass =
   "w-full rounded-md border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 transition-colors duration-200 focus:border-teal-600 focus:outline-none focus:ring-1 focus:ring-teal-600";
@@ -57,7 +58,7 @@ export function AuthForm({
       {mode === "register" && (
         <div>
           <label htmlFor="fullName" className={labelClass}>
-            Full name
+            <T text="Full name" />
           </label>
           <input id="fullName" name="fullName" type="text" required minLength={2} className={`mt-1.5 ${inputClass}`} />
         </div>
@@ -65,14 +66,14 @@ export function AuthForm({
 
       <div>
         <label htmlFor="email" className={labelClass}>
-          Email
+          <T text="Email" />
         </label>
         <input id="email" name="email" type="email" required className={`mt-1.5 ${inputClass}`} />
       </div>
 
       <div>
         <label htmlFor="password" className={labelClass}>
-          Password
+          <T text="Password" />
         </label>
         <input
           id="password"
@@ -82,12 +83,16 @@ export function AuthForm({
           minLength={mode === "register" ? 8 : undefined}
           className={`mt-1.5 ${inputClass}`}
         />
-        {mode === "register" && <p className="mt-1.5 text-xs text-slate-400">At least 8 characters.</p>}
+        {mode === "register" && (
+          <p className="mt-1.5 text-xs text-slate-400">
+            <T text="At least 8 characters." />
+          </p>
+        )}
       </div>
 
       {status === "error" && errorMessage && (
         <p className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          {errorMessage}
+          <T text={errorMessage} />
         </p>
       )}
 
@@ -96,7 +101,7 @@ export function AuthForm({
         disabled={status === "submitting"}
         className="inline-flex w-full items-center justify-center rounded-md bg-teal-800 px-6 py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-teal-900 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {status === "submitting" ? "Please wait…" : mode === "login" ? "Log in" : "Create account"}
+        <T text={status === "submitting" ? "Please wait…" : mode === "login" ? "Log in" : "Create account"} />
       </button>
     </form>
   );

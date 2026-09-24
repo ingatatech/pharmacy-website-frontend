@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@/types";
+import { T } from "@/lib/language-context";
 
 function statusMeta(status: Product["availabilityStatus"]) {
   if (status === "in_stock") return { label: "In stock", dot: "bg-emerald-500" };
@@ -29,7 +30,7 @@ export function ProductCard({ product }: { product: Product }) {
         />
         {product.requiresPrescription && (
           <span className="absolute left-3 top-3 rounded-full border border-slate-300 bg-white px-2.5 py-1 text-[11px] font-medium text-slate-600">
-            Prescription required
+            <T text="Prescription required" />
           </span>
         )}
       </div>
@@ -42,11 +43,13 @@ export function ProductCard({ product }: { product: Product }) {
         )}
         <h3 className="mt-1 font-display text-lg font-semibold text-slate-900">{product.name}</h3>
         {product.generalUse && (
-          <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-600">{product.generalUse}</p>
+          <p className="mt-2 flex-1 text-sm leading-relaxed text-slate-600">
+            <T text={product.generalUse} />
+          </p>
         )}
         <div className="mt-4 flex items-center gap-1.5 text-xs text-slate-500">
           <span className={`h-1.5 w-1.5 rounded-full ${status.dot}`} />
-          {status.label}
+          <T text={status.label} />
         </div>
       </div>
     </Link>

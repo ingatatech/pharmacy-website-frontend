@@ -1,14 +1,17 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Calendar, Search } from "lucide-react";
 import type { Article } from "@/types";
+import { T, useTranslated } from "@/lib/language-context";
 
 const widgetClass = "rounded-xl border border-slate-200 bg-white p-6";
 
 function WidgetHeading({ children }: { children: string }) {
   return (
     <h3 className="relative pb-3 font-display text-base font-semibold text-slate-900 after:absolute after:bottom-0 after:left-0 after:h-0.5 after:w-8 after:bg-teal-600">
-      {children}
+      <T text={children} />
     </h3>
   );
 }
@@ -42,6 +45,9 @@ export function BlogSidebar({
     .sort((a, b) => new Date(b.publishedAt || b.createdAt).getTime() - new Date(a.publishedAt || a.createdAt).getTime())
     .slice(0, 3);
 
+  const searchPlaceholder = useTranslated("Search articles");
+  const searchLabel = useTranslated("Search");
+
   return (
     <div className="space-y-6">
       <div className={widgetClass}>
@@ -51,12 +57,12 @@ export function BlogSidebar({
             type="text"
             name="q"
             defaultValue={query}
-            placeholder="Search articles"
+            placeholder={searchPlaceholder}
             className="w-full px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none"
           />
           <button
             type="submit"
-            aria-label="Search"
+            aria-label={searchLabel}
             className="flex shrink-0 items-center justify-center px-4 text-slate-500 transition-colors duration-200 hover:text-teal-700"
           >
             <Search className="h-4 w-4" />
@@ -78,7 +84,9 @@ export function BlogSidebar({
                       active ? "text-teal-700 ring-1 ring-inset ring-teal-600" : "text-slate-700"
                     }`}
                   >
-                    <span className="min-w-0 truncate">{name}</span>
+                    <span className="min-w-0 truncate">
+                      <T text={name} />
+                    </span>
                     <span className="shrink-0 text-slate-400">({count})</span>
                   </Link>
                 </li>
@@ -114,7 +122,7 @@ export function BlogSidebar({
                       })}
                     </p>
                     <p className="mt-1 text-sm font-medium leading-snug text-slate-900 transition-colors duration-200 group-hover:text-teal-700">
-                      {article.title}
+                      <T text={article.title} />
                     </p>
                   </div>
                 </Link>
@@ -140,7 +148,7 @@ export function BlogSidebar({
                       : "border-slate-200 bg-slate-50 text-slate-600 hover:border-slate-300"
                   }`}
                 >
-                  {tag}
+                  <T text={tag} />
                 </Link>
               );
             })}

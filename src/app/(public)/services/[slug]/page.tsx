@@ -6,6 +6,7 @@ import { apiFetch, ApiError } from "@/lib/api";
 import type { Service } from "@/types";
 import { PageHeader } from "@/components/PageHeader";
 import { serviceIcon } from "@/components/services/ServiceCard";
+import { T } from "@/lib/language-context";
 
 async function getService(slug: string): Promise<Service | null> {
   try {
@@ -62,7 +63,7 @@ export default async function ServiceDetailPage({
         <div className="mx-auto grid max-w-6xl gap-12 px-4 py-16 sm:px-6 md:grid-cols-[1.2fr_1fr] md:py-24">
           <div>
             <p className="max-w-xl text-lg leading-relaxed text-slate-700">
-              {service.shortDescription}
+              <T text={service.shortDescription} />
             </p>
 
             <div className="mt-10 space-y-10">
@@ -71,8 +72,12 @@ export default async function ServiceDetailPage({
                 if (!value || typeof value !== "string") return null;
                 return (
                   <div key={key}>
-                    <h2 className="font-display text-xl font-semibold text-slate-900">{label}</h2>
-                    <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-600">{value}</p>
+                    <h2 className="font-display text-xl font-semibold text-slate-900">
+                      <T text={label} />
+                    </h2>
+                    <p className="mt-3 max-w-xl text-sm leading-relaxed text-slate-600">
+                      <T text={value} />
+                    </p>
                   </div>
                 );
               })}
@@ -88,7 +93,9 @@ export default async function ServiceDetailPage({
               {service.keyBenefit && (
                 <div className="mt-5 flex items-start gap-2.5">
                   <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-ink" />
-                  <p className="text-sm font-medium text-slate-900">{service.keyBenefit}</p>
+                  <p className="text-sm font-medium text-slate-900">
+                    <T text={service.keyBenefit} />
+                  </p>
                 </div>
               )}
 
@@ -97,14 +104,14 @@ export default async function ServiceDetailPage({
                   href="/prescription-refill"
                   className="group inline-flex items-center justify-center gap-2 rounded-md bg-teal-800 px-5 py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-teal-900"
                 >
-                  Get started
+                  <T text="Get started" />
                   <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
                 </Link>
                 <Link
                   href="/contact"
                   className="inline-flex items-center justify-center rounded-md border border-slate-300 px-5 py-3 text-sm font-semibold text-slate-700 transition-colors duration-200 hover:border-slate-400 hover:text-slate-900"
                 >
-                  Talk to a pharmacist
+                  <T text="Talk to a pharmacist" />
                 </Link>
               </div>
             </div>
@@ -113,7 +120,7 @@ export default async function ServiceDetailPage({
               href="/services"
               className="inline-flex text-sm font-medium text-teal-600 transition-colors duration-200 hover:text-teal-700"
             >
-              ← Back to all services
+              ← <T text="Back to all services" />
             </Link>
           </div>
         </div>

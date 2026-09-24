@@ -2,6 +2,7 @@ import type { Service } from "@/types";
 import { ServiceCard } from "@/components/services/ServiceCard";
 import { CapsuleMotif } from "@/components/home/CapsuleMotif";
 import { ServicesCarousel } from "@/components/home/ServicesCarousel";
+import { T } from "@/lib/language-context";
 
 // Beyond this many, a static grid gets cramped — switch to the slider
 // instead of truncating the list behind a "view all" link.
@@ -35,9 +36,11 @@ export function ServicesSection({ services }: { services: Service[] }) {
       </div>
 
       <div className="relative mx-auto max-w-6xl px-4 py-16 text-center sm:px-6 md:py-24">
-        <span className="text-sm font-medium text-teal-600">What we offer</span>
+        <span className="text-sm font-medium text-teal-600">
+          <T text="What we offer" />
+        </span>
         <h2 className="mx-auto mt-2 max-w-lg font-display text-3xl font-medium text-slate-900 sm:text-4xl">
-          Services at every branch
+          <T text="Services at every branch" />
         </h2>
 
         {useCarousel ? (

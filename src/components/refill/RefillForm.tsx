@@ -5,6 +5,7 @@ import { CheckCircle2 } from "lucide-react";
 import { apiFetch, ApiError } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import type { PharmacyLocation } from "@/types";
+import { T, useTranslated } from "@/lib/language-context";
 
 const inputClass =
   "w-full rounded-md border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 transition-colors duration-200 focus:border-teal-600 focus:outline-none focus:ring-1 focus:ring-teal-600";
@@ -15,6 +16,7 @@ export function RefillForm({ locations }: { locations: PharmacyLocation[] }) {
   const { user, token } = useAuth();
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const noPreferenceLabel = useTranslated("No preference");
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -59,13 +61,14 @@ export function RefillForm({ locations }: { locations: PharmacyLocation[] }) {
     return (
       <div className="rounded-xl border border-slate-200 bg-white p-8">
         <CheckCircle2 className="h-8 w-8 text-emerald-500" strokeWidth={1.75} />
-        <h3 className="mt-4 font-display text-xl font-semibold text-slate-900">Request received</h3>
+        <h3 className="mt-4 font-display text-xl font-semibold text-slate-900">
+          <T text="Request received" />
+        </h3>
         <p className="mt-2 text-sm leading-relaxed text-slate-600">
-          A pharmacist will review your refill request and reach out using the information you provided.
+          <T text="A pharmacist will review your refill request and reach out using the information you provided." />
         </p>
         <p className="mt-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-xs leading-relaxed text-amber-900">
-          Please note that submission of a request does not constitute prescription approval, renewal or
-          confirmation that the requested medicine is available.
+          <T text="Please note that submission of a request does not constitute prescription approval, renewal or confirmation that the requested medicine is available." />
         </p>
       </div>
     );
@@ -80,7 +83,7 @@ export function RefillForm({ locations }: { locations: PharmacyLocation[] }) {
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="fullName" className={labelClass}>
-            Full name
+            <T text="Full name" />
           </label>
           <input
             id="fullName"
@@ -93,7 +96,7 @@ export function RefillForm({ locations }: { locations: PharmacyLocation[] }) {
         </div>
         <div>
           <label htmlFor="phoneNumber" className={labelClass}>
-            Phone number
+            <T text="Phone number" />
           </label>
           <input id="phoneNumber" name="phoneNumber" type="tel" required className={`mt-1.5 ${inputClass}`} />
         </div>
@@ -101,7 +104,7 @@ export function RefillForm({ locations }: { locations: PharmacyLocation[] }) {
 
       <div>
         <label htmlFor="email" className={labelClass}>
-          Email <span className="text-slate-400">(optional)</span>
+          <T text="Email" /> <span className="text-slate-400">(<T text="optional" />)</span>
         </label>
         <input
           id="email"
@@ -115,13 +118,13 @@ export function RefillForm({ locations }: { locations: PharmacyLocation[] }) {
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="medicationName" className={labelClass}>
-            Medication name <span className="text-slate-400">(optional)</span>
+            <T text="Medication name" /> <span className="text-slate-400">(<T text="optional" />)</span>
           </label>
           <input id="medicationName" name="medicationName" type="text" className={`mt-1.5 ${inputClass}`} />
         </div>
         <div>
           <label htmlFor="prescriptionReference" className={labelClass}>
-            Prescription reference <span className="text-slate-400">(optional)</span>
+            <T text="Prescription reference" /> <span className="text-slate-400">(<T text="optional" />)</span>
           </label>
           <input id="prescriptionReference" name="prescriptionReference" type="text" className={`mt-1.5 ${inputClass}`} />
         </div>
@@ -130,10 +133,10 @@ export function RefillForm({ locations }: { locations: PharmacyLocation[] }) {
       <div className="grid gap-5 sm:grid-cols-2">
         <div>
           <label htmlFor="preferredBranch" className={labelClass}>
-            Preferred branch <span className="text-slate-400">(optional)</span>
+            <T text="Preferred branch" /> <span className="text-slate-400">(<T text="optional" />)</span>
           </label>
           <select id="preferredBranch" name="preferredBranch" className={`mt-1.5 ${inputClass}`} defaultValue="">
-            <option value="">No preference</option>
+            <option value="">{noPreferenceLabel}</option>
             {locations.map((location) => (
               <option key={location.id} value={location.branchName}>
                 {location.branchName}
@@ -143,7 +146,7 @@ export function RefillForm({ locations }: { locations: PharmacyLocation[] }) {
         </div>
         <div>
           <label htmlFor="preferredPickupMethod" className={labelClass}>
-            Pickup method <span className="text-slate-400">(optional)</span>
+            <T text="Pickup method" /> <span className="text-slate-400">(<T text="optional" />)</span>
           </label>
           <select
             id="preferredPickupMethod"
@@ -151,30 +154,32 @@ export function RefillForm({ locations }: { locations: PharmacyLocation[] }) {
             className={`mt-1.5 ${inputClass}`}
             defaultValue=""
           >
-            <option value="">No preference</option>
-            <option value="In-store pickup">In-store pickup</option>
-            <option value="Delivery">Delivery</option>
+            <option value="">{noPreferenceLabel}</option>
+            <option value="In-store pickup">
+              <T text="In-store pickup" />
+            </option>
+            <option value="Delivery">
+              <T text="Delivery" />
+            </option>
           </select>
         </div>
       </div>
 
       <div>
         <label htmlFor="additionalNotes" className={labelClass}>
-          Additional notes <span className="text-slate-400">(optional)</span>
+          <T text="Additional notes" /> <span className="text-slate-400">(<T text="optional" />)</span>
         </label>
         <textarea id="additionalNotes" name="additionalNotes" rows={4} className={`mt-1.5 ${inputClass}`} />
       </div>
 
       {status === "error" && errorMessage && (
         <p className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-          {errorMessage}
+          <T text={errorMessage} />
         </p>
       )}
 
       <p className="text-xs leading-relaxed text-slate-500">
-        Submitting a prescription or refill request through this website does not constitute prescription
-        approval, renewal, dispensing or confirmation of product availability. All requests are subject to
-        verification and review by authorized pharmacy personnel.
+        <T text="Submitting a prescription or refill request through this website does not constitute prescription approval, renewal, dispensing or confirmation of product availability. All requests are subject to verification and review by authorized pharmacy personnel." />
       </p>
 
       <button
@@ -182,7 +187,7 @@ export function RefillForm({ locations }: { locations: PharmacyLocation[] }) {
         disabled={status === "submitting"}
         className="inline-flex items-center justify-center rounded-md bg-teal-800 px-6 py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-teal-900 disabled:cursor-not-allowed disabled:opacity-60"
       >
-        {status === "submitting" ? "Sending…" : "Submit request"}
+        <T text={status === "submitting" ? "Sending…" : "Submit request"} />
       </button>
     </form>
   );

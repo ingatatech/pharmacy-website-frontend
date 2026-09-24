@@ -7,6 +7,7 @@ import { useAuth } from "@/lib/auth-context";
 import { apiFetch, ApiError } from "@/lib/api";
 import type { AuthUser } from "@/types";
 import { PageHeader } from "@/components/PageHeader";
+import { T, useTranslated } from "@/lib/language-context";
 
 const inputClass =
   "w-full rounded-md border border-slate-300 bg-white px-4 py-2.5 text-sm text-slate-900 placeholder:text-slate-400 transition-colors duration-200 focus:border-teal-600 focus:outline-none focus:ring-1 focus:ring-teal-600";
@@ -18,6 +19,7 @@ export default function AccountSettingsPage() {
   const { user, token, ready, updateUser } = useAuth();
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const passwordPlaceholder = useTranslated("Leave blank to keep your current password");
 
   useEffect(() => {
     if (ready && !user) {
@@ -67,7 +69,7 @@ export default function AccountSettingsPage() {
           >
             <div>
               <label htmlFor="fullName" className={labelClass}>
-                Full name
+                <T text="Full name" />
               </label>
               <input
                 id="fullName"
@@ -82,7 +84,7 @@ export default function AccountSettingsPage() {
 
             <div>
               <label htmlFor="email" className={labelClass}>
-                Email
+                <T text="Email" />
               </label>
               <input
                 id="email"
@@ -96,29 +98,31 @@ export default function AccountSettingsPage() {
 
             <div className="border-t border-slate-100 pt-5">
               <label htmlFor="password" className={labelClass}>
-                New password <span className="text-slate-400">(optional)</span>
+                <T text="New password" /> <span className="text-slate-400">(<T text="optional" />)</span>
               </label>
               <input
                 id="password"
                 name="password"
                 type="password"
                 minLength={8}
-                placeholder="Leave blank to keep your current password"
+                placeholder={passwordPlaceholder}
                 className={`mt-1.5 ${inputClass}`}
               />
-              <p className="mt-1.5 text-xs text-slate-400">At least 8 characters.</p>
+              <p className="mt-1.5 text-xs text-slate-400">
+                <T text="At least 8 characters." />
+              </p>
             </div>
 
             {status === "success" && (
               <p className="flex items-center gap-2 rounded-md border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm text-emerald-800">
                 <CheckCircle2 className="h-4 w-4 shrink-0" strokeWidth={1.75} />
-                Your changes have been saved.
+                <T text="Your changes have been saved." />
               </p>
             )}
 
             {status === "error" && errorMessage && (
               <p className="rounded-md border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-800">
-                {errorMessage}
+                <T text={errorMessage} />
               </p>
             )}
 
@@ -127,7 +131,7 @@ export default function AccountSettingsPage() {
               disabled={status === "submitting"}
               className="inline-flex items-center justify-center rounded-md bg-teal-800 px-6 py-3 text-sm font-semibold text-white transition-colors duration-200 hover:bg-teal-900 disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {status === "submitting" ? "Saving…" : "Save changes"}
+              <T text={status === "submitting" ? "Saving…" : "Save changes"} />
             </button>
           </form>
         </div>

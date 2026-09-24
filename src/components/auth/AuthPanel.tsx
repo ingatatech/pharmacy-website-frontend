@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { LogIn, UserPlus } from "lucide-react";
 import { AuthForm } from "@/components/auth/AuthForm";
+import { T } from "@/lib/language-context";
 
 const COPY = {
   login: {
@@ -46,22 +47,28 @@ export function AuthPanel({ onSuccess }: { onSuccess?: () => void }) {
       <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-teal-50 text-teal-800">
         <copy.icon className="h-5 w-5" strokeWidth={1.75} />
       </div>
-      <span className="mt-5 block text-sm font-medium text-teal-600">{copy.eyebrow}</span>
-      <h2 className="mt-1 font-display text-2xl font-semibold text-slate-900">{copy.title}</h2>
-      <p className="mt-1.5 text-sm leading-relaxed text-slate-500">{copy.subtitle}</p>
+      <span className="mt-5 block text-sm font-medium text-teal-600">
+        <T text={copy.eyebrow} />
+      </span>
+      <h2 className="mt-1 font-display text-2xl font-semibold text-slate-900">
+        <T text={copy.title} />
+      </h2>
+      <p className="mt-1.5 text-sm leading-relaxed text-slate-500">
+        <T text={copy.subtitle} />
+      </p>
 
       <div className="mt-7">
         <AuthForm mode={mode} onSuccess={handleSuccess} />
       </div>
 
       <p className="mt-6 text-center text-sm text-slate-500">
-        {copy.switchPrompt}{" "}
+        <T text={copy.switchPrompt} />{" "}
         <button
           type="button"
           onClick={() => setMode(mode === "login" ? "register" : "login")}
           className="font-semibold text-teal-700 transition-colors duration-200 hover:text-teal-800"
         >
-          {copy.switchCta}
+          <T text={copy.switchCta} />
         </button>
       </p>
     </div>

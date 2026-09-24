@@ -3,6 +3,7 @@ import Link from "next/link";
 import { ArrowRight, Clock, Tag } from "lucide-react";
 import type { Article } from "@/types";
 import { estimateReadMinutes, excerpt, initials, roleLabel } from "@/lib/text";
+import { T } from "@/lib/language-context";
 
 // A compact horizontal card — small thumbnail beside the content instead
 // of a full-width image on top — so a page of these reads as a list, not
@@ -40,12 +41,12 @@ export function ArticleCard({ article }: { article: Article }) {
             {article.category && (
               <span className="inline-flex items-center gap-1.5">
                 <Tag className="h-3.5 w-3.5" />
-                {article.category}
+                <T text={article.category} />
               </span>
             )}
             <span className="inline-flex items-center gap-1.5">
               <Clock className="h-3.5 w-3.5" />
-              {readMinutes} min read
+              {readMinutes} <T text="min read" />
             </span>
           </div>
 
@@ -54,11 +55,13 @@ export function ArticleCard({ article }: { article: Article }) {
               href={`/articles/${article.slug}`}
               className="font-display text-lg font-semibold leading-snug text-slate-900 transition-colors duration-200 hover:text-teal-700 sm:text-xl"
             >
-              {article.title}
+              <T text={article.title} />
             </Link>
           </h3>
 
-          <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-slate-600">{excerpt(article.content)}</p>
+          <p className="mt-2 line-clamp-2 text-sm leading-relaxed text-slate-600">
+            <T text={excerpt(article.content)} />
+          </p>
 
           <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-t border-slate-100 pt-4">
             <div className="flex items-center gap-2.5">
@@ -67,7 +70,9 @@ export function ArticleCard({ article }: { article: Article }) {
               </div>
               <div className="text-sm">
                 <p className="font-medium text-slate-900">{article.author.fullName}</p>
-                <p className="text-xs text-slate-500">{roleLabel(article.author.role)}</p>
+                <p className="text-xs text-slate-500">
+                  <T text={roleLabel(article.author.role)} />
+                </p>
               </div>
             </div>
 
@@ -75,7 +80,7 @@ export function ArticleCard({ article }: { article: Article }) {
               href={`/articles/${article.slug}`}
               className="group inline-flex items-center gap-1.5 rounded-md bg-teal-800 px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-teal-900"
             >
-              Read more
+              <T text="Read more" />
               <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
             </Link>
           </div>

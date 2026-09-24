@@ -4,6 +4,7 @@ import type { PharmacyLocation, Service } from "@/types";
 import { PageHeader } from "@/components/PageHeader";
 import { LocationCard } from "@/components/locations/LocationCard";
 import { ClosingCta } from "@/components/home/ClosingCta";
+import { T } from "@/lib/language-context";
 
 export const metadata: Metadata = {
   title: "Locations | Ingata Pharmacy",
@@ -48,7 +49,7 @@ export default async function LocationsPage() {
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24">
           {locations.length === 0 ? (
             <p className="text-center text-sm text-slate-500">
-              Branch details will be listed here shortly. In the meantime, reach us through the contact page.
+              <T text="Branch details will be listed here shortly. In the meantime, reach us through the contact page." />
             </p>
           ) : (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

@@ -3,6 +3,7 @@ import { Mail, MapPin, Phone } from "lucide-react";
 import { FaFacebook, FaInstagram, FaLinkedin, FaXTwitter, FaYoutube } from "react-icons/fa6";
 import type { IconType } from "react-icons";
 import type { SiteSetting } from "@/types";
+import { T } from "@/lib/language-context";
 
 const EXPLORE_LINKS = [
   { href: "/services", label: "Services" },
@@ -46,8 +47,12 @@ export function Footer({ settings }: { settings: SiteSetting | null }) {
             {settings?.pharmacyName || "Ingata Pharmacy"}
           </span>
           <p className="mt-3 max-w-xs text-sm leading-relaxed">
-            {settings?.heroSubheading ||
-              "Prescription refills, medication counseling and everyday care from licensed pharmacists."}
+            <T
+              text={
+                settings?.heroSubheading ||
+                "Prescription refills, medication counseling and everyday care from licensed pharmacists."
+              }
+            />
           </p>
           {socials.length > 0 && (
             <div className="mt-5 flex gap-3">
@@ -68,12 +73,14 @@ export function Footer({ settings }: { settings: SiteSetting | null }) {
         </div>
 
         <div>
-          <h3 className="text-sm font-medium text-white">Explore</h3>
+          <h3 className="text-sm font-medium text-white">
+            <T text="Explore" />
+          </h3>
           <ul className="mt-4 space-y-3 text-sm">
             {EXPLORE_LINKS.map((link) => (
               <li key={link.href}>
                 <Link href={link.href} className="transition-colors hover:text-white">
-                  {link.label}
+                  <T text={link.label} />
                 </Link>
               </li>
             ))}
@@ -81,12 +88,14 @@ export function Footer({ settings }: { settings: SiteSetting | null }) {
         </div>
 
         <div>
-          <h3 className="text-sm font-medium text-white">Get help</h3>
+          <h3 className="text-sm font-medium text-white">
+            <T text="Get help" />
+          </h3>
           <ul className="mt-4 space-y-3 text-sm">
             {HELP_LINKS.map((link) => (
               <li key={link.href}>
                 <Link href={link.href} className="transition-colors hover:text-white">
-                  {link.label}
+                  <T text={link.label} />
                 </Link>
               </li>
             ))}
@@ -94,12 +103,14 @@ export function Footer({ settings }: { settings: SiteSetting | null }) {
         </div>
 
         <div>
-          <h3 className="text-sm font-medium text-white">Legal</h3>
+          <h3 className="text-sm font-medium text-white">
+            <T text="Legal" />
+          </h3>
           <ul className="mt-4 space-y-3 text-sm">
             {LEGAL_LINKS.map((link) => (
               <li key={link.href}>
                 <Link href={link.href} className="transition-colors hover:text-white">
-                  {link.label}
+                  <T text={link.label} />
                 </Link>
               </li>
             ))}
@@ -107,7 +118,9 @@ export function Footer({ settings }: { settings: SiteSetting | null }) {
         </div>
 
         <div>
-          <h3 className="text-sm font-medium text-white">Contact</h3>
+          <h3 className="text-sm font-medium text-white">
+            <T text="Contact" />
+          </h3>
           <ul className="mt-4 space-y-3 text-sm">
             {settings?.phone && (
               <li className="flex items-center gap-2">
@@ -137,8 +150,12 @@ export function Footer({ settings }: { settings: SiteSetting | null }) {
 
       <div className="border-t border-white/10">
         <div className="mx-auto flex max-w-6xl flex-col gap-2 px-4 py-6 text-xs text-white/60 sm:flex-row sm:items-center sm:justify-between sm:px-6">
-          <span>© {year} {settings?.pharmacyName || "Ingata Pharmacy"}. All rights reserved.</span>
-          <span>Kigali, Rwanda</span>
+          <span>
+            © {year} {settings?.pharmacyName || "Ingata Pharmacy"}. <T text="All rights reserved." />
+          </span>
+          <span>
+            <T text="Kigali, Rwanda" />
+          </span>
         </div>
       </div>
     </footer>

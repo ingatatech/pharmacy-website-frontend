@@ -4,6 +4,7 @@ import { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown } from "lucide-react";
 import type { Faq } from "@/types";
+import { T } from "@/lib/language-context";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -11,7 +12,11 @@ export function FaqAccordion({ faqs }: { faqs: Faq[] }) {
   const [openId, setOpenId] = useState<string | null>(faqs[0]?.id ?? null);
 
   if (faqs.length === 0) {
-    return <p className="text-sm text-slate-500">Frequently asked questions will appear here shortly.</p>;
+    return (
+      <p className="text-sm text-slate-500">
+        <T text="Frequently asked questions will appear here shortly." />
+      </p>
+    );
   }
 
   return (
@@ -27,7 +32,7 @@ export function FaqAccordion({ faqs }: { faqs: Faq[] }) {
               className="flex w-full items-center justify-between gap-4 px-6 py-5 text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-teal-500"
             >
               <span className="font-display text-base font-semibold text-slate-900 sm:text-lg">
-                {faq.question}
+                <T text={faq.question} />
               </span>
               <ChevronDown
                 className={`h-5 w-5 shrink-0 text-teal-600 transition-transform duration-300 ${
@@ -44,7 +49,9 @@ export function FaqAccordion({ faqs }: { faqs: Faq[] }) {
                   transition={{ duration: 0.3, ease: EASE }}
                   className="overflow-hidden"
                 >
-                  <p className="px-6 pb-5 text-sm leading-relaxed text-slate-600">{faq.answer}</p>
+                  <p className="px-6 pb-5 text-sm leading-relaxed text-slate-600">
+                    <T text={faq.answer} />
+                  </p>
                 </motion.div>
               )}
             </AnimatePresence>

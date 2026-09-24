@@ -12,6 +12,7 @@ import {
   useTransform,
 } from "framer-motion";
 import { ArrowRight, ShieldCheck } from "lucide-react";
+import { T } from "@/lib/language-context";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -87,34 +88,34 @@ export function Hero({
             className="inline-flex items-center gap-2 rounded-full bg-teal-950/40 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-white text-shadow-nav ring-1 ring-white/25 backdrop-blur-sm"
           >
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            Trusted pharmacy care
+            <T text="Trusted pharmacy care" />
           </motion.span>
 
           <motion.h1
             {...fadeUp(0.1)}
             className="mt-5 font-display text-5xl font-bold leading-[1.02] tracking-tight text-white text-shadow-nav sm:text-6xl lg:text-7xl"
           >
-            {headline}
+            <T text={headline} />
           </motion.h1>
           <motion.p
             {...fadeUp(0.2)}
             className="mt-6 max-w-md text-base font-medium leading-relaxed text-white text-shadow-nav sm:text-lg"
           >
-            {subheading}
+            <T text={subheading} />
           </motion.p>
           <motion.div {...fadeUp(0.3)} className="mt-10 flex flex-wrap items-center gap-6">
             <Link
               href="/prescription-refill"
               className="group inline-flex items-center gap-2 rounded-md bg-emerald-500 px-7 py-3.5 text-sm font-semibold text-teal-950 transition-colors duration-200 hover:bg-emerald-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
             >
-              Refill a prescription
+              <T text="Refill a prescription" />
               <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
             <Link
               href="/services"
               className="text-sm font-semibold text-white text-shadow-nav transition-colors duration-200"
             >
-              Browse services
+              <T text="Browse services" />
             </Link>
           </motion.div>
 
@@ -130,8 +131,12 @@ export function Hero({
               <ShieldCheck className="h-5 w-5" strokeWidth={1.75} />
             </span>
             <div>
-              <p className="font-display text-sm font-semibold text-slate-900">Licensed pharmacists</p>
-              <p className="text-xs text-slate-500">On every shift</p>
+              <p className="font-display text-sm font-semibold text-slate-900">
+                <T text="Licensed pharmacists" />
+              </p>
+              <p className="text-xs text-slate-500">
+                <T text="On every shift" />
+              </p>
             </div>
           </motion.div>
         </div>
@@ -151,8 +156,12 @@ export function Hero({
             <ShieldCheck className="h-5 w-5" strokeWidth={1.75} />
           </span>
           <div>
-            <p className="font-display text-sm font-semibold text-slate-900">Licensed pharmacists</p>
-            <p className="text-xs text-slate-500">On every shift</p>
+            <p className="font-display text-sm font-semibold text-slate-900">
+              <T text="Licensed pharmacists" />
+            </p>
+            <p className="text-xs text-slate-500">
+              <T text="On every shift" />
+            </p>
           </div>
         </div>
       </motion.div>

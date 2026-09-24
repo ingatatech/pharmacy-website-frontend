@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
 import { CapsuleMotif } from "./home/CapsuleMotif";
+import { T } from "@/lib/language-context";
 
 // The interior-page equivalent of the homepage Hero: a compact breadcrumb
 // banner instead of the full-bleed dark hero, since only the homepage has
@@ -48,25 +49,27 @@ export function PageHeader({
             href="/"
             className={`shrink-0 transition-colors duration-200 ${dark ? "hover:text-white" : "hover:text-slate-900"}`}
           >
-            Home
+            <T text="Home" />
           </Link>
           <ChevronRight className="h-3.5 w-3.5 shrink-0" />
-          <span className={`min-w-0 truncate ${dark ? "text-white" : "text-slate-900"}`}>{title}</span>
+          <span className={`min-w-0 truncate ${dark ? "text-white" : "text-slate-900"}`}>
+            <T text={title} />
+          </span>
         </nav>
 
         {eyebrow && (
           <span className={`mt-6 block text-sm font-medium ${dark ? "text-emerald-400" : "text-teal-600"}`}>
-            {eyebrow}
+            <T text={eyebrow} />
           </span>
         )}
         <h1
           className={`mt-2 font-display text-4xl font-medium sm:text-5xl ${dark ? "text-white" : "text-slate-900"}`}
         >
-          {title}
+          <T text={title} />
         </h1>
         {description && (
           <p className={`mt-4 max-w-2xl text-base leading-relaxed ${dark ? "text-white/70" : "text-slate-600"}`}>
-            {description}
+            <T text={description} />
           </p>
         )}
       </div>

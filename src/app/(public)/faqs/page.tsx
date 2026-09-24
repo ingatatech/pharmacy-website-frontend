@@ -5,6 +5,7 @@ import { apiFetch } from "@/lib/api";
 import type { Faq, SiteSetting } from "@/types";
 import { PageHeader } from "@/components/PageHeader";
 import { FaqAccordion } from "@/components/faqs/FaqAccordion";
+import { T } from "@/lib/language-context";
 
 export const metadata: Metadata = {
   title: "FAQs | Ingata Pharmacy",
@@ -49,9 +50,11 @@ export default async function FaqsPage() {
                 <MessageCircle className="h-5 w-5" strokeWidth={1.75} />
               </span>
               <div>
-                <h2 className="font-display text-lg font-semibold text-slate-900">Still have questions?</h2>
+                <h2 className="font-display text-lg font-semibold text-slate-900">
+                  <T text="Still have questions?" />
+                </h2>
                 <p className="mt-1 text-sm leading-relaxed text-slate-600">
-                  Our pharmacists are happy to talk through anything not covered here.
+                  <T text="Our pharmacists are happy to talk through anything not covered here." />
                 </p>
               </div>
             </div>
@@ -69,7 +72,7 @@ export default async function FaqsPage() {
                 href="/contact"
                 className="inline-flex items-center justify-center rounded-md bg-teal-800 px-5 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-teal-900"
               >
-                Contact us
+                <T text="Contact us" />
               </Link>
             </div>
           </div>

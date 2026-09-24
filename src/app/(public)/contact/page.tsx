@@ -6,6 +6,7 @@ import { apiFetch } from "@/lib/api";
 import type { PharmacyLocation, SiteSetting } from "@/types";
 import { PageHeader } from "@/components/PageHeader";
 import { ContactForm } from "@/components/contact/ContactForm";
+import { T } from "@/lib/language-context";
 
 export const metadata: Metadata = {
   title: "Contact | Ingata Pharmacy",
@@ -63,7 +64,9 @@ export default async function ContactPage() {
 
           <div className="space-y-6">
             <div className="rounded-xl border border-slate-200 bg-white p-7">
-              <h2 className="font-display text-lg font-semibold text-slate-900">Reach us directly</h2>
+              <h2 className="font-display text-lg font-semibold text-slate-900">
+                <T text="Reach us directly" />
+              </h2>
               <div className="mt-5 space-y-4 text-sm text-slate-600">
                 {settings?.phone && (
                   <p className="flex items-center gap-2.5">
@@ -88,7 +91,9 @@ export default async function ContactPage() {
                   </p>
                 )}
                 {!settings?.phone && !settings?.email && !settings?.address && (
-                  <p>Contact details will appear here once they&rsquo;re added.</p>
+                  <p>
+                    <T text="Contact details will appear here once they're added." />
+                  </p>
                 )}
               </div>
 
@@ -126,7 +131,9 @@ export default async function ContactPage() {
 
             {locations.length > 0 && (
               <div className="rounded-xl border border-slate-200 bg-white p-7">
-                <h2 className="font-display text-lg font-semibold text-slate-900">Visit a branch</h2>
+                <h2 className="font-display text-lg font-semibold text-slate-900">
+                  <T text="Visit a branch" />
+                </h2>
                 <ul className="mt-4 divide-y divide-slate-100">
                   {locations.map((location) => (
                     <li key={location.id} className="flex items-start gap-3 py-3 first:pt-0 last:pb-0">

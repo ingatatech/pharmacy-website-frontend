@@ -9,6 +9,7 @@ import { apiFetch } from "@/lib/api";
 import { initials, roleLabel } from "@/lib/text";
 import type { ContactInquiry, RefillRequest } from "@/types";
 import { PageHeader } from "@/components/PageHeader";
+import { T } from "@/lib/language-context";
 
 const REFILL_STATUS_STYLES: Record<string, string> = {
   submitted: "bg-slate-100 text-slate-700",
@@ -39,7 +40,7 @@ function StatusBadge({ status, styles }: { status: string; styles: Record<string
         styles[status] || "bg-slate-100 text-slate-700"
       }`}
     >
-      {formatStatus(status)}
+      <T text={formatStatus(status)} />
     </span>
   );
 }
@@ -99,7 +100,7 @@ export default function AccountPage() {
                 className="inline-flex items-center gap-2 rounded-md border border-slate-300 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors duration-200 hover:border-slate-400 hover:text-slate-900"
               >
                 <Settings className="h-4 w-4" strokeWidth={1.75} />
-                Edit profile
+                <T text="Edit profile" />
               </Link>
             </div>
 
@@ -107,20 +108,24 @@ export default function AccountPage() {
               <div className="flex items-center justify-between gap-4 py-4">
                 <dt className="flex items-center gap-2.5 text-sm text-slate-500">
                   <Mail className="h-4 w-4 text-slate-400" strokeWidth={1.75} />
-                  Email
+                  <T text="Email" />
                 </dt>
                 <dd className="truncate text-sm font-medium text-slate-900">{user.email}</dd>
               </div>
               <div className="flex items-center justify-between gap-4 py-4">
                 <dt className="flex items-center gap-2.5 text-sm text-slate-500">
                   <ShieldCheck className="h-4 w-4 text-slate-400" strokeWidth={1.75} />
-                  Account type
+                  <T text="Account type" />
                 </dt>
-                <dd className="text-sm font-medium text-slate-900">{roleLabel(user.role)}</dd>
+                <dd className="text-sm font-medium text-slate-900">
+                  <T text={roleLabel(user.role)} />
+                </dd>
               </div>
               {memberSince && (
                 <div className="flex items-center justify-between gap-4 py-4">
-                  <dt className="text-sm text-slate-500">Member since</dt>
+                  <dt className="text-sm text-slate-500">
+                    <T text="Member since" />
+                  </dt>
                   <dd className="text-sm font-medium text-slate-900">{memberSince}</dd>
                 </div>
               )}
@@ -133,13 +138,17 @@ export default function AccountPage() {
               <p className="font-display text-2xl font-semibold text-slate-900">
                 {refills === null ? "—" : refills.length}
               </p>
-              <p className="mt-1 text-sm text-slate-500">Refill requests</p>
+              <p className="mt-1 text-sm text-slate-500">
+                <T text="Refill requests" />
+              </p>
             </div>
             <div className="rounded-xl border border-slate-200 bg-white p-5">
               <p className="font-display text-2xl font-semibold text-slate-900">
                 {inquiries === null ? "—" : inquiries.length}
               </p>
-              <p className="mt-1 text-sm text-slate-500">Messages sent</p>
+              <p className="mt-1 text-sm text-slate-500">
+                <T text="Messages sent" />
+              </p>
             </div>
           </div>
 
@@ -147,22 +156,22 @@ export default function AccountPage() {
             <div className="flex items-center justify-between">
               <h3 className="flex items-center gap-2 font-display text-lg font-semibold text-slate-900">
                 <Pill className="h-5 w-5 text-teal-700" strokeWidth={1.75} />
-                Prescription refill requests
+                <T text="Prescription refill requests" />
               </h3>
               <Link href="/prescription-refill" className="text-sm font-medium text-teal-700 hover:text-teal-800">
-                New request
+                <T text="New request" />
               </Link>
             </div>
 
             <div className="mt-4 space-y-3">
               {refills === null && (
                 <div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-400">
-                  Loading…
+                  <T text="Loading…" />
                 </div>
               )}
               {refills !== null && refills.length === 0 && (
                 <div className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center text-sm text-slate-500">
-                  You haven&rsquo;t submitted any refill requests yet.
+                  <T text="You haven't submitted any refill requests yet." />
                 </div>
               )}
               {refills?.map((refill) => (
@@ -172,12 +181,17 @@ export default function AccountPage() {
                 >
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold text-slate-900">
-                      {refill.medicationName || "General refill request"}
+                      <T text={refill.medicationName || "General refill request"} />
                     </p>
                     <p className="mt-1 text-xs text-slate-500">
                       {formatDate(refill.createdAt)}
-                      {refill.preferredBranch && ` · ${refill.preferredBranch}`}
-                      {refill.prescriptionReference && ` · Ref: ${refill.prescriptionReference}`}
+                      {refill.preferredBranch && <> · {refill.preferredBranch}</>}
+                      {refill.prescriptionReference && (
+                        <>
+                          {" "}
+                          · <T text="Ref" />: {refill.prescriptionReference}
+                        </>
+                      )}
                     </p>
                   </div>
                   <StatusBadge status={refill.status} styles={REFILL_STATUS_STYLES} />
@@ -190,22 +204,22 @@ export default function AccountPage() {
             <div className="flex items-center justify-between">
               <h3 className="flex items-center gap-2 font-display text-lg font-semibold text-slate-900">
                 <MessageSquare className="h-5 w-5 text-teal-700" strokeWidth={1.75} />
-                Messages
+                <T text="Messages" />
               </h3>
               <Link href="/contact" className="text-sm font-medium text-teal-700 hover:text-teal-800">
-                New message
+                <T text="New message" />
               </Link>
             </div>
 
             <div className="mt-4 space-y-3">
               {inquiries === null && (
                 <div className="rounded-xl border border-slate-200 bg-white p-6 text-sm text-slate-400">
-                  Loading…
+                  <T text="Loading…" />
                 </div>
               )}
               {inquiries !== null && inquiries.length === 0 && (
                 <div className="rounded-xl border border-dashed border-slate-300 bg-white p-6 text-center text-sm text-slate-500">
-                  You haven&rsquo;t sent us a message yet.
+                  <T text="You haven't sent us a message yet." />
                 </div>
               )}
               {inquiries?.map((inquiry) => (
@@ -215,7 +229,7 @@ export default function AccountPage() {
                 >
                   <div className="min-w-0">
                     <p className="truncate text-sm font-semibold text-slate-900">
-                      {inquiry.subject || "General inquiry"}
+                      <T text={inquiry.subject || "General inquiry"} />
                     </p>
                     <p className="mt-1 truncate text-xs text-slate-500">
                       {formatDate(inquiry.createdAt)} · {inquiry.message}

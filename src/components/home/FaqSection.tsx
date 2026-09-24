@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { Faq } from "@/types";
 import { FaqAccordion } from "@/components/faqs/FaqAccordion";
+import { T } from "@/lib/language-context";
 
 export function FaqSection({ faqs }: { faqs: Faq[] }) {
   if (faqs.length === 0) {
@@ -11,9 +12,11 @@ export function FaqSection({ faqs }: { faqs: Faq[] }) {
     <section className="border-t border-teal-100 bg-sage">
       <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 md:py-24">
         <div className="text-center">
-          <span className="text-sm font-medium text-teal-600">Have questions?</span>
+          <span className="text-sm font-medium text-teal-600">
+            <T text="Have questions?" />
+          </span>
           <h2 className="mx-auto mt-2 max-w-lg font-display text-3xl font-medium text-slate-900 sm:text-4xl">
-            Frequently asked questions
+            <T text="Frequently asked questions" />
           </h2>
         </div>
 
@@ -26,7 +29,7 @@ export function FaqSection({ faqs }: { faqs: Faq[] }) {
             href="/faqs"
             className="text-sm font-medium text-teal-600 transition-colors duration-200 hover:text-teal-700"
           >
-            View all FAQs
+            <T text="View all FAQs" />
           </Link>
         </div>
       </div>

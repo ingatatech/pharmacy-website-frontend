@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import type { Article } from "@/types";
+import { T } from "@/lib/language-context";
 
 function formatDate(iso: string): string {
   return new Date(iso).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" });
@@ -23,9 +24,11 @@ export function ArticlesSection({ articles }: { articles: Article[] }) {
   return (
     <section className="border-t border-teal-100 bg-sage">
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24">
-        <span className="text-sm font-medium text-teal-600">Our blog</span>
+        <span className="text-sm font-medium text-teal-600">
+          <T text="Our blog" />
+        </span>
         <h2 className="mt-2 font-display text-3xl font-medium text-slate-900 sm:text-4xl">
-          From the pharmacy desk
+          <T text="From the pharmacy desk" />
         </h2>
 
         <div className={`mt-10 grid gap-x-8 gap-y-10 ${gridClass}`}>
@@ -49,20 +52,20 @@ export function ArticlesSection({ articles }: { articles: Article[] }) {
                 <div className="pointer-events-none absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/20" />
                 {article.category && (
                   <span className="absolute left-3 top-3 rounded-full bg-teal-800 px-3 py-1 text-xs font-medium text-white">
-                    {article.category}
+                    <T text={article.category} />
                   </span>
                 )}
               </div>
 
               <div className="p-6">
                 <h3 className="font-display text-xl font-semibold leading-snug text-slate-900">
-                  {article.title}
+                  <T text={article.title} />
                 </h3>
                 {article.publishedAt && (
                   <p className="mt-3 text-xs text-slate-400">{formatDate(article.publishedAt)}</p>
                 )}
                 <span className="mt-4 inline-flex items-center gap-1.5 text-sm font-medium text-teal-600 transition-colors duration-200 group-hover:text-teal-700">
-                  Read article
+                  <T text="Read article" />
                   <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-1" />
                 </span>
               </div>

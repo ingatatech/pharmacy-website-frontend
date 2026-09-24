@@ -5,11 +5,14 @@ import { useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { X } from "lucide-react";
 import { AuthPanel } from "@/components/auth/AuthPanel";
+import { useTranslated } from "@/lib/language-context";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
 export function AuthModal({ open, onClose }: { open: boolean; onClose: () => void }) {
   const router = useRouter();
+  const dialogLabel = useTranslated("Log in or create an account");
+  const closeLabel = useTranslated("Close");
 
   useEffect(() => {
     if (!open) return;
@@ -50,7 +53,7 @@ export function AuthModal({ open, onClose }: { open: boolean; onClose: () => voi
           <motion.div
             role="dialog"
             aria-modal="true"
-            aria-label="Log in or create an account"
+            aria-label={dialogLabel}
             initial={{ opacity: 0, y: 16, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 10, scale: 0.98 }}
@@ -60,7 +63,7 @@ export function AuthModal({ open, onClose }: { open: boolean; onClose: () => voi
             <button
               type="button"
               onClick={onClose}
-              aria-label="Close"
+              aria-label={closeLabel}
               className="absolute right-5 top-5 flex h-8 w-8 items-center justify-center rounded-full text-slate-400 transition-colors duration-200 hover:bg-slate-100 hover:text-slate-700"
             >
               <X className="h-4 w-4" />

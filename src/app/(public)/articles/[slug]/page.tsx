@@ -7,6 +7,7 @@ import { apiFetch, ApiError } from "@/lib/api";
 import type { Article } from "@/types";
 import { PageHeader } from "@/components/PageHeader";
 import { estimateReadMinutes, initials, roleLabel } from "@/lib/text";
+import { T } from "@/lib/language-context";
 
 async function getArticle(slug: string): Promise<Article | null> {
   try {
@@ -60,7 +61,7 @@ export default async function ArticleDetailPage({
             className="inline-flex items-center gap-1.5 text-sm font-medium text-teal-600 transition-colors duration-200 hover:text-teal-700"
           >
             <ArrowLeft className="h-3.5 w-3.5" />
-            Back to blog
+            <T text="Back to blog" />
           </Link>
 
           <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-2 text-sm text-slate-500">
@@ -70,12 +71,12 @@ export default async function ArticleDetailPage({
             </span>
             <span className="inline-flex items-center gap-1.5">
               <Clock className="h-4 w-4" />
-              {estimateReadMinutes(article.content)} min read
+              {estimateReadMinutes(article.content)} <T text="min read" />
             </span>
             {article.category && (
               <span className="inline-flex items-center gap-1.5">
                 <Tag className="h-4 w-4" />
-                {article.category}
+                <T text={article.category} />
               </span>
             )}
           </div>
@@ -92,17 +93,19 @@ export default async function ArticleDetailPage({
             </div>
 
             <div className="p-6 sm:p-10">
-              <p className="whitespace-pre-line text-base leading-relaxed text-slate-700">{article.content}</p>
+              <p className="whitespace-pre-line text-base leading-relaxed text-slate-700">
+                <T text={article.content} />
+              </p>
 
               {article.tags.length > 0 && (
                 <div className="mt-8 flex flex-wrap gap-2 border-t border-slate-100 pt-6">
-                  {article.tags.map((t) => (
+                  {article.tags.map((tag) => (
                     <Link
-                      key={t}
-                      href={`/articles?tag=${encodeURIComponent(t)}`}
+                      key={tag}
+                      href={`/articles?tag=${encodeURIComponent(tag)}`}
                       className="rounded-full border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-medium text-slate-600 transition-colors duration-200 hover:border-slate-300"
                     >
-                      {t}
+                      <T text={tag} />
                     </Link>
                   ))}
                 </div>
@@ -114,7 +117,9 @@ export default async function ArticleDetailPage({
                 </div>
                 <div className="text-sm">
                   <p className="font-medium text-slate-900">{article.author.fullName}</p>
-                  <p className="text-xs text-slate-500">{roleLabel(article.author.role)}</p>
+                  <p className="text-xs text-slate-500">
+                    <T text={roleLabel(article.author.role)} />
+                  </p>
                 </div>
               </div>
             </div>

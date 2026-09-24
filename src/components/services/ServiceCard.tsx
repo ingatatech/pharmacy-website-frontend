@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { HeartPulse, Pill, Stethoscope, Syringe } from "lucide-react";
 import type { Service } from "@/types";
+import { T } from "@/lib/language-context";
 
 export function serviceIcon(service: Service, className: string) {
   const text = `${service.name} ${service.shortDescription}`.toLowerCase();
@@ -33,10 +34,10 @@ export function ServiceCard({ service }: { service: Service }) {
           {serviceIcon(service, "h-7 w-7 sm:h-9 sm:w-9")}
         </div>
         <h3 className="mt-6 sm:mt-8 font-display text-xl sm:text-2xl font-semibold text-slate-900 transition-colors duration-300 group-hover:text-white">
-          {service.name}
+          <T text={service.name} />
         </h3>
         <p className="mt-3 text-sm sm:text-base leading-relaxed text-slate-600 transition-colors duration-300 group-hover:text-white/85">
-          {service.shortDescription}
+          <T text={service.shortDescription} />
         </p>
       </div>
     </Link>

@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { T } from "@/lib/language-context";
 
 export function LegalToc({ sections }: { sections: { id: string; label: string }[] }) {
   const [activeId, setActiveId] = useState(sections[0]?.id);
@@ -36,7 +37,9 @@ export function LegalToc({ sections }: { sections: { id: string; label: string }
 
   return (
     <nav className="hidden lg:block lg:sticky lg:top-28 lg:self-start">
-      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">On this page</p>
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+        <T text="On this page" />
+      </p>
       <ul className="mt-4 space-y-0.5 border-l border-slate-200">
         {sections.map(({ id, label }) => (
           <li key={id}>
@@ -48,7 +51,7 @@ export function LegalToc({ sections }: { sections: { id: string; label: string }
                   : "border-transparent text-slate-500 hover:text-slate-900"
               }`}
             >
-              {label}
+              <T text={label} />
             </a>
           </li>
         ))}

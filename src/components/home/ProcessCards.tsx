@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { motion, useReducedMotion } from "framer-motion";
 import { ClipboardList, PackageCheck, ShieldCheck } from "lucide-react";
+import { T, useTranslated } from "@/lib/language-context";
 
 const STEPS = [
   {
@@ -43,6 +44,7 @@ export function ProcessCards() {
   const [active, setActive] = useState(0);
   const [paused, setPaused] = useState(false);
   const prefersReducedMotion = useReducedMotion();
+  const showStepLabel = useTranslated("Show step");
 
   // Default to the narrower mobile-safe spread (matches the SSR/first-paint
   // markup, so there's never a flash of the wider desktop fan before this
@@ -118,7 +120,7 @@ export function ProcessCards() {
                   isActive ? "text-gold" : "text-teal-700/70"
                 }`}
               >
-                Step {index + 1} of {STEPS.length}
+                <T text="Step" /> {index + 1} <T text="of" /> {STEPS.length}
               </p>
 
               <h3
@@ -126,7 +128,7 @@ export function ProcessCards() {
                   isActive ? "text-white" : "text-slate-900"
                 }`}
               >
-                {step.title}
+                <T text={step.title} />
               </h3>
 
               {isActive && (
@@ -136,7 +138,7 @@ export function ProcessCards() {
                   transition={{ duration: 0.25, delay: 0.1 }}
                   className="mt-4 text-sm leading-relaxed text-white/75"
                 >
-                  {step.description}
+                  <T text={step.description} />
                 </motion.p>
               )}
             </motion.button>
@@ -150,7 +152,7 @@ export function ProcessCards() {
             key={step.title}
             type="button"
             onClick={() => setActive(index)}
-            aria-label={`Show step ${index + 1}: ${step.title}`}
+            aria-label={`${showStepLabel} ${index + 1}: ${step.title}`}
             aria-current={index === active ? "step" : undefined}
             className={`h-2.5 rounded-full transition-[width,background-color] duration-300 ${
               index === active ? "w-8 bg-teal-700" : "w-2.5 bg-slate-300 hover:bg-slate-400"

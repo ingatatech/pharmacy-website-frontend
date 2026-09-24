@@ -17,6 +17,7 @@ import {
   Trophy,
 } from "lucide-react";
 import { StatNumber } from "@/components/home/StatNumber";
+import { T } from "@/lib/language-context";
 
 // Keyword match against whatever the admin has typed into SiteSetting's
 // core-values list — same approach as ServiceCard's serviceIcon, since
@@ -78,17 +79,21 @@ export function AboutSection({
           <div className="grid gap-12 md:grid-cols-[1.2fr_1fr] md:items-start">
             <div>
               <span className="block text-center font-display text-2xl font-semibold text-ink sm:text-3xl">
-                About us
+                <T text="About us" />
               </span>
               <h2 className="mt-2 font-display text-3xl font-medium text-slate-900 sm:text-4xl">
-                Pharmacy care you can rely on
+                <T text="Pharmacy care you can rely on" />
               </h2>
-              <p className="mt-5 max-w-lg text-base leading-relaxed text-slate-600">{aboutUs}</p>
+              <p className="mt-5 max-w-lg text-base leading-relaxed text-slate-600">
+                <T text={aboutUs} />
+              </p>
             </div>
 
             {coreValues.length > 0 && (
               <div>
-                <h3 className="text-sm font-medium text-slate-600">What guides us</h3>
+                <h3 className="text-sm font-medium text-slate-600">
+                  <T text="What guides us" />
+                </h3>
                 <ul className="mt-4 flex flex-wrap gap-3">
                   {coreValues.map((value, index) => {
                     const Icon = coreValueIcon(value);
@@ -106,7 +111,7 @@ export function AboutSection({
                         >
                           <Icon className="h-6 w-6 text-white" strokeWidth={1.75} />
                         </motion.span>
-                        {value}
+                        <T text={value} />
                       </li>
                     );
                   })}
@@ -121,7 +126,7 @@ export function AboutSection({
           <div className="mt-12 flex items-start gap-4 border-t border-teal-100 pt-10 sm:mt-16 sm:gap-5 sm:pt-12">
             <Quote className="h-7 w-7 shrink-0 fill-teal-200 text-teal-200 sm:h-8 sm:w-8" strokeWidth={0} aria-hidden />
             <p className="max-w-3xl font-display text-xl font-medium italic leading-snug text-teal-900 sm:text-2xl">
-              {whyChooseUs}
+              <T text={whyChooseUs} />
             </p>
           </div>
         </div>
@@ -151,8 +156,12 @@ export function AboutSection({
                 <stat.icon className="h-5 w-5 sm:h-6 sm:w-6" strokeWidth={1.75} />
               </span>
               <div className="min-w-0">
-                <p className="font-display text-xl font-bold text-white sm:text-3xl">{stat.value}</p>
-                <p className="mt-0.5 text-xs leading-snug text-white/60 sm:text-sm">{stat.label}</p>
+                <p className="font-display text-xl font-bold text-white sm:text-3xl">
+                  {typeof stat.value === "string" ? <T text={stat.value} /> : stat.value}
+                </p>
+                <p className="mt-0.5 text-xs leading-snug text-white/60 sm:text-sm">
+                  <T text={stat.label} />
+                </p>
               </div>
             </div>
           ))}
