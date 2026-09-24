@@ -23,7 +23,7 @@ export function ProcessSection() {
           </p>
           <Link
             href="/prescription-refill"
-            className="group mt-8 inline-flex items-center gap-2 rounded-full bg-teal-900 px-6 py-3.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-teal-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500"
+            className="group mt-8 inline-flex items-center gap-2 rounded-full bg-black px-6 py-3.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500"
           >
             <T text="Start a refill" />
             <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />

@@ -78,7 +78,7 @@ export function ArticleCard({ article }: { article: Article }) {
 
             <Link
               href={`/articles/${article.slug}`}
-              className="group inline-flex items-center gap-1.5 rounded-md bg-teal-800 px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-teal-900"
+              className="group inline-flex items-center gap-1.5 rounded-md bg-black px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-slate-800"
             >
               <T text="Read more" />
               <ArrowRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
