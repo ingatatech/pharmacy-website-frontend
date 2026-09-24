@@ -24,6 +24,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { initials } from "@/lib/text";
+import { GlobalSearch } from "@/components/admin/GlobalSearch";
 
 type NavItem = { href: string; label: string; icon: typeof Home; roles: Array<"admin" | "pharmacist_reviewer"> };
 
@@ -136,16 +137,20 @@ export function AdminShell({ children }: { children: ReactNode }) {
       )}
 
       <div className="flex min-w-0 flex-1 flex-col">
-        <header className="flex h-16 shrink-0 items-center justify-between border-b border-slate-200 bg-white px-4 sm:px-6 lg:justify-end">
+        <header className="flex h-16 shrink-0 items-center gap-3 border-b border-slate-200 bg-white px-4 sm:px-6">
           <button
             type="button"
             onClick={() => setMobileOpen(true)}
             aria-label="Open menu"
-            className="flex items-center justify-center rounded-md p-2 text-slate-600 lg:hidden"
+            className="flex shrink-0 items-center justify-center rounded-md p-2 text-slate-600 lg:hidden"
           >
             <Menu className="h-5 w-5" />
           </button>
-          <Link href="/" className="text-sm font-medium text-slate-500 transition-colors duration-150 hover:text-slate-900">
+          <GlobalSearch />
+          <Link
+            href="/"
+            className="ml-auto shrink-0 text-sm font-medium text-slate-500 transition-colors duration-150 hover:text-slate-900"
+          >
             View public site →
           </Link>
         </header>
