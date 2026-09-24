@@ -77,7 +77,10 @@ export function AboutSection({
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="grid gap-12 md:grid-cols-[1.2fr_1fr] md:items-start">
             <div>
-              <h2 className="font-display text-3xl font-medium text-slate-900 sm:text-4xl">
+              <span className="block text-center font-display text-2xl font-semibold text-ink sm:text-3xl">
+                About us
+              </span>
+              <h2 className="mt-2 font-display text-3xl font-medium text-slate-900 sm:text-4xl">
                 Pharmacy care you can rely on
               </h2>
               <p className="mt-5 max-w-lg text-base leading-relaxed text-slate-600">{aboutUs}</p>
@@ -124,14 +127,18 @@ export function AboutSection({
         </div>
       </section>
 
-      {/* Straddles the seam itself — equal negative top and bottom margins
-          pull it up into the section above and pull the section below up
-          underneath it by the same amount, so it sits centered on the
-          border between the two, above both (z-10), not flush to either.
-          The overlap (40px/56px) is kept comfortably smaller than the
-          card's own padding, so the straddle only eats into empty padding
-          on each neighboring section, never the icon/value/label content. */}
-      <div className="relative z-10 mx-auto -my-10 max-w-6xl px-4 sm:-my-14 sm:px-6">
+      {/* Pulls up into this section's own bottom padding (always present,
+          always this exact amount — safe regardless of data) so the card
+          floats above the seam. Deliberately NOT a symmetric -my- pull
+          into the section below too: which section renders next depends on
+          whether locations/articles/FAQs have any data, and a couple of
+          those can be empty (or all of them, before the DB has content),
+          in which case a bottom pull would land in whatever section
+          happens to be next and eat into ITS padding by an amount sized
+          for a different neighbor — visible as the card overlapping
+          straight into that section with no gap. A fixed bottom margin
+          instead guarantees consistent spacing no matter what follows. */}
+      <div className="relative z-10 mx-auto -mt-10 mb-16 max-w-6xl px-4 sm:-mt-14 sm:mb-24 sm:px-6">
         <div className="grid grid-cols-2 gap-3 bg-teal-800 p-7 sm:grid-cols-4 sm:gap-5 sm:p-10">
           {stats.map((stat) => (
             <div

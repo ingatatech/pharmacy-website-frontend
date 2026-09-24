@@ -40,6 +40,8 @@ export default async function LocationsPage() {
             ? `${locations.length} ${locations.length === 1 ? "branch" : "branches"} across Kigali, each staffed by licensed pharmacists.`
             : "Every branch is staffed by licensed pharmacists."
         }
+        variant="image"
+        image="/images/bg.png"
       />
 
       <section className="bg-slate-50">

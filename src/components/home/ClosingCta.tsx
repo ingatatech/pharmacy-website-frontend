@@ -4,7 +4,8 @@ export function ClosingCta() {
   return (
     <section className="bg-emerald-600">
       <div className="mx-auto max-w-3xl px-4 py-12 text-center sm:px-6 md:py-20 lg:py-24">
-        <h2 className="font-display text-2xl sm:text-3xl md:text-4xl font-medium text-white">
+        <span className="text-sm font-medium text-white/80">Get in touch</span>
+        <h2 className="mt-2 font-display text-2xl sm:text-3xl md:text-4xl font-medium text-white">
           Questions about a medication?
         </h2>
         <p className="mx-auto mt-4 max-w-xl text-base leading-relaxed text-white/85">

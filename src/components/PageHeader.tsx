@@ -16,11 +16,13 @@ export function PageHeader({
   title,
   description,
   variant = "light",
+  image = "/images/page-bg.jpg",
 }: {
   eyebrow?: string;
   title: string;
   description?: string;
   variant?: "light" | "image";
+  image?: string;
 }) {
   const dark = variant === "image";
 
@@ -28,7 +30,7 @@ export function PageHeader({
     <section className={`relative overflow-hidden border-b ${dark ? "border-teal-950" : "border-slate-200 bg-slate-50"}`}>
       {dark ? (
         <>
-          <Image src="/images/page-bg.jpg" alt="" fill priority sizes="100vw" className="object-cover" />
+          <Image src={image} alt="" fill priority sizes="100vw" className="object-cover" />
           <div className="absolute inset-0 bg-gradient-to-br from-teal-950/95 via-teal-900/90 to-teal-800/80" />
         </>
       ) : (

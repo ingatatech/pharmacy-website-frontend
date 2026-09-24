@@ -53,6 +53,8 @@ export default async function ContactPage() {
         eyebrow="Get in touch"
         title="Contact"
         description="Questions about a medication, a branch, or anything else — send a message and our team will get back to you."
+        variant="image"
+        image="/images/bg.png"
       />
 
       <section className="bg-slate-50">

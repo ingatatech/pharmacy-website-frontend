@@ -11,9 +11,12 @@ export function LocationsSection({ locations }: { locations: PharmacyLocation[] 
     <section className="bg-sage">
       <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24">
         <div className="flex flex-wrap items-end justify-between gap-4">
-          <h2 className="font-display text-3xl font-medium text-slate-900 sm:text-4xl">
-            Find a branch near you
-          </h2>
+          <div>
+            <span className="text-sm font-medium text-teal-600">Find us</span>
+            <h2 className="mt-2 font-display text-3xl font-medium text-slate-900 sm:text-4xl">
+              Find a branch near you
+            </h2>
+          </div>
           <Link
             href="/locations"
             className="rounded-sm text-sm font-medium text-teal-600 transition-colors duration-200 hover:text-teal-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500"
