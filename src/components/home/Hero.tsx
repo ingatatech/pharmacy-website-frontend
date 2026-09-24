@@ -83,17 +83,9 @@ export function Hero({
 
       <div className="relative mx-auto max-w-6xl px-4 pb-20 pt-32 sm:px-6 sm:pb-24 sm:pt-36 lg:pb-28 lg:pt-40">
         <div className="max-w-3xl">
-          <motion.span
-            {...fadeUp(0)}
-            className="inline-flex items-center gap-2 rounded-full bg-teal-950/40 px-4 py-1.5 text-xs font-semibold uppercase tracking-wide text-white text-shadow-nav ring-1 ring-white/25 backdrop-blur-sm"
-          >
-            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
-            <T text="Trusted pharmacy care" />
-          </motion.span>
-
           <motion.h1
-            {...fadeUp(0.1)}
-            className="mt-5 font-display text-5xl font-bold leading-[1.02] tracking-tight text-white text-shadow-nav sm:text-6xl lg:text-7xl"
+            {...fadeUp(0)}
+            className="font-display text-5xl font-bold leading-[1.02] tracking-tight text-white text-shadow-nav sm:text-6xl lg:text-7xl"
           >
             <T text={headline} />
           </motion.h1>
