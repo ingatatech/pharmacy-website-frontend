@@ -58,6 +58,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(null);
   }, []);
 
+  useEffect(() => {
+    // apiFetch/apiFetchPaginated/uploadImage fire this when a request sent
+    // with a token comes back 401 — the token has gone stale (expired,
+    // typically), so drop it here rather than leaving every page that
+    // happens to fetch something to show its own unexplained error.
+    window.addEventListener("ingata:session-expired", logout);
+    return () => window.removeEventListener("ingata:session-expired", logout);
+  }, [logout]);
+
   const updateUser = useCallback((updated: AuthUser) => {
     localStorage.setItem(USER_KEY, JSON.stringify(updated));
     setUser(updated);

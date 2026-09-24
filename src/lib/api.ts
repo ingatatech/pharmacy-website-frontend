@@ -10,6 +10,20 @@ export class ApiError extends Error {
   }
 }
 
+/** Fired on window when an authenticated request comes back 401 — the token
+ * that was sent is no longer valid (typically: the 8-hour JWT expired).
+ * AuthProvider listens for this to log the user out and let route guards
+ * (e.g. the admin layout) redirect to /login, instead of every page that
+ * happens to fetch something showing its own generic "failed to load"
+ * error with no indication *why*. Only fired when a token was actually
+ * sent — an anonymous request 401ing is a different, expected case (e.g.
+ * a public endpoint that just requires login), not a session going stale. */
+function notifyIfSessionExpired(status: number, token?: string) {
+  if (status === 401 && token && typeof window !== "undefined") {
+    window.dispatchEvent(new Event("ingata:session-expired"));
+  }
+}
+
 /**
  * The single way the rest of the app calls the backend API. Prepends
  * NEXT_PUBLIC_API_URL, defaults Content-Type to application/json, attaches
@@ -40,6 +54,7 @@ export async function apiFetch<T = unknown>(
   const response = await fetch(`${API_URL}${path}`, { ...options, headers });
 
   if (!response.ok) {
+    notifyIfSessionExpired(response.status, token);
     const body = await response.json().catch(() => null);
     const message = body?.error || `Request to ${path} failed with status ${response.status}`;
     throw new ApiError(response.status, message);
@@ -77,6 +92,7 @@ export async function apiFetchPaginated<T = unknown>(
   const response = await fetch(`${API_URL}${path}`, { ...options, headers });
 
   if (!response.ok) {
+    notifyIfSessionExpired(response.status, token);
     const body = await response.json().catch(() => null);
     const message = body?.error || `Request to ${path} failed with status ${response.status}`;
     throw new ApiError(response.status, message);
@@ -108,6 +124,7 @@ export async function uploadImage(file: File, token: string): Promise<{ url: str
   });
 
   if (!response.ok) {
+    notifyIfSessionExpired(response.status, token);
     const body = await response.json().catch(() => null);
     throw new ApiError(response.status, body?.error || `Upload failed with status ${response.status}`);
   }
