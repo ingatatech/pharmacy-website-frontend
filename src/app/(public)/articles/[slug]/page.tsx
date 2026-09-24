@@ -3,7 +3,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { Calendar, ArrowLeft, Clock, Tag } from "lucide-react";
-import { apiFetch, ApiError } from "@/lib/api";
+import { apiFetch, ApiError, resolveUploadUrl } from "@/lib/api";
 import type { Article } from "@/types";
 import { PageHeader } from "@/components/PageHeader";
 import { estimateReadMinutes, initials, roleLabel } from "@/lib/text";
@@ -84,7 +84,7 @@ export default async function ArticleDetailPage({
           <div className="mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
             <div className="relative aspect-[16/9] w-full bg-slate-100">
               <Image
-                src={article.featuredImageUrl || "/images/bg.png"}
+                src={article.featuredImageUrl ? resolveUploadUrl(article.featuredImageUrl) : "/images/bg.png"}
                 alt=""
                 fill
                 sizes="768px"

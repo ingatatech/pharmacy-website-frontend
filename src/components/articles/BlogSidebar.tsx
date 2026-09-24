@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { Calendar, Search } from "lucide-react";
 import type { Article } from "@/types";
+import { resolveUploadUrl } from "@/lib/api";
 import { T, useTranslated } from "@/lib/language-context";
 
 const widgetClass = "rounded-xl border border-slate-200 bg-white p-6";
@@ -105,7 +106,7 @@ export function BlogSidebar({
                 <Link href={`/articles/${article.slug}`} className="group flex items-start gap-3">
                   <div className="relative h-14 w-14 shrink-0 overflow-hidden rounded-md bg-slate-100">
                     <Image
-                      src={article.featuredImageUrl || "/images/bg.png"}
+                      src={article.featuredImageUrl ? resolveUploadUrl(article.featuredImageUrl) : "/images/bg.png"}
                       alt=""
                       fill
                       sizes="56px"

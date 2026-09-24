@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import type { Article } from "@/types";
+import { resolveUploadUrl } from "@/lib/api";
 import { T } from "@/lib/language-context";
 
 function formatDate(iso: string): string {
@@ -43,7 +44,7 @@ export function ArticlesSection({ articles }: { articles: Article[] }) {
                   qtglobal.rw's blog cards. */}
               <div className="relative aspect-[16/10] overflow-hidden bg-slate-100">
                 <Image
-                  src={article.featuredImageUrl || "/images/bg.png"}
+                  src={article.featuredImageUrl ? resolveUploadUrl(article.featuredImageUrl) : "/images/bg.png"}
                   alt=""
                   fill
                   sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Clock, Tag } from "lucide-react";
 import type { Article } from "@/types";
+import { resolveUploadUrl } from "@/lib/api";
 import { estimateReadMinutes, excerpt, initials, roleLabel } from "@/lib/text";
 import { T } from "@/lib/language-context";
 
@@ -24,7 +25,7 @@ export function ArticleCard({ article }: { article: Article }) {
           className="group relative block aspect-[16/9] shrink-0 overflow-hidden bg-slate-100 sm:aspect-square sm:w-48"
         >
           <Image
-            src={article.featuredImageUrl || "/images/bg.png"}
+            src={article.featuredImageUrl ? resolveUploadUrl(article.featuredImageUrl) : "/images/bg.png"}
             alt=""
             fill
             sizes="(min-width: 640px) 192px, 100vw"

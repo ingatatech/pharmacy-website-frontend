@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Product } from "@/types";
+import { resolveUploadUrl } from "@/lib/api";
 import { T } from "@/lib/language-context";
 
 function statusMeta(status: Product["availabilityStatus"]) {
@@ -22,7 +23,7 @@ export function ProductCard({ product }: { product: Product }) {
     >
       <div className="relative flex aspect-[4/3] items-center justify-center overflow-hidden bg-slate-50">
         <Image
-          src={product.imageUrl || "/images/bg.png"}
+          src={product.imageUrl ? resolveUploadUrl(product.imageUrl) : "/images/bg.png"}
           alt=""
           fill
           sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"

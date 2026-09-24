@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { apiFetch, ApiError } from "@/lib/api";
+import { apiFetch, ApiError, resolveUploadUrl } from "@/lib/api";
 import type { Product } from "@/types";
 import { PageHeader } from "@/components/PageHeader";
 import { T } from "@/lib/language-context";
@@ -79,7 +79,7 @@ export default async function ProductDetailPage({
           <div>
             <div className="relative flex aspect-square items-center justify-center overflow-hidden rounded-2xl border border-slate-200 bg-white">
               <Image
-                src={product.imageUrl || "/images/bg.png"}
+                src={product.imageUrl ? resolveUploadUrl(product.imageUrl) : "/images/bg.png"}
                 alt=""
                 fill
                 sizes="(min-width: 768px) 40vw, 90vw"

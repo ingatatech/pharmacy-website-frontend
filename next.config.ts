@@ -16,6 +16,12 @@ const nextConfig: NextConfig = {
           },
         ]
       : [],
+    // Next 16's SSRF guard refuses to optimize images whose hostname
+    // resolves to a private/loopback IP — which "localhost" always does in
+    // local dev, since NEXT_PUBLIC_API_URL points at the backend on the
+    // same machine. Safe here because remotePatterns above already scopes
+    // optimization to that one, explicitly configured backend origin.
+    dangerouslyAllowLocalIP: true,
   },
 };
 
