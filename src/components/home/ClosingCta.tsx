@@ -3,7 +3,7 @@ import { T } from "@/lib/language-context";
 
 export function ClosingCta() {
   return (
-    <section className="bg-emerald-600">
+    <section className="bg-teal-900">
       <div className="mx-auto max-w-3xl px-4 py-12 text-center sm:px-6 md:py-20 lg:py-24">
         <span className="text-sm font-medium text-white/80">
           <T text="Get in touch" />
@@ -17,7 +17,7 @@ export function ClosingCta() {
         <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
           <Link
             href="/contact"
-            className="rounded-md bg-white px-6 py-3 text-sm font-medium text-emerald-700 transition-colors duration-200 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+            className="rounded-md bg-white px-6 py-3 text-sm font-medium text-teal-800 transition-colors duration-200 hover:bg-slate-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
             <T text="Talk to a pharmacist" />
           </Link>
