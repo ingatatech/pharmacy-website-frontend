@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { ScrollProgressBar } from "@/components/ScrollProgressBar";
 import { apiFetch } from "@/lib/api";
 import type { Article, Service, SiteSetting } from "@/types";
 import type { ReactNode } from "react";
@@ -38,6 +39,7 @@ export default async function PublicLayout({ children }: { children: ReactNode }
 
   return (
     <>
+      <ScrollProgressBar />
       <Navbar services={services} articles={articles} />
       <main className="flex-1 pt-20">{children}</main>
       <Footer settings={settings} />
