@@ -78,7 +78,7 @@ export function AboutSection({
         <div className="mx-auto max-w-6xl px-4 sm:px-6">
           <div className="grid gap-12 md:grid-cols-[1.2fr_1fr] md:items-start">
             <div>
-              <span className="block text-center font-display text-2xl font-semibold text-ink sm:text-3xl">
+              <span className="block text-center text-sm font-medium text-teal-600">
                 <T text="About us" />
               </span>
               <h2 className="mt-2 font-display text-3xl font-medium text-slate-900 sm:text-4xl">
