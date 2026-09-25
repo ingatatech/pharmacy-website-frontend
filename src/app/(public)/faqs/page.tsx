@@ -5,6 +5,7 @@ import { apiFetch } from "@/lib/api";
 import type { Faq, SiteSetting } from "@/types";
 import { PageHeader } from "@/components/PageHeader";
 import { FaqAccordion } from "@/components/faqs/FaqAccordion";
+import { jsonLd } from "@/lib/json-ld";
 import { T } from "@/lib/language-context";
 
 export const metadata: Metadata = {
@@ -32,8 +33,21 @@ async function getSiteSettings(): Promise<SiteSetting | null> {
 export default async function FaqsPage() {
   const [faqs, settings] = await Promise.all([getFaqs(), getSiteSettings()]);
 
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: faqs.map((faq) => ({
+      "@type": "Question",
+      name: faq.question,
+      acceptedAnswer: { "@type": "Answer", text: faq.answer },
+    })),
+  };
+
   return (
     <>
+      {faqs.length > 0 && (
+        <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(structuredData) }} />
+      )}
       <PageHeader
         eyebrow="Help center"
         title="Frequently asked questions"
