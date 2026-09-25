@@ -12,7 +12,7 @@ const inputClass =
 
 const labelClass = "block text-sm font-medium text-slate-700";
 
-export function ContactForm({ locations }: { locations: PharmacyLocation[] }) {
+export function ContactForm({ locations, defaultBranch }: { locations: PharmacyLocation[]; defaultBranch?: string }) {
   const { user, token } = useAuth();
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -30,6 +30,7 @@ export function ContactForm({ locations }: { locations: PharmacyLocation[] }) {
       fullName: get("fullName"),
       phoneNumber: get("phoneNumber"),
       email: get("email"),
+      inquiryType: get("inquiryType") || "general",
       message: get("message"),
     };
     // The backend rejects empty strings on optional fields — omit rather
@@ -111,7 +112,7 @@ export function ContactForm({ locations }: { locations: PharmacyLocation[] }) {
           <label htmlFor="preferredBranch" className={labelClass}>
             <T text="Preferred branch" /> <span className="text-slate-400">(<T text="optional" />)</span>
           </label>
-          <select id="preferredBranch" name="preferredBranch" className={`mt-1.5 ${inputClass}`} defaultValue="">
+          <select id="preferredBranch" name="preferredBranch" className={`mt-1.5 ${inputClass}`} defaultValue={defaultBranch || ""}>
             <option value="">{noPreferenceLabel}</option>
             {locations.map((location) => (
               <option key={location.id} value={location.branchName}>
@@ -139,6 +140,26 @@ export function ContactForm({ locations }: { locations: PharmacyLocation[] }) {
             </option>
           </select>
         </div>
+      </div>
+
+      <div>
+        <label htmlFor="inquiryType" className={labelClass}>
+          <T text="What is this about?" />
+        </label>
+        <select id="inquiryType" name="inquiryType" className={`mt-1.5 ${inputClass}`} defaultValue="general">
+          <option value="general">
+            <T text="General inquiry" />
+          </option>
+          <option value="health">
+            <T text="Health question" />
+          </option>
+          <option value="product">
+            <T text="Product question" />
+          </option>
+          <option value="service">
+            <T text="Service question" />
+          </option>
+        </select>
       </div>
 
       <div>

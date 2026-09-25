@@ -43,8 +43,12 @@ function socialLinks(
   ].filter((social): social is typeof social & { href: string } => Boolean(social.href));
 }
 
-export default async function ContactPage() {
-  const [settings, locations] = await Promise.all([getSiteSettings(), getLocations()]);
+export default async function ContactPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ branch?: string }>;
+}) {
+  const [{ branch }, settings, locations] = await Promise.all([searchParams, getSiteSettings(), getLocations()]);
   const socials = settings ? socialLinks(settings) : [];
   const mappable = locations.find((location) => location.latitude != null && location.longitude != null);
 
@@ -60,7 +64,7 @@ export default async function ContactPage() {
 
       <section className="bg-slate-50">
         <div className="mx-auto grid max-w-6xl gap-12 px-4 py-16 sm:px-6 md:grid-cols-[1.3fr_1fr] md:py-24">
-          <ContactForm locations={locations} />
+          <ContactForm locations={locations} defaultBranch={branch} />
 
           <div className="space-y-6">
             <div className="rounded-xl border border-slate-200 bg-white p-7">

@@ -30,12 +30,20 @@ const PUBLISH_STATUS_STYLES: Record<string, string> = {
   false: "bg-slate-100 text-slate-700",
 };
 
+const INQUIRY_TYPE_STYLES: Record<string, string> = {
+  general: "bg-slate-100 text-slate-700",
+  health: "bg-rose-100 text-rose-700",
+  product: "bg-teal-100 text-teal-800",
+  service: "bg-amber-100 text-amber-800",
+};
+
 export const STATUS_STYLE_SETS = {
   refill: REFILL_STATUS_STYLES,
   contact: CONTACT_STATUS_STYLES,
   article: ARTICLE_STATUS_STYLES,
   availability: AVAILABILITY_STATUS_STYLES,
   published: PUBLISH_STATUS_STYLES,
+  inquiryType: INQUIRY_TYPE_STYLES,
 } as const;
 
 export type StatusStyleSet = keyof typeof STATUS_STYLE_SETS;

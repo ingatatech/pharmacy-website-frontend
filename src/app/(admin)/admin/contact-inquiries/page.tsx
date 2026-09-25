@@ -6,9 +6,10 @@ import { useAuth } from "@/lib/auth-context";
 import { useToast } from "@/components/admin/Toast";
 import { DataTable, type Column } from "@/components/admin/DataTable";
 import { StatusBadge } from "@/components/admin/StatusBadge";
-import type { ContactInquiry, ContactInquiryStatus } from "@/types";
+import type { ContactInquiry, ContactInquiryStatus, ContactInquiryType } from "@/types";
 
 const STATUSES: ContactInquiryStatus[] = ["new", "in_progress", "resolved"];
+const TYPES: ContactInquiryType[] = ["general", "health", "product", "service"];
 const PAGE_SIZE = 15;
 
 export default function AdminContactInquiriesPage() {
@@ -17,6 +18,7 @@ export default function AdminContactInquiriesPage() {
   const [inquiries, setInquiries] = useState<ContactInquiry[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<ContactInquiryStatus | "all">("all");
+  const [typeFilter, setTypeFilter] = useState<ContactInquiryType | "all">("all");
   const [page, setPage] = useState(1);
 
   useEffect(() => {
@@ -41,12 +43,18 @@ export default function AdminContactInquiriesPage() {
     }
   }
 
-  const filtered = filter === "all" ? inquiries : inquiries.filter((i) => i.status === filter);
+  const filtered = inquiries
+    .filter((i) => filter === "all" || i.status === filter)
+    .filter((i) => typeFilter === "all" || i.inquiryType === typeFilter);
   const paged = useMemo(() => filtered.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE), [filtered, page]);
 
   const columns: Column<ContactInquiry>[] = [
     { header: "Name", cell: (i) => <span className="font-medium text-slate-900">{i.fullName}</span> },
     { header: "Email", cell: (i) => i.email },
+    {
+      header: "Type",
+      cell: (i) => <StatusBadge status={i.inquiryType || "general"} set="inquiryType" />,
+    },
     { header: "Subject", cell: (i) => i.subject || <span className="text-slate-400">—</span> },
     { header: "Message", className: "max-w-xs", cell: (i) => <span className="line-clamp-2 text-slate-600">{i.message}</span> },
     {
@@ -93,6 +101,24 @@ export default function AdminContactInquiriesPage() {
             }`}
           >
             {s === "all" ? "All" : s.replace(/_/g, " ")}
+          </button>
+        ))}
+      </div>
+
+      <div className="mt-2 flex flex-wrap gap-2">
+        {(["all", ...TYPES] as const).map((t) => (
+          <button
+            key={t}
+            type="button"
+            onClick={() => {
+              setTypeFilter(t);
+              setPage(1);
+            }}
+            className={`rounded-full px-3.5 py-1.5 text-xs font-medium capitalize transition-colors duration-150 ${
+              typeFilter === t ? "bg-slate-800 text-white" : "bg-white text-slate-600 ring-1 ring-inset ring-slate-200 hover:bg-slate-50"
+            }`}
+          >
+            {t === "all" ? "All types" : t}
           </button>
         ))}
       </div>
