@@ -149,6 +149,10 @@ export default async function ProductDetailPage({
                 ← <T text="Back to products" />
               </Link>
             </div>
+
+            <p className="mt-8 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-xs leading-relaxed text-amber-900">
+              <T text="Product information is provided for general informational purposes. Product availability, packaging, formulations, indications, precautions and other information may change. Please consult a pharmacist or qualified healthcare professional for advice appropriate to your individual circumstances." />
+            </p>
           </div>
         </div>
       </section>
