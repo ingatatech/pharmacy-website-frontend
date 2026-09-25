@@ -17,6 +17,7 @@ type FormState = {
   aboutUs: string;
   mission: string;
   vision: string;
+  companyHistory: string;
   coreValues: string[];
   whyChooseUs: string;
   heroHeadline: string;
@@ -30,6 +31,8 @@ type FormState = {
   xUrl: string;
   whatsappUrl: string;
   youtubeUrl: string;
+  announcementMessage: string;
+  announcementActive: boolean;
 };
 
 function toFormState(settings: SiteSetting | null): FormState {
@@ -38,6 +41,7 @@ function toFormState(settings: SiteSetting | null): FormState {
     aboutUs: settings?.aboutUs || "",
     mission: settings?.mission || "",
     vision: settings?.vision || "",
+    companyHistory: settings?.companyHistory || "",
     coreValues: settings?.coreValues || [],
     whyChooseUs: settings?.whyChooseUs || "",
     heroHeadline: settings?.heroHeadline || "",
@@ -51,6 +55,8 @@ function toFormState(settings: SiteSetting | null): FormState {
     xUrl: settings?.xUrl || "",
     whatsappUrl: settings?.whatsappUrl || "",
     youtubeUrl: settings?.youtubeUrl || "",
+    announcementMessage: settings?.announcementMessage || "",
+    announcementActive: settings?.announcementActive ?? false,
   };
 }
 
@@ -78,8 +84,12 @@ export default function AdminSiteSettingsPage() {
     if (!token) return;
     setSaving(true);
 
+    const rawFields: Array<keyof FormState> = ["coreValues", "announcementActive"];
     const payload = Object.fromEntries(
-      Object.entries(form).map(([key, value]) => [key, key === "coreValues" ? value : value || null])
+      Object.entries(form).map(([key, value]) => [
+        key,
+        rawFields.includes(key as keyof FormState) ? value : value || null,
+      ])
     );
 
     try {
@@ -131,6 +141,39 @@ export default function AdminSiteSettingsPage() {
         </div>
 
         <div className="grid gap-5 rounded-xl border border-slate-200 bg-white p-6 sm:grid-cols-2">
+          <div className="sm:col-span-2">
+            <h2 className="font-display text-base font-semibold text-slate-900">Site-wide announcement</h2>
+            <p className="mt-1 text-sm text-slate-500">
+              A dismissible banner shown at the top of every public page — for holiday hours, a temporary closure or
+              an urgent notice. Turning it off doesn&apos;t erase the message, so you can toggle the same notice back
+              on later.
+            </p>
+          </div>
+          <div className="sm:col-span-2">
+            <label htmlFor="announcementMessage" className={labelClass}>
+              Message
+            </label>
+            <textarea
+              id="announcementMessage"
+              value={form.announcementMessage}
+              onChange={(e) => set("announcementMessage", e.target.value)}
+              rows={2}
+              maxLength={500}
+              className={`mt-1.5 ${textareaClass}`}
+            />
+          </div>
+          <label className="inline-flex items-center gap-2 text-sm text-slate-700 sm:col-span-2">
+            <input
+              type="checkbox"
+              checked={form.announcementActive}
+              onChange={(e) => set("announcementActive", e.target.checked)}
+              className="h-4 w-4 rounded border-slate-300 text-teal-700 focus:ring-teal-600"
+            />
+            Show this announcement on the site
+          </label>
+        </div>
+
+        <div className="grid gap-5 rounded-xl border border-slate-200 bg-white p-6 sm:grid-cols-2">
           <h2 className="font-display text-base font-semibold text-slate-900 sm:col-span-2">Homepage hero</h2>
           <div className="sm:col-span-2">
             <label htmlFor="heroHeadline" className={labelClass}>
@@ -171,6 +214,12 @@ export default function AdminSiteSettingsPage() {
               Why choose us
             </label>
             <textarea id="whyChooseUs" value={form.whyChooseUs} onChange={(e) => set("whyChooseUs", e.target.value)} rows={2} className={`mt-1.5 ${textareaClass}`} />
+          </div>
+          <div className="sm:col-span-2">
+            <label htmlFor="companyHistory" className={labelClass}>
+              Company history <span className="font-normal text-slate-400">(optional — leave blank to hide this section on the About page)</span>
+            </label>
+            <textarea id="companyHistory" value={form.companyHistory} onChange={(e) => set("companyHistory", e.target.value)} rows={3} className={`mt-1.5 ${textareaClass}`} />
           </div>
           <div className="sm:col-span-2">
             <TagsInput label="Core values" values={form.coreValues} onChange={(values) => set("coreValues", values)} />

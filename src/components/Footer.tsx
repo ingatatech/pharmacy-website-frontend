@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { Mail, MapPin, Phone } from "lucide-react";
-import { FaFacebook, FaInstagram, FaLinkedin, FaXTwitter, FaYoutube } from "react-icons/fa6";
+import { FaFacebook, FaInstagram, FaLinkedin, FaWhatsapp, FaXTwitter, FaYoutube } from "react-icons/fa6";
 import type { IconType } from "react-icons";
 import type { SiteSetting } from "@/types";
 import { T } from "@/lib/language-context";
@@ -23,12 +23,15 @@ const LEGAL_LINKS = [
   { href: "/privacy-policy", label: "Privacy Policy" },
   { href: "/terms-and-conditions", label: "Terms & Conditions" },
   { href: "/medical-disclaimer", label: "Medical Disclaimer" },
+  { href: "/pharmacy-terms", label: "Pharmacy Terms" },
+  { href: "/complaints", label: "Complaints & Customer Care" },
 ];
 
 const SOCIAL_LINKS = (
-  settings: Pick<SiteSetting, "facebookUrl" | "instagramUrl" | "linkedinUrl" | "xUrl" | "youtubeUrl">
+  settings: Pick<SiteSetting, "facebookUrl" | "instagramUrl" | "linkedinUrl" | "xUrl" | "youtubeUrl" | "whatsappUrl">
 ): { href: string; label: string; Icon: IconType }[] =>
   [
+    { href: settings.whatsappUrl, label: "WhatsApp", Icon: FaWhatsapp },
     { href: settings.facebookUrl, label: "Facebook", Icon: FaFacebook },
     { href: settings.instagramUrl, label: "Instagram", Icon: FaInstagram },
     { href: settings.linkedinUrl, label: "LinkedIn", Icon: FaLinkedin },
