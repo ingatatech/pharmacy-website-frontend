@@ -40,24 +40,6 @@ html {
   text-shadow: 0 1px 3px rgba(0, 0, 0, 0.45), 0 1px 12px rgba(0, 0, 0, 0.25);
 }
 
-/* Blinking caret for TypewriterText — only applied while "idle" (before
-   typing starts, and after it finishes), never while actively typing, so
-   it reads as a real text-input cursor rather than a constant flicker. */
-@keyframes cursor-blink {
-  0%,
-  45% {
-    opacity: 1;
-  }
-  50%,
-  100% {
-    opacity: 0;
-  }
-}
-
-.typewriter-cursor-idle {
-  animation: cursor-blink 1s step-end infinite;
-}
-
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
@@ -67,9 +49,5 @@ html {
     opacity: 1;
     transform: none;
     transition: none;
-  }
-
-  .typewriter-cursor-idle {
-    animation: none;
   }
 }

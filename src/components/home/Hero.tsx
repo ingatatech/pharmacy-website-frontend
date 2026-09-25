@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type MouseEvent } from "react";
+import { useRef, type MouseEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -12,8 +12,8 @@ import {
   useTransform,
 } from "framer-motion";
 import { ArrowRight, ShieldCheck } from "lucide-react";
-import { T, useTranslated } from "@/lib/language-context";
-import { TypewriterText } from "@/components/home/TypewriterText";
+import { T } from "@/lib/language-context";
+import { WordReveal } from "@/components/WordReveal";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
 
@@ -34,15 +34,6 @@ export function Hero({
 }) {
   const sectionRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = useReducedMotion();
-  const translatedHeadline = useTranslated(headline);
-  const translatedSubheading = useTranslated(subheading);
-
-  // Headline types out first; the subheading only starts once it's done,
-  // and the CTAs/trust badge only reveal once the subheading is done too —
-  // one continuous "someone is typing this" sequence rather than everything
-  // fading in on independent timers.
-  const [headlineDone, setHeadlineDone] = useState(false);
-  const [introDone, setIntroDone] = useState(false);
 
   // Scroll-linked parallax: the trust card drifts down slightly slower
   // than the page scrolls past the hero, giving it a sense of depth.
@@ -93,32 +84,13 @@ export function Hero({
 
       <div className="relative mx-auto max-w-6xl px-4 pb-20 pt-32 sm:px-6 sm:pb-24 sm:pt-36 lg:pb-28 lg:pt-40">
         <div className="max-w-3xl">
-          <motion.h1
-            {...fadeUp(0)}
-            className="font-display text-5xl font-bold leading-[1.02] tracking-tight text-white text-shadow-nav sm:text-6xl lg:text-7xl"
-          >
-            <TypewriterText
-              text={translatedHeadline}
-              startDelay={300}
-              speed={32}
-              onDone={() => setHeadlineDone(true)}
-              keepCursorWhenDone={false}
-            />
-          </motion.h1>
-          <motion.p
-            {...fadeUp(0.2)}
-            className="mt-6 max-w-md text-base font-medium leading-relaxed text-white text-shadow-nav sm:text-lg"
-          >
-            {headlineDone && (
-              <TypewriterText text={translatedSubheading} startDelay={250} speed={18} onDone={() => setIntroDone(true)} />
-            )}
-          </motion.p>
-          <motion.div
-            initial={{ opacity: 0, y: 22 }}
-            animate={introDone ? { opacity: 1, y: 0 } : { opacity: 0, y: 22 }}
-            transition={{ duration: 0.7, ease: EASE }}
-            className="mt-10 flex flex-wrap items-center gap-6"
-          >
+          <h1 className="font-display text-5xl font-bold leading-[1.02] tracking-tight text-white text-shadow-nav sm:text-6xl lg:text-7xl">
+            <WordReveal text={headline} />
+          </h1>
+          <p className="mt-6 max-w-md text-base font-medium leading-relaxed text-white text-shadow-nav sm:text-lg">
+            <WordReveal text={subheading} delay={0.15} />
+          </p>
+          <motion.div {...fadeUp(0.5)} className="mt-10 flex flex-wrap items-center gap-6">
             <Link
               href="/prescription-refill"
               className="group inline-flex items-center gap-2 rounded-md bg-emerald-500 px-7 py-3.5 text-sm font-semibold text-teal-950 transition-colors duration-200 hover:bg-emerald-400 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-300"
@@ -139,9 +111,7 @@ export function Hero({
               positioned and would overlap the headline at narrow widths,
               so this sits safely in normal flow under the CTAs instead. */}
           <motion.div
-            initial={{ opacity: 0, y: 22 }}
-            animate={introDone ? { opacity: 1, y: 0 } : { opacity: 0, y: 22 }}
-            transition={{ duration: 0.7, ease: EASE }}
+            {...fadeUp(0.6)}
             className="mt-8 inline-flex items-center gap-3 rounded-xl bg-white/95 p-3.5 shadow-lg backdrop-blur-md sm:hidden"
           >
             <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-teal-100 text-teal-800">
@@ -162,9 +132,7 @@ export function Hero({
       {/* Floating trust card — real content (no invented ratings), echoing
           the "card overlaid on the photo" detail from the reference. */}
       <motion.div
-        initial={{ opacity: 0, y: 16 }}
-        animate={introDone ? { opacity: 1, y: 0 } : { opacity: 0, y: 16 }}
-        transition={{ duration: 0.7, ease: EASE }}
+        {...fadeUp(0.65)}
         style={{ y: cardScrollY, x: cardX, rotateX: cardTiltY }}
         className="absolute right-6 top-28 hidden rounded-2xl bg-white/95 p-4 shadow-xl backdrop-blur-md sm:right-10 sm:top-32 sm:block"
       >

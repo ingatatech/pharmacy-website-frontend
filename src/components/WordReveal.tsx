@@ -14,7 +14,16 @@ const EASE = [0.16, 1, 0.3, 1] as const;
 // as Reveal.tsx, just scoped to a single heading's words rather than a
 // whole section. Deliberately only used on headings, not paragraphs or
 // cards — see Reveal.tsx's note against cascading fade-in-up everywhere.
-export function WordReveal({ text, className = "" }: { text: string; className?: string }) {
+export function WordReveal({
+  text,
+  className = "",
+  delay = 0,
+}: {
+  text: string;
+  className?: string;
+  /** Base delay (seconds) before the first word starts — lets callers stagger multiple WordReveals against each other. */
+  delay?: number;
+}) {
   const resolved = useTranslated(text);
   const containerRef = useRef<HTMLSpanElement>(null);
   const [visible, setVisible] = useState(false);
@@ -53,7 +62,7 @@ export function WordReveal({ text, className = "" }: { text: string; className?:
               className="inline-block"
               initial={{ y: "100%", opacity: 0 }}
               animate={visible ? { y: "0%", opacity: 1 } : undefined}
-              transition={{ duration: 0.6, ease: EASE, delay: index * 0.05 }}
+              transition={{ duration: 0.6, ease: EASE, delay: delay + index * 0.05 }}
             >
               {word}
               {index < words.length - 1 ? " " : ""}
