@@ -1,11 +1,12 @@
 import { apiFetch } from "@/lib/api";
-import type { Article, Faq, PharmacyLocation, Service, SiteSetting } from "@/types";
+import type { Article, Faq, PharmacyLocation, Service, SiteSetting, Testimonial } from "@/types";
 import { Hero } from "@/components/home/Hero";
 import { ServicesSection } from "@/components/home/ServicesSection";
 import { ProcessSection } from "@/components/home/ProcessSection";
 import { AboutSection } from "@/components/home/AboutSection";
 import { LocationsSection } from "@/components/home/LocationsSection";
 import { ArticlesSection } from "@/components/home/ArticlesSection";
+import { TestimonialsSection } from "@/components/home/TestimonialsSection";
 import { FaqSection } from "@/components/home/FaqSection";
 import { ClosingCta } from "@/components/home/ClosingCta";
 import { Reveal } from "@/components/Reveal";
@@ -27,11 +28,12 @@ async function safeFetch<T>(path: string, fallback: T): Promise<T> {
 }
 
 export default async function HomePage() {
-  const [settings, services, locations, articles, faqs] = await Promise.all([
+  const [settings, services, locations, articles, testimonials, faqs] = await Promise.all([
     safeFetch<SiteSetting | null>("/api/site-settings", null),
     safeFetch<Service[]>("/api/services", []),
     safeFetch<PharmacyLocation[]>("/api/locations", []),
     safeFetch<Article[]>("/api/articles", []),
+    safeFetch<Testimonial[]>("/api/testimonials", []),
     safeFetch<Faq[]>("/api/faqs", []),
   ]);
 
@@ -61,6 +63,9 @@ export default async function HomePage() {
       </Reveal>
       <Reveal>
         <ArticlesSection articles={articles} />
+      </Reveal>
+      <Reveal>
+        <TestimonialsSection testimonials={testimonials} />
       </Reveal>
       <Reveal>
         <FaqSection faqs={faqs} />
