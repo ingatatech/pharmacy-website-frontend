@@ -49,14 +49,14 @@ export function AboutSection({
             <h2 className="mt-2 font-display text-3xl font-medium text-slate-900 sm:text-4xl">
               <T text="Pharmacy care you can rely on" />
             </h2>
-            <p className="mt-5 max-w-lg text-base leading-relaxed text-slate-600">
+            <p className="mt-5 max-w-lg text-sm leading-relaxed text-slate-600">
               <T text={aboutUs} />
             </p>
 
             {/* Small, contained quote + stats — sits under the copy instead
                 of its own full-bleed band, sized down to match this column's
                 width rather than the whole page. */}
-            <div className="mt-8 rounded-2xl bg-teal-900 p-5 sm:p-6">
+            <div className="mt-8 max-w-md rounded-2xl bg-teal-900 p-5 sm:p-6">
               <div className="flex items-start gap-2">
                 <Quote className="mt-0.5 h-4 w-4 shrink-0 fill-white/20 text-white/20" strokeWidth={0} aria-hidden />
                 <p className="text-sm italic leading-snug text-white">
