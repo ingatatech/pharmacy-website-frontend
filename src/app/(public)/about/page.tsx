@@ -50,6 +50,7 @@ export default async function AboutPage() {
   const coreValues = settings?.coreValues ?? [];
   const mission = settings?.mission;
   const vision = settings?.vision;
+  const companyHistory = settings?.companyHistory;
 
   return (
     <>
@@ -97,6 +98,22 @@ export default async function AboutPage() {
                 </p>
               </div>
             )}
+          </div>
+        </section>
+      )}
+
+      {companyHistory && (
+        <section className="bg-white py-16 sm:py-24">
+          <div className="mx-auto max-w-3xl px-4 text-center sm:px-6">
+            <span className="text-sm font-medium text-teal-600">
+              <T text="Our story" />
+            </span>
+            <h2 className="mt-2 font-display text-3xl font-medium text-slate-900 sm:text-4xl">
+              <T text="How we got here" />
+            </h2>
+            <p className="mt-5 text-base leading-relaxed text-slate-600">
+              <T text={companyHistory} />
+            </p>
           </div>
         </section>
       )}

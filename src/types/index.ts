@@ -92,6 +92,17 @@ export interface Faq {
   isPublished: boolean;
 }
 
+export interface Testimonial {
+  id: string;
+  customerName: string;
+  customerCategory: string | null;
+  testimonialText: string;
+  photoUrl: string | null;
+  displayOrder: number;
+  isPublished: boolean;
+  createdAt: string;
+}
+
 export interface WeeklyOpeningHours {
   monday?: string;
   tuesday?: string;
@@ -104,6 +115,7 @@ export interface WeeklyOpeningHours {
 
 export interface PharmacyLocation {
   id: string;
+  slug: string;
   branchName: string;
   address: string;
   telephone: string | null;
@@ -112,9 +124,26 @@ export interface PharmacyLocation {
   openingHours: WeeklyOpeningHours | null;
   availableServices: string[];
   isActive: boolean;
+  description: string | null;
+  photoUrl: string | null;
+}
+
+export interface TeamMember {
+  id: string;
+  fullName: string;
+  role: string;
+  credentials: string | null;
+  bio: string | null;
+  photoUrl: string | null;
+  displayOrder: number;
+  isPublished: boolean;
+  createdAt: string;
+  locationId: string | null;
+  location?: Pick<PharmacyLocation, "id" | "branchName"> | null;
 }
 
 export type ContactInquiryStatus = "new" | "in_progress" | "resolved";
+export type ContactInquiryType = "general" | "health" | "product" | "service";
 
 export interface ContactInquiry {
   id: string;
@@ -122,6 +151,7 @@ export interface ContactInquiry {
   phoneNumber: string;
   email: string;
   subject: string | null;
+  inquiryType: ContactInquiryType | null;
   message: string;
   preferredContactMethod: string | null;
   preferredBranch: string | null;
@@ -153,6 +183,7 @@ export interface SiteSetting {
   aboutUs: string | null;
   mission: string | null;
   vision: string | null;
+  companyHistory: string | null;
   coreValues: string[];
   whyChooseUs: string | null;
   heroHeadline: string | null;
@@ -166,6 +197,8 @@ export interface SiteSetting {
   xUrl: string | null;
   whatsappUrl: string | null;
   youtubeUrl: string | null;
+  announcementMessage: string | null;
+  announcementActive: boolean;
   updatedAt: string;
 }
 

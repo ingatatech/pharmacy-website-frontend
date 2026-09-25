@@ -6,6 +6,8 @@ import { ApiError, apiFetch } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import { useToast } from "@/components/admin/Toast";
 import { OpeningHoursEditor } from "@/components/admin/OpeningHoursEditor";
+import { SlugField } from "@/components/admin/SlugField";
+import { ImageUploadField } from "@/components/admin/ImageUploadField";
 import type { PharmacyLocation, Service, WeeklyOpeningHours } from "@/types";
 
 const inputClass =
@@ -17,6 +19,9 @@ export function LocationForm({ location }: { location?: PharmacyLocation }) {
   const router = useRouter();
   const showToast = useToast();
   const [branchName, setBranchName] = useState(location?.branchName || "");
+  const [slug, setSlug] = useState(location?.slug || "");
+  const [description, setDescription] = useState(location?.description || "");
+  const [photoUrl, setPhotoUrl] = useState<string | null>(location?.photoUrl ?? null);
   const [address, setAddress] = useState(location?.address || "");
   const [telephone, setTelephone] = useState(location?.telephone || "");
   const [latitude, setLatitude] = useState(location?.latitude != null ? String(location.latitude) : "");
@@ -44,6 +49,9 @@ export function LocationForm({ location }: { location?: PharmacyLocation }) {
 
     const payload = {
       branchName,
+      slug,
+      description: description || null,
+      photoUrl,
       address,
       telephone: telephone || null,
       latitude: latitude ? Number(latitude) : null,
@@ -79,11 +87,27 @@ export function LocationForm({ location }: { location?: PharmacyLocation }) {
           </label>
           <input id="branchName" type="text" value={branchName} onChange={(e) => setBranchName(e.target.value)} required className={`mt-1.5 ${inputClass}`} />
         </div>
+        <SlugField value={slug} onChange={setSlug} sourceValue={branchName} />
         <div>
           <label htmlFor="telephone" className={labelClass}>
             Telephone
           </label>
           <input id="telephone" type="tel" value={telephone} onChange={(e) => setTelephone(e.target.value)} className={`mt-1.5 ${inputClass}`} />
+        </div>
+        <div className="sm:col-span-2">
+          <label htmlFor="description" className={labelClass}>
+            Branch description <span className="text-slate-400">(optional — shown on this branch&apos;s own page)</span>
+          </label>
+          <textarea
+            id="description"
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            rows={3}
+            className={`mt-1.5 ${inputClass} min-h-[5rem]`}
+          />
+        </div>
+        <div className="sm:col-span-2">
+          <ImageUploadField label="Branch photo (optional)" value={photoUrl} onChange={setPhotoUrl} />
         </div>
         <div className="sm:col-span-2">
           <label htmlFor="address" className={labelClass}>
