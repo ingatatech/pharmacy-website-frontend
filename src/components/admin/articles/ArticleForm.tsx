@@ -32,9 +32,11 @@ export function ArticleForm({ article, onSaved }: { article?: Article; onSaved?:
   const [workflowBusy, setWorkflowBusy] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
 
+  // This form is only rendered by admin-only routes, so a pharmacist_reviewer
+  // can never reach it — they review from /pharmacist/articles. The role check
+  // stays as a defence in depth rather than an access control.
   const isAdmin = user?.role === "admin";
-  const isReviewer = user?.role === "pharmacist_reviewer";
-  const readOnly = !isAdmin; // reviewers can only act via workflow buttons, never edit content
+  const readOnly = !isAdmin;
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -105,28 +107,6 @@ export function ArticleForm({ article, onSaved }: { article?: Article; onSaved?:
                 <Send className="h-3.5 w-3.5" />
                 Submit for review
               </button>
-            )}
-            {isReviewer && article.status === "pending_review" && (
-              <>
-                <button
-                  type="button"
-                  onClick={() => runWorkflowAction("approve")}
-                  disabled={workflowBusy}
-                  className="inline-flex items-center gap-1.5 rounded-md bg-teal-700 px-3 py-2 text-xs font-semibold text-white transition-colors duration-200 hover:bg-teal-800 disabled:opacity-60"
-                >
-                  <CheckCircle2 className="h-3.5 w-3.5" />
-                  Approve
-                </button>
-                <button
-                  type="button"
-                  onClick={() => runWorkflowAction("reject")}
-                  disabled={workflowBusy}
-                  className="inline-flex items-center gap-1.5 rounded-md border border-red-300 px-3 py-2 text-xs font-semibold text-red-600 transition-colors duration-200 hover:bg-red-50 disabled:opacity-60"
-                >
-                  <XCircle className="h-3.5 w-3.5" />
-                  Reject
-                </button>
-              </>
             )}
             {isAdmin && article.status === "approved" && (
               <button

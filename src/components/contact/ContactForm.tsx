@@ -37,10 +37,19 @@ export function ContactForm({ locations, defaultBranch }: { locations: PharmacyL
     // than send "".
     const subject = get("subject");
     const preferredContactMethod = get("preferredContactMethod");
-    const preferredBranch = get("preferredBranch");
     if (subject) payload.subject = subject;
     if (preferredContactMethod) payload.preferredContactMethod = preferredContactMethod;
-    if (preferredBranch) payload.preferredBranch = preferredBranch;
+
+    // The branch select carries the branch's id; send it as locationId (what
+    // the pharmacist's portal filters on) plus the branch's name as
+    // preferredBranch (what the admin screens display). See the equivalent
+    // comment in RefillForm.
+    const chosenBranchId = get("preferredBranch");
+    if (chosenBranchId) {
+      payload.locationId = chosenBranchId;
+      const name = locations.find((l) => l.id === chosenBranchId)?.branchName;
+      if (name) payload.preferredBranch = name;
+    }
 
     try {
       await apiFetch("/api/contact", { method: "POST", body: JSON.stringify(payload) }, token || undefined);
@@ -112,10 +121,19 @@ export function ContactForm({ locations, defaultBranch }: { locations: PharmacyL
           <label htmlFor="preferredBranch" className={labelClass}>
             <T text="Preferred branch" /> <span className="text-slate-400">(<T text="optional" />)</span>
           </label>
-          <select id="preferredBranch" name="preferredBranch" className={`mt-1.5 ${inputClass}`} defaultValue={defaultBranch || ""}>
+          <select
+            id="preferredBranch"
+            name="preferredBranch"
+            className={`mt-1.5 ${inputClass}`}
+            // Option values are branch ids now (see the submit handler), so a
+            // `?branch=` query value that was previously a name — and may also
+            // be a slug, depending on which public page linked here — has to be
+            // resolved to an id before it can be used as a default.
+            defaultValue={locations.find((l) => l.id === defaultBranch || l.branchName === defaultBranch || l.slug === defaultBranch)?.id ?? ""}
+          >
             <option value="">{noPreferenceLabel}</option>
             {locations.map((location) => (
-              <option key={location.id} value={location.branchName}>
+              <option key={location.id} value={location.id}>
                 {location.branchName}
               </option>
             ))}

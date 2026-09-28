@@ -6,6 +6,24 @@ import type { AuthUser } from "@/types";
 const TOKEN_KEY = "ingata_token";
 const USER_KEY = "ingata_user";
 
+// Mirrors the backend's 8h JWT so the cookie doesn't outlive the token it
+// describes. Deliberately NOT httpOnly: it's written from the browser, and it
+// holds no secret (just the id and role), so the only thing that can read it is
+// src/proxy.ts, which uses it purely as an optimistic hint for route gating.
+const SESSION_COOKIE = "ingata_session";
+const SESSION_MAX_AGE_SECONDS = 8 * 60 * 60;
+
+type SessionHint = { id: string; role: string };
+
+function writeSessionCookie(user: AuthUser) {
+  const hint: SessionHint = { id: user.id, role: user.role };
+  document.cookie = `${SESSION_COOKIE}=${encodeURIComponent(JSON.stringify(hint))}; path=/; max-age=${SESSION_MAX_AGE_SECONDS}; SameSite=Lax`;
+}
+
+function clearSessionCookie() {
+  document.cookie = `${SESSION_COOKIE}=; path=/; max-age=0; SameSite=Lax`;
+}
+
 type AuthContextValue = {
   user: AuthUser | null;
   token: string | null;
@@ -34,9 +52,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const storedToken = localStorage.getItem(TOKEN_KEY);
       const storedUser = localStorage.getItem(USER_KEY);
       if (storedToken && storedUser) {
+        const parsed = JSON.parse(storedUser) as AuthUser;
         // eslint-disable-next-line react-hooks/set-state-in-effect
         setToken(storedToken);
-        setUser(JSON.parse(storedUser));
+        setUser(parsed);
+        // Re-issue the hint cookie for sessions that predate it, so an
+        // already-logged-in user isn't bounced to /login by the proxy once.
+        writeSessionCookie(parsed);
       }
     } catch {
       // Corrupt or inaccessible storage — treat as logged out.
@@ -47,6 +69,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = useCallback((newToken: string, newUser: AuthUser) => {
     localStorage.setItem(TOKEN_KEY, newToken);
     localStorage.setItem(USER_KEY, JSON.stringify(newUser));
+    writeSessionCookie(newUser);
     setToken(newToken);
     setUser(newUser);
   }, []);
@@ -54,6 +77,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const logout = useCallback(() => {
     localStorage.removeItem(TOKEN_KEY);
     localStorage.removeItem(USER_KEY);
+    clearSessionCookie();
     setToken(null);
     setUser(null);
   }, []);
@@ -69,6 +93,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const updateUser = useCallback((updated: AuthUser) => {
     localStorage.setItem(USER_KEY, JSON.stringify(updated));
+    // Keep the hint cookie in step — a role change (an admin demoting someone)
+    // has to be reflected in the proxy's routing, not just in local state.
+    writeSessionCookie(updated);
     setUser(updated);
   }, []);
 

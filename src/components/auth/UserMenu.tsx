@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { homeForRole } from "@/lib/admin-access";
 import { ChevronDown, LayoutDashboard, LogOut, Settings, User } from "lucide-react";
 import { useAuth } from "@/lib/auth-context";
 import { initials } from "@/lib/text";
@@ -40,15 +41,15 @@ export function UserMenu({ user, onNavigate }: { user: AuthUser; onNavigate?: ()
             <p className="truncate text-xs text-slate-500">{user.email}</p>
           </div>
           <ul className="divide-y divide-slate-100 border-t border-slate-100">
-            {(user.role === "admin" || user.role === "pharmacist_reviewer") && (
+            {homeForRole(user.role) && (
               <li>
                 <Link
-                  href="/admin"
+                  href={homeForRole(user.role)!}
                   onClick={onNavigate}
                   className="flex items-center gap-2.5 px-5 py-3 text-sm text-slate-700 transition-colors duration-200 hover:bg-slate-50 hover:text-teal-800"
                 >
                   <LayoutDashboard className="h-4 w-4 text-slate-400" strokeWidth={1.75} />
-                  Admin Dashboard
+                  {user.role === "pharmacist_reviewer" ? "Pharmacist Portal" : "Admin Dashboard"}
                 </Link>
               </li>
             )}

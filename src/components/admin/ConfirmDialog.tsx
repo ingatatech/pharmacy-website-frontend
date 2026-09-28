@@ -3,14 +3,16 @@
 import { AlertTriangle } from "lucide-react";
 
 // A plain, synchronous confirm modal (no animation library dependency) used
-// before every destructive admin action (delete service/product/etc.).
-// `open` is fully controlled by the caller — this component holds no state
-// of its own.
+// before every destructive admin action (delete service/product/etc.), and
+// before non-delete actions that are just as consequential for the record
+// (rejecting an article sends it back to draft). `open` is fully controlled by
+// the caller — this component holds no state of its own.
 export function ConfirmDialog({
   open,
   title,
   description,
   confirmLabel = "Delete",
+  busyLabel = "Deleting…",
   busy = false,
   onConfirm,
   onCancel,
@@ -19,6 +21,7 @@ export function ConfirmDialog({
   title: string;
   description: string;
   confirmLabel?: string;
+  busyLabel?: string;
   busy?: boolean;
   onConfirm: () => void;
   onCancel: () => void;
@@ -54,7 +57,7 @@ export function ConfirmDialog({
             disabled={busy}
             className="rounded-md bg-red-600 px-4 py-2 text-sm font-semibold text-white transition-colors duration-200 hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {busy ? "Deleting…" : confirmLabel}
+            {busy ? busyLabel : confirmLabel}
           </button>
         </div>
       </div>

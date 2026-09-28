@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { homeForRole } from "@/lib/admin-access";
 import { LogIn, UserPlus } from "lucide-react";
 import { AuthForm } from "@/components/auth/AuthForm";
 import { T } from "@/lib/language-context";
@@ -45,11 +46,17 @@ export function AuthPanel({
       onSuccess(user);
       return;
     }
-    // Staff accounts always land in the admin dashboard, regardless of
-    // where the login form was reached from — a customer-facing `next`
-    // (e.g. back to /prescription-refill) would be meaningless for them.
-    const isStaff = user.role === "admin" || user.role === "pharmacist_reviewer";
-    router.push(isStaff ? (next.startsWith("/admin") ? next : "/admin") : next);
+    // Staff land in their own area, regardless of where the login form was
+    // reached from — a customer-facing `next` (e.g. back to
+    // /prescription-refill) would be meaningless for them. A pharmacist's area
+    // is /pharmacist, not /admin, and the two are disjoint, so `next` is only
+    // honoured when it actually points inside the role's own area.
+    const home = homeForRole(user.role);
+    if (home) {
+      router.push(next.startsWith(home) ? next : home);
+    } else {
+      router.push(next);
+    }
     router.refresh();
   }
 

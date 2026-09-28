@@ -34,7 +34,6 @@ export function RefillForm({ locations }: { locations: PharmacyLocation[] }) {
     // than send "".
     for (const key of [
       "email",
-      "preferredBranch",
       "prescriptionReference",
       "medicationName",
       "preferredPickupMethod",
@@ -42,6 +41,16 @@ export function RefillForm({ locations }: { locations: PharmacyLocation[] }) {
     ]) {
       const value = get(key);
       if (value) payload[key] = value;
+    }
+
+    // The branch select carries the branch's id; send it as locationId (what
+    // the pharmacist's portal filters on) plus the branch's name as
+    // preferredBranch (what the admin screens display).
+    const chosenBranchId = get("preferredBranch");
+    if (chosenBranchId) {
+      payload.locationId = chosenBranchId;
+      const name = locations.find((l) => l.id === chosenBranchId)?.branchName;
+      if (name) payload.preferredBranch = name;
     }
 
     try {
@@ -138,7 +147,12 @@ export function RefillForm({ locations }: { locations: PharmacyLocation[] }) {
           <select id="preferredBranch" name="preferredBranch" className={`mt-1.5 ${inputClass}`} defaultValue="">
             <option value="">{noPreferenceLabel}</option>
             {locations.map((location) => (
-              <option key={location.id} value={location.branchName}>
+              // Value is the branch id, not its name — a pharmacist's portal
+              // filters on that id, and a name string would break the moment
+              // the branch is renamed. The submit handler looks the name back
+              // up and sends it as preferredBranch, so the admin screens keep
+              // displaying the branch name they always have.
+              <option key={location.id} value={location.id}>
                 {location.branchName}
               </option>
             ))}

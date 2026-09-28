@@ -3,12 +3,19 @@
 import { Search } from "lucide-react";
 import { useTranslated } from "@/lib/language-context";
 
-export function ProductSearchBar({ defaultValue }: { defaultValue?: string }) {
+export function ProductSearchBar({
+  defaultValue,
+  category,
+}: {
+  defaultValue?: string;
+  category?: string;
+}) {
   const placeholder = useTranslated("Search products or medicines by name, brand or ingredient");
   const searchLabel = useTranslated("Search");
 
   return (
     <form action="/products" method="GET" className="mx-auto flex max-w-xl overflow-hidden rounded-md border border-slate-300 bg-white shadow-sm">
+      {category && <input type="hidden" name="category" value={category} />}
       <input
         type="text"
         name="q"

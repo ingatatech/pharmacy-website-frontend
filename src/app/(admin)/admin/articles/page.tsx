@@ -23,7 +23,7 @@ export default function AdminArticlesPage() {
   const showToast = useToast();
   const [articles, setArticles] = useState<Article[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<ArticleStatus | "all">(user?.role === "pharmacist_reviewer" ? "pending_review" : "all");
+  const [filter, setFilter] = useState<ArticleStatus | "all">("all");
 
   useEffect(() => {
     if (!token) return;

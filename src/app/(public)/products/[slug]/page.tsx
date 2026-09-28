@@ -72,7 +72,12 @@ export default async function ProductDetailPage({
 
   return (
     <>
-      <PageHeader eyebrow={product.category?.name || "Product"} title={product.name} />
+      <PageHeader
+        eyebrow={product.category?.name || "Product"}
+        title={product.name}
+        variant="pattern"
+        image="/images/product-hero-bg.jpg"
+      />
 
       <section className="bg-slate-50">
         <div className="mx-auto grid max-w-6xl gap-12 px-4 py-16 sm:px-6 md:grid-cols-[1fr_1.2fr] md:py-24">

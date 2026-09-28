@@ -20,6 +20,7 @@ import {
   Pill,
   Quote,
   Settings,
+  Stethoscope,
   UserCircle,
   Users,
   X,
@@ -28,23 +29,29 @@ import { useAuth } from "@/lib/auth-context";
 import { initials } from "@/lib/text";
 import { GlobalSearch } from "@/components/admin/GlobalSearch";
 
-type NavItem = { href: string; label: string; icon: typeof Home; roles: Array<"admin" | "pharmacist_reviewer"> };
+type NavItem = { href: string; label: string; icon: typeof Home };
 
+// Admin-only, with no per-role filtering: a pharmacist_reviewer no longer has
+// any place in /admin. They get their own area at /pharmacist, so this list
+// doesn't need `roles` at all — the layout guard above already rejects anyone
+// who isn't an admin, and the nav is a convenience on top of that, not the
+// access control.
 const NAV_ITEMS: NavItem[] = [
-  { href: "/admin", label: "Dashboard", icon: LayoutDashboard, roles: ["admin"] },
-  { href: "/admin/services", label: "Services", icon: Pill, roles: ["admin"] },
-  { href: "/admin/products", label: "Products", icon: Package, roles: ["admin"] },
-  { href: "/admin/categories", label: "Categories", icon: Folder, roles: ["admin"] },
-  { href: "/admin/articles", label: "Articles", icon: FileText, roles: ["admin", "pharmacist_reviewer"] },
-  { href: "/admin/locations", label: "Locations", icon: MapPin, roles: ["admin"] },
-  { href: "/admin/team", label: "Team", icon: UserCircle, roles: ["admin"] },
-  { href: "/admin/faqs", label: "FAQs", icon: ListChecks, roles: ["admin"] },
-  { href: "/admin/testimonials", label: "Testimonials", icon: Quote, roles: ["admin"] },
-  { href: "/admin/refill-requests", label: "Refill Requests", icon: ClipboardList, roles: ["admin"] },
-  { href: "/admin/contact-inquiries", label: "Contact Inquiries", icon: MessageSquare, roles: ["admin"] },
-  { href: "/admin/site-settings", label: "Site Settings", icon: Settings, roles: ["admin"] },
-  { href: "/admin/users", label: "Users", icon: Users, roles: ["admin"] },
-  { href: "/admin/audit-log", label: "Audit Log", icon: Archive, roles: ["admin"] },
+  { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/services", label: "Services", icon: Pill },
+  { href: "/admin/products", label: "Products", icon: Package },
+  { href: "/admin/categories", label: "Categories", icon: Folder },
+  { href: "/admin/articles", label: "Articles", icon: FileText },
+  { href: "/admin/locations", label: "Locations", icon: MapPin },
+  { href: "/admin/team", label: "Team", icon: UserCircle },
+  { href: "/admin/pharmacists", label: "Pharmacists", icon: Stethoscope },
+  { href: "/admin/faqs", label: "FAQs", icon: ListChecks },
+  { href: "/admin/testimonials", label: "Testimonials", icon: Quote },
+  { href: "/admin/refill-requests", label: "Refill Requests", icon: ClipboardList },
+  { href: "/admin/contact-inquiries", label: "Contact Inquiries", icon: MessageSquare },
+  { href: "/admin/site-settings", label: "Site Settings", icon: Settings },
+  { href: "/admin/users", label: "All Users", icon: Users },
+  { href: "/admin/audit-log", label: "Audit Log", icon: Archive },
 ];
 
 export function AdminShell({ children }: { children: ReactNode }) {
@@ -53,8 +60,7 @@ export function AdminShell({ children }: { children: ReactNode }) {
   const { user, logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
-  const role = user?.role as "admin" | "pharmacist_reviewer" | undefined;
-  const items = NAV_ITEMS.filter((item) => role && item.roles.includes(role));
+  const items = NAV_ITEMS;
 
   const isActive = (href: string) => (href === "/admin" ? pathname === href : pathname === href || pathname?.startsWith(`${href}/`));
 

@@ -34,6 +34,11 @@ export function ProductCard({ product }: { product: Product }) {
             <T text="Prescription required" />
           </span>
         )}
+        {product.category && (
+          <span className="absolute right-3 top-3 rounded-full bg-teal-800/90 px-2.5 py-1 text-[11px] font-medium text-white">
+            <T text={product.category.name} />
+          </span>
+        )}
       </div>
 
       <div className="flex flex-1 flex-col p-5">

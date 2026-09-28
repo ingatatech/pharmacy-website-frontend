@@ -1,11 +1,21 @@
 export type UserRole = "admin" | "pharmacist_reviewer" | "customer";
 
+/** The branch a user is responsible for, as returned on User/AuthUser. */
+export interface UserBranch {
+  id: string;
+  branchName: string;
+  slug: string;
+}
+
 export interface User {
   id: string;
   email: string;
   fullName: string;
   role: UserRole;
   createdAt: string;
+  /** Null for customers, and for a pharmacist not yet assigned to a branch. */
+  locationId: string | null;
+  location: UserBranch | null;
 }
 
 export type CategoryType = "service" | "product";
@@ -155,6 +165,9 @@ export interface ContactInquiry {
   message: string;
   preferredContactMethod: string | null;
   preferredBranch: string | null;
+  /** Which branch this enquiry was directed at. Null on rows written before
+   *  the branch relation existed — those keep only preferredBranch. */
+  locationId: string | null;
   status: ContactInquiryStatus;
   createdAt: string;
   userId: string | null;
@@ -172,6 +185,9 @@ export interface RefillRequest {
   medicationName: string | null;
   additionalNotes: string | null;
   preferredPickupMethod: string | null;
+  /** Which branch this refill was requested from. Null on rows written before
+   *  the branch relation existed — those keep only preferredBranch. */
+  locationId: string | null;
   status: RefillRequestStatus;
   createdAt: string;
   userId: string | null;
@@ -217,4 +233,6 @@ export interface AuthUser {
   fullName: string;
   role: string;
   createdAt: string;
+  locationId: string | null;
+  location: UserBranch | null;
 }

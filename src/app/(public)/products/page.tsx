@@ -22,22 +22,42 @@ async function getProducts(): Promise<Product[]> {
   }
 }
 
+function filterHref(params: { q?: string; category?: string }): string {
+  const search = new URLSearchParams();
+  if (params.q) search.set("q", params.q);
+  if (params.category) search.set("category", params.category);
+  const qs = search.toString();
+  return qs ? `/products?${qs}` : "/products";
+}
+
 export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ q?: string }>;
+  searchParams: Promise<{ q?: string; category?: string }>;
 }) {
-  const { q } = await searchParams;
+  const { q, category } = await searchParams;
   const products = await getProducts();
 
+  const categoryCounts = new Map<string, { name: string; count: number }>();
+  for (const product of products) {
+    if (!product.category) continue;
+    const existing = categoryCounts.get(product.category.slug);
+    categoryCounts.set(product.category.slug, {
+      name: product.category.name,
+      count: (existing?.count || 0) + 1,
+    });
+  }
+
+  const byCategory = category ? products.filter((product) => product.category?.slug === category) : products;
+
   const filtered = q
-    ? products.filter((product) => {
+    ? byCategory.filter((product) => {
         const needle = q.toLowerCase();
         return [product.name, product.brandName, product.activeIngredient, product.generalUse, product.generalDescription]
           .filter((field): field is string => Boolean(field))
           .some((field) => field.toLowerCase().includes(needle));
       })
-    : products;
+    : byCategory;
 
   return (
     <>
@@ -50,12 +70,53 @@ export default async function ProductsPage({
 
       <section className="bg-slate-50">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24">
-          <ProductSearchBar defaultValue={q} />
+          <ProductSearchBar defaultValue={q} category={category} />
 
-          {q && (
+          {categoryCounts.size > 0 && (
+            <div className="mt-6 flex flex-wrap justify-center gap-2">
+              <Link
+                href={filterHref({ q })}
+                className={`rounded-full border px-4 py-1.5 text-sm font-medium transition-colors duration-200 ${
+                  !category
+                    ? "border-teal-800 bg-teal-800 text-white"
+                    : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
+                }`}
+              >
+                <T text="All" />
+              </Link>
+              {[...categoryCounts.entries()].map(([slug, { name, count }]) => {
+                const active = category === slug;
+                return (
+                  <Link
+                    key={slug}
+                    href={filterHref({ q, category: slug })}
+                    className={`rounded-full border px-4 py-1.5 text-sm font-medium transition-colors duration-200 ${
+                      active
+                        ? "border-teal-800 bg-teal-800 text-white"
+                        : "border-slate-200 bg-white text-slate-600 hover:border-slate-300"
+                    }`}
+                  >
+                    <T text={name} /> <span className={active ? "text-teal-100" : "text-slate-400"}>({count})</span>
+                  </Link>
+                );
+              })}
+            </div>
+          )}
+
+          {(q || category) && (
             <div className="mx-auto mt-6 flex max-w-xl min-w-0 items-center justify-between gap-4 rounded-md border border-slate-200 bg-white px-4 py-3 text-sm text-slate-600">
               <span className="min-w-0 truncate">
-                <T text="Results for" /> &quot;{q}&quot;
+                {q && (
+                  <>
+                    <T text="Results for" /> &quot;{q}&quot;
+                  </>
+                )}
+                {q && category && " "}
+                {category && (
+                  <>
+                    <T text="in" /> {categoryCounts.get(category)?.name}
+                  </>
+                )}
               </span>
               <Link
                 href="/products"
@@ -73,7 +134,7 @@ export default async function ProductsPage({
                 text={
                   products.length === 0
                     ? "Products will be listed here shortly. In the meantime, call your nearest branch for availability."
-                    : "No products match that search. Try a different name, brand or ingredient."
+                    : "No products match those filters. Try a different name, brand, ingredient or category."
                 }
               />
             </p>
