@@ -4,10 +4,17 @@ on:
   push:
   pull_request:
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   frontend:
     name: Frontend
-    runs-on: ubuntu-latest
+    # Pinned rather than "latest": the ubuntu-latest label migrates to
+    # Ubuntu 26 on 2026-10-19, which would change the base image (and so the
+    # Node build this runs against) without any commit here.
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
@@ -22,6 +29,9 @@ jobs:
 
       - name: Typecheck
         run: npm run typecheck
+
+      - name: Lint
+        run: npm run lint
 
       - name: Build
         run: npm run build
