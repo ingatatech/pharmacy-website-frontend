@@ -15,7 +15,12 @@ import { T } from "@/lib/language-context";
 import { initials } from "@/lib/text";
 
 type DropdownItem = { href: string; label: string };
-type NavLink = { href: string; label: string; dropdown?: DropdownItem[] };
+
+// `href` is optional: some entries are grouping labels that only exist to hold
+// a dropdown ("Health Information"). Those render as a <span> rather than a
+// link, and the dropdown's "View all ..." footer is omitted, because there is
+// no page behind the label to point it at.
+type NavLink = { href?: string; label: string; dropdown?: DropdownItem[] };
 
 export function Navbar({
   services = [],
@@ -46,7 +51,8 @@ export function Navbar({
   // dark band now that most page content sits on white/slate-50.
   const isHome = pathname === "/";
   const solid = scrolled || !isHome;
-  const isActive = (href: string) => pathname === href || pathname?.startsWith(`${href}/`);
+  // A label-only entry has no href, so it can never be the current page.
+  const isActive = (href?: string) => !!href && (pathname === href || pathname?.startsWith(`${href}/`));
 
   // Real sub-items (not placeholder links) — same "hover reveals a white
   // dropdown panel" pattern as qtglobal.rw's nav, e.g. its Blog menu.
@@ -65,6 +71,17 @@ export function Navbar({
         .sort((a, b) => new Date(b.publishedAt || b.createdAt).getTime() - new Date(a.publishedAt || a.createdAt).getTime())
         .slice(0, 5)
         .map((a) => ({ href: `/articles/${a.slug}`, label: a.title })),
+    },
+    // A grouping label with no page of its own, so no href and no "View all"
+    // footer. Every child here is a real route.
+    {
+      label: "Health Information",
+      dropdown: [
+        { href: "/articles", label: "Health Articles" },
+        { href: "/articles?category=Medication%20Safety", label: "Medication Safety" },
+        { href: "/wellness", label: "Wellness" },
+        { href: "/faqs", label: "FAQs" },
+      ],
     },
     { href: "/locations", label: "Find a Pharmacy" },
     { href: "/contact", label: "Contact" },
@@ -97,30 +114,52 @@ export function Navbar({
             {navLinks.map((link) => {
               const active = isActive(link.href);
               const hasDropdown = (link.dropdown?.length ?? 0) > 0;
+              const labelClasses = `relative inline-flex items-center gap-1 rounded-sm py-2 text-sm font-bold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold after:absolute after:-bottom-[1px] after:left-0 after:h-[2px] after:rounded-full after:bg-gold after:transition-all after:content-[''] ${
+                solid
+                  ? active
+                    ? "text-slate-900 after:w-full"
+                    : "text-slate-600 after:w-0 hover:text-slate-900 hover:after:w-full"
+                  : active
+                    ? "text-white text-shadow-nav after:w-full"
+                    : "text-white text-shadow-nav after:w-0 hover:after:w-full"
+              }`;
+              const labelInner = (
+                <>
+                  <T text={link.label} />
+                  {hasDropdown && (
+                    <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 group-hover:rotate-180" />
+                  )}
+                </>
+              );
+
               return (
-                <div key={link.href} className="relative group">
-                  <Link
-                    href={link.href}
-                    aria-current={active ? "page" : undefined}
-                    className={`relative inline-flex items-center gap-1 rounded-sm py-2 text-sm font-bold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold after:absolute after:-bottom-[1px] after:left-0 after:h-[2px] after:rounded-full after:bg-gold after:transition-all after:content-[''] ${
-                      solid
-                        ? active
-                          ? "text-slate-900 after:w-full"
-                          : "text-slate-600 after:w-0 hover:text-slate-900 hover:after:w-full"
-                        : active
-                          ? "text-white text-shadow-nav after:w-full"
-                          : "text-white text-shadow-nav after:w-0 hover:after:w-full"
-                    }`}
-                  >
-                    <T text={link.label} />
-                    {hasDropdown && (
-                      <ChevronDown className="h-3.5 w-3.5 transition-transform duration-200 group-hover:rotate-180" />
-                    )}
-                  </Link>
+                <div key={link.href ?? link.label} className="relative group">
+                  {link.href ? (
+                    <Link
+                      href={link.href}
+                      aria-current={active ? "page" : undefined}
+                      className={labelClasses}
+                    >
+                      {labelInner}
+                    </Link>
+                  ) : (
+                    // Grouping label only — not interactive, so it must not be
+                    // a link and must not take keyboard focus. Deliberately not
+                    // aria-hidden: it is visible text and belongs in the
+                    // accessibility tree, just not in the tab order.
+                    <span className={`${labelClasses} cursor-default after:transition-none`}>
+                      {labelInner}
+                    </span>
+                  )}
 
                   {hasDropdown && (
-                    <div className="invisible absolute left-0 top-full z-50 w-64 pt-3 opacity-0 transition-[opacity,visibility] duration-200 ease-out group-hover:visible group-hover:opacity-100">
-                      <div className="-translate-y-1 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-lg transition-transform duration-200 ease-out group-hover:translate-y-0">
+                    // group-focus-within is load-bearing, not decoration: the
+                    // panel is `invisible`, and visibility:hidden drops its
+                    // links out of the tab order. Without the focus variant,
+                    // keyboard users could never reach any dropdown child —
+                    // they can only ever hover.
+                    <div className="invisible absolute left-0 top-full z-50 w-64 pt-3 opacity-0 transition-[opacity,visibility] duration-200 ease-out group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
+                      <div className="-translate-y-1 overflow-hidden rounded-lg border border-slate-200 bg-white shadow-lg transition-transform duration-200 ease-out group-hover:translate-y-0 group-focus-within:translate-y-0">
                         <ul className="divide-y divide-slate-100">
                           {link.dropdown!.map((item) => (
                             <li key={item.href}>
@@ -133,12 +172,14 @@ export function Navbar({
                             </li>
                           ))}
                         </ul>
-                        <Link
-                          href={link.href}
-                          className="block border-t border-slate-100 bg-slate-50 px-5 py-3 text-sm font-bold text-teal-700 transition-colors duration-200 hover:bg-slate-100"
-                        >
-                          <T text={`View all ${link.label.toLowerCase()}`} />
-                        </Link>
+                        {link.href && (
+                          <Link
+                            href={link.href}
+                            className="block border-t border-slate-100 bg-slate-50 px-5 py-3 text-sm font-bold text-teal-700 transition-colors duration-200 hover:bg-slate-100"
+                          >
+                            <T text={`View all ${link.label.toLowerCase()}`} />
+                          </Link>
+                        )}
                       </div>
                     </div>
                   )}
@@ -198,24 +239,65 @@ export function Navbar({
                 <ul className="flex flex-col">
                   {navLinks.map((link) => {
                     const active = isActive(link.href);
+                    const hasDropdown = (link.dropdown?.length ?? 0) > 0;
                     return (
-                      <li key={link.href}>
-                        <Link
-                          href={link.href}
-                          aria-current={active ? "page" : undefined}
-                          className={`block border-l-2 py-3 pl-3 text-sm font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
-                            solid
-                              ? active
-                                ? "border-gold text-slate-900"
-                                : "border-transparent text-slate-600 hover:text-slate-900"
-                              : active
-                                ? "border-gold text-white"
-                                : "border-transparent text-white"
-                          }`}
-                          onClick={() => setMenuOpen(false)}
-                        >
-                          <T text={link.label} />
-                        </Link>
+                      <li key={link.href ?? link.label}>
+                        {link.href ? (
+                          <Link
+                            href={link.href}
+                            aria-current={active ? "page" : undefined}
+                            className={`block border-l-2 py-3 pl-3 text-sm font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
+                              solid
+                                ? active
+                                  ? "border-gold text-slate-900"
+                                  : "border-transparent text-slate-600 hover:text-slate-900"
+                                : active
+                                  ? "border-gold text-white"
+                                  : "border-transparent text-white"
+                            }`}
+                            onClick={() => setMenuOpen(false)}
+                          >
+                            <T text={link.label} />
+                          </Link>
+                        ) : (
+                          // Same grouping-label treatment as the desktop nav.
+                          <span
+                            className={`block border-l-2 border-transparent py-3 pl-3 text-sm font-semibold ${
+                              solid ? "text-slate-900" : "text-white"
+                            }`}
+                          >
+                            <T text={link.label} />
+                          </span>
+                        )}
+
+                        {/* The mobile menu has no hover state, so dropdown
+                            children are inlined as indented sub-items. Without
+                            this a label-only entry like "Health Information"
+                            would be dead on mobile — nothing to tap, and its
+                            four destinations unreachable. */}
+                        {hasDropdown && (
+                          <ul
+                            className={`mb-1 ml-3 border-l pl-3 ${
+                              solid ? "border-slate-200" : "border-white/10"
+                            }`}
+                          >
+                            {link.dropdown!.map((item) => (
+                              <li key={item.href}>
+                                <Link
+                                  href={item.href}
+                                  className={`block py-2 text-sm transition-colors duration-200 ${
+                                    solid
+                                      ? "text-slate-600 hover:text-slate-900"
+                                      : "text-white/75 hover:text-white"
+                                  }`}
+                                  onClick={() => setMenuOpen(false)}
+                                >
+                                  <T text={item.label} />
+                                </Link>
+                              </li>
+                            ))}
+                          </ul>
+                        )}
                       </li>
                     );
                   })}

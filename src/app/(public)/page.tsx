@@ -1,7 +1,8 @@
 import { apiFetch } from "@/lib/api";
-import type { Article, Faq, PharmacyLocation, Service, SiteSetting, Testimonial } from "@/types";
+import type { Article, Category, Faq, PharmacyLocation, Product, Service, SiteSetting, Testimonial } from "@/types";
 import { Hero } from "@/components/home/Hero";
 import { ServicesSection } from "@/components/home/ServicesSection";
+import { ProductsSection } from "@/components/home/ProductsSection";
 import { ProcessSection } from "@/components/home/ProcessSection";
 import { AboutSection } from "@/components/home/AboutSection";
 import { LocationsSection } from "@/components/home/LocationsSection";
@@ -27,15 +28,26 @@ async function safeFetch<T>(path: string, fallback: T): Promise<T> {
   }
 }
 
+// Products are only needed to fill in counts and example names for the range
+// teaser, which is driven by the category list. 200 is the API's maximum page
+// size, so the counts stay exact up to that many products; past it the tiles
+// would start showing partial counts and this wants a real aggregate endpoint.
+const HOMEPAGE_PRODUCT_LIMIT = 200;
+
 export default async function HomePage() {
-  const [settings, services, locations, articles, testimonials, faqs] = await Promise.all([
-    safeFetch<SiteSetting | null>("/api/site-settings", null),
-    safeFetch<Service[]>("/api/services", []),
-    safeFetch<PharmacyLocation[]>("/api/locations", []),
-    safeFetch<Article[]>("/api/articles", []),
-    safeFetch<Testimonial[]>("/api/testimonials", []),
-    safeFetch<Faq[]>("/api/faqs", []),
-  ]);
+  const [settings, services, categories, products, locations, articles, testimonials, faqs] =
+    await Promise.all([
+      safeFetch<SiteSetting | null>("/api/site-settings", null),
+      safeFetch<Service[]>("/api/services", []),
+      // Only product ranges belong in the teaser. "service" categories drive
+      // the services section instead.
+      safeFetch<Category[]>("/api/categories?type=product", []),
+      safeFetch<Product[]>(`/api/products?limit=${HOMEPAGE_PRODUCT_LIMIT}`, []),
+      safeFetch<PharmacyLocation[]>("/api/locations", []),
+      safeFetch<Article[]>("/api/articles", []),
+      safeFetch<Testimonial[]>("/api/testimonials", []),
+      safeFetch<Faq[]>("/api/faqs", []),
+    ]);
 
   return (
     <>
@@ -45,6 +57,9 @@ export default async function HomePage() {
       />
       <Reveal>
         <ServicesSection services={services} />
+      </Reveal>
+      <Reveal>
+        <ProductsSection categories={categories} products={products} />
       </Reveal>
       <Reveal>
         <ProcessSection />
