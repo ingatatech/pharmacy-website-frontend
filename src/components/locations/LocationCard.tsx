@@ -7,9 +7,15 @@ import { groupOpeningHours } from "@/lib/opening-hours";
 import { T } from "@/lib/language-context";
 
 // Shared between the homepage teaser and the full /locations directory.
-// The live embedded Google Map now lives only on the branch's own page
+// The live embedded Google Map lives only on the branch's own page
 // (/locations/[slug]) — cards here just link through, with a static photo
-// (or an accent-bar fallback) instead of a per-card map iframe.
+// (or a branded gradient fallback) instead of a per-card map iframe.
+//
+// The photo is the background of the header band only, behind the branch name.
+// Everything below it — address, phone, hours, services, links — stays on the
+// white card body, so the image never fights with the small body text for
+// contrast. Most branches have no photo uploaded yet, so the teal gradient
+// doubles as the fallback.
 export function LocationCard({
   location,
   serviceNames = [],
@@ -20,39 +26,45 @@ export function LocationCard({
   const hourLines = location.openingHours ? groupOpeningHours(location.openingHours) : [];
   const hasCoordinates = location.latitude != null && location.longitude != null;
   const branchHref = `/locations/${location.slug}`;
+  const hasPhoto = Boolean(location.photoUrl);
 
   return (
-    <div className="group relative overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:border-teal-200 hover:shadow-lg">
-      <Link href={branchHref} className="block">
-        {location.photoUrl ? (
-          <div className="relative h-36 w-full overflow-hidden bg-slate-100">
-            <Image
-              src={resolveUploadUrl(location.photoUrl)}
-              alt=""
-              fill
-              sizes="(min-width: 1024px) 33vw, 100vw"
-              className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-            />
-          </div>
-        ) : (
-          <span
-            aria-hidden
-            className="absolute inset-x-0 top-0 h-1 origin-left scale-x-0 bg-teal-600 transition-transform duration-300 ease-out group-hover:scale-x-100"
-          />
-        )}
-      </Link>
+    <div className="group relative flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white shadow-sm transition-[transform,box-shadow,border-color] duration-300 hover:-translate-y-1 hover:border-teal-200 hover:shadow-lg">
+      <div className="relative isolate">
+        {/*
+          Background layer, held behind the content with -z-10 so the branch name
+          stays selectable and clickable.
+        */}
+        <div aria-hidden className="absolute inset-0 -z-10">
+          {hasPhoto ? (
+            <>
+              <Image
+                src={resolveUploadUrl(location.photoUrl as string)}
+                alt=""
+                fill
+                sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+                className="object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+              />
+              {/* Two stops: diagonal to darken the photo, teal to tie it to the brand. */}
+              <div className="absolute inset-0 bg-gradient-to-br from-slate-950/85 via-slate-900/70 to-teal-950/70" />
+            </>
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-br from-teal-900 to-teal-700" />
+          )}
+        </div>
 
-      <div className="p-7">
         <Link
           href={branchHref}
-          className="relative inline-block text-slate-900 no-underline after:absolute after:-bottom-0.5 after:left-0 after:h-[2px] after:w-0 after:rounded-full after:bg-gold after:transition-all after:content-[''] hover:after:w-full"
+          className="flex min-h-28 items-end p-6 text-white no-underline sm:min-h-32"
         >
-          <h3 className="font-display text-xl font-semibold transition-colors duration-200 group-hover:text-teal-700">
+          <h3 className="font-display text-xl font-semibold leading-snug transition-colors duration-200 group-hover:text-gold">
             {location.branchName}
           </h3>
         </Link>
+      </div>
 
-        <div className="mt-4 space-y-3 text-sm text-slate-600">
+      <div className="flex flex-1 flex-col p-6">
+        <div className="space-y-3 text-sm text-slate-600">
           <p className="flex items-start gap-2.5">
             <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-slate-400" />
             {location.address}
@@ -60,7 +72,10 @@ export function LocationCard({
           {location.telephone && (
             <p className="flex items-center gap-2.5">
               <Phone className="h-4 w-4 shrink-0 text-slate-400" />
-              <a href={`tel:${location.telephone}`} className="hover:text-slate-900">
+              <a
+                href={`tel:${location.telephone}`}
+                className="transition-colors duration-200 hover:text-slate-900"
+              >
                 {location.telephone}
               </a>
             </p>

@@ -74,7 +74,7 @@ export default async function HomePage() {
         />
       </Reveal>
       <Reveal>
-        <LocationsSection locations={locations} />
+        <LocationsSection locations={locations} services={services} />
       </Reveal>
       <Reveal>
         <ArticlesSection articles={articles} />

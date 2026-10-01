@@ -1,12 +1,23 @@
 import Link from "next/link";
-import type { PharmacyLocation } from "@/types";
+import type { PharmacyLocation, Service } from "@/types";
 import { LocationCard } from "@/components/locations/LocationCard";
 import { T } from "@/lib/language-context";
 
-export function LocationsSection({ locations }: { locations: PharmacyLocation[] }) {
+export function LocationsSection({
+  locations,
+  services = [],
+}: {
+  locations: PharmacyLocation[];
+  services?: Service[];
+}) {
   if (locations.length === 0) {
     return null;
   }
+
+  // Branches store services as slugs; the cards show the human-readable names,
+  // so resolve them here rather than rendering raw slugs like
+  // "prescription-refills" on the card.
+  const serviceNameBySlug = new Map(services.map((service) => [service.slug, service.name]));
 
   return (
     <section className="bg-sage">
@@ -30,7 +41,13 @@ export function LocationsSection({ locations }: { locations: PharmacyLocation[] 
 
         <div className={`mt-10 grid gap-6 ${locations.length > 1 ? "sm:grid-cols-2" : "max-w-md"}`}>
           {locations.slice(0, 2).map((location) => (
-            <LocationCard key={location.id} location={location} />
+            <LocationCard
+              key={location.id}
+              location={location}
+              serviceNames={location.availableServices
+                .map((slug) => serviceNameBySlug.get(slug))
+                .filter((name): name is string => Boolean(name))}
+            />
           ))}
         </div>
       </div>
