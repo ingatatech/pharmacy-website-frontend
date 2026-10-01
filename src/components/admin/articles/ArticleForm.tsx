@@ -92,7 +92,7 @@ export function ArticleForm({ article, onSaved }: { article?: Article; onSaved?:
           <div className="flex items-center gap-3">
             <StatusBadge status={article.status} set="article" />
             <span className="text-xs text-slate-400">
-              by {article.author.fullName}
+              by {article.author?.fullName}
               {article.reviewer && ` · reviewed by ${article.reviewer.fullName}`}
             </span>
           </div>
