@@ -6,7 +6,7 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronDown, LogOut, Menu, Settings, User, X } from "lucide-react";
-import type { Article, Service } from "@/types";
+import type { Service } from "@/types";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { UserMenu } from "@/components/auth/UserMenu";
 import { LanguageSwitcher, MobileLanguageSwitcher } from "@/components/LanguageSwitcher";
@@ -22,13 +22,7 @@ type DropdownItem = { href: string; label: string };
 // no page behind the label to point it at.
 type NavLink = { href?: string; label: string; dropdown?: DropdownItem[] };
 
-export function Navbar({
-  services = [],
-  articles = [],
-}: {
-  services?: Service[];
-  articles?: Article[];
-}) {
+export function Navbar({ services = [] }: { services?: Service[] }) {
   const pathname = usePathname();
   const router = useRouter();
   const { user, logout, ready } = useAuth();
@@ -64,14 +58,6 @@ export function Navbar({
       dropdown: services.slice(0, 6).map((s) => ({ href: `/services/${s.slug}`, label: s.name })),
     },
     { href: "/products", label: "Products" },
-    {
-      href: "/articles",
-      label: "Blog",
-      dropdown: [...articles]
-        .sort((a, b) => new Date(b.publishedAt || b.createdAt).getTime() - new Date(a.publishedAt || a.createdAt).getTime())
-        .slice(0, 5)
-        .map((a) => ({ href: `/articles/${a.slug}`, label: a.title })),
-    },
     // A grouping label with no page of its own, so no href and no "View all"
     // footer. Every child here is a real route.
     {

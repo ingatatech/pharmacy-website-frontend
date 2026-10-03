@@ -105,27 +105,6 @@ export function Hero({
               <T text="Browse services" />
             </Link>
           </motion.div>
-
-          {/* Mobile gets its own inline trust badge instead of losing the
-              content entirely — the floating card below is absolutely
-              positioned and would overlap the headline at narrow widths,
-              so this sits safely in normal flow under the CTAs instead. */}
-          <motion.div
-            {...fadeUp(0.6)}
-            className="mt-8 inline-flex items-center gap-3 rounded-xl bg-white/95 p-3.5 shadow-lg backdrop-blur-md sm:hidden"
-          >
-            <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-teal-100 text-teal-800">
-              <ShieldCheck className="h-5 w-5" strokeWidth={1.75} />
-            </span>
-            <div>
-              <p className="font-display text-sm font-semibold text-slate-900">
-                <T text="Licensed pharmacists" />
-              </p>
-              <p className="text-xs text-slate-500">
-                <T text="On every shift" />
-              </p>
-            </div>
-          </motion.div>
         </div>
       </div>
 

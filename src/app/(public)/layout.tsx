@@ -9,7 +9,7 @@ import { AnnouncementBanner } from "@/components/AnnouncementBanner";
 import { apiFetch } from "@/lib/api";
 import { jsonLd } from "@/lib/json-ld";
 import { SITE_URL } from "@/lib/site";
-import type { Article, Service, SiteSetting } from "@/types";
+import type { Service, SiteSetting } from "@/types";
 import type { ReactNode } from "react";
 
 async function getSiteSettings(): Promise<SiteSetting | null> {
@@ -32,16 +32,8 @@ async function getServices(): Promise<Service[]> {
   }
 }
 
-async function getArticles(): Promise<Article[]> {
-  try {
-    return await apiFetch<Article[]>("/api/articles", { next: { revalidate: 300 } });
-  } catch {
-    return [];
-  }
-}
-
 export default async function PublicLayout({ children }: { children: ReactNode }) {
-  const [settings, services, articles] = await Promise.all([getSiteSettings(), getServices(), getArticles()]);
+  const [settings, services] = await Promise.all([getSiteSettings(), getServices()]);
 
   const sameAs = [
     settings?.facebookUrl,
@@ -66,7 +58,7 @@ export default async function PublicLayout({ children }: { children: ReactNode }
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(structuredData) }} />
       <ScrollProgressBar />
-      <Navbar services={services} articles={articles} />
+      <Navbar services={services} />
       <main className="flex-1 pt-20">
         {settings?.announcementActive && settings.announcementMessage && (
           <AnnouncementBanner message={settings.announcementMessage} />
