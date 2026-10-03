@@ -77,6 +77,8 @@ export default async function ProductDetailPage({
         title={product.name}
         variant="pattern"
         image="/images/product-hero-bg.jpg"
+        backHref="/products"
+        backLabel="All products"
       />
 
       <section className="bg-slate-50">

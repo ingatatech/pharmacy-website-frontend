@@ -57,7 +57,12 @@ export default async function ServiceDetailPage({
 
   return (
     <>
-      <PageHeader eyebrow={service.category?.name || "Service"} title={service.name} />
+      <PageHeader
+        eyebrow={service.category?.name || "Service"}
+        title={service.name}
+        backHref="/services"
+        backLabel="All services"
+      />
 
       <section className="bg-slate-50">
         <div className="mx-auto grid max-w-6xl gap-12 px-4 py-16 sm:px-6 md:grid-cols-[1.2fr_1fr] md:py-24">

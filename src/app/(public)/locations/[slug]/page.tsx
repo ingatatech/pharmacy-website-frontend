@@ -77,6 +77,8 @@ export default async function LocationDetailPage({
         description={location.description || undefined}
         variant="image"
         image={location.photoUrl ? resolveUploadUrl(location.photoUrl) : undefined}
+        backHref="/locations"
+        backLabel="All branches"
       />
 
       <section className="bg-slate-50">

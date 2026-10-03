@@ -52,7 +52,12 @@ export default async function ArticleDetailPage({
 
   return (
     <>
-      <PageHeader eyebrow={article.category || "Blog"} title={article.title} />
+      <PageHeader
+        eyebrow={article.category || "Blog"}
+        title={article.title}
+        backHref="/articles"
+        backLabel="All articles"
+      />
 
       <section className="bg-slate-50">
         <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 md:py-24">

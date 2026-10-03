@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronRight, Pill } from "lucide-react";
+import { ChevronLeft, ChevronRight, Pill } from "lucide-react";
 import { CapsuleMotif } from "./home/CapsuleMotif";
 import { T } from "@/lib/language-context";
 
@@ -25,12 +25,16 @@ export function PageHeader({
   description,
   variant = "light",
   image = "/images/page-bg.jpg",
+  backHref,
+  backLabel = "Back",
 }: {
   eyebrow?: string;
   title: string;
   description?: string;
   variant?: "light" | "image" | "pattern";
   image?: string;
+  backHref?: string;
+  backLabel?: string;
 }) {
   const dark = variant === "image" || variant === "pattern";
   // The "pattern" wash is much lighter than "image"'s near-opaque scrim
@@ -78,6 +82,21 @@ export function PageHeader({
       )}
 
       <div className="relative mx-auto max-w-6xl px-4 py-14 sm:px-6 md:py-20">
+        {/* A real link to the parent listing, not router.back(). Back is
+            unavailable when the page was reached directly — a shared or
+            indexed URL, a refresh, a typed address — and would then either
+            do nothing or drop the visitor off the site entirely. A fixed
+            href always resolves, and stays crawlable. */}
+        {backHref && (
+          <Link
+            href={backHref}
+            className={`group mb-4 inline-flex items-center gap-1 rounded-sm text-sm font-medium transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-teal-500 ${dark ? `text-white/70 hover:text-white ${shadow}` : "text-slate-500 hover:text-slate-900"}`}
+          >
+            <ChevronLeft className="h-4 w-4 transition-transform duration-200 group-hover:-translate-x-0.5" />
+            <T text={backLabel} />
+          </Link>
+        )}
+
         <nav
           aria-label="Breadcrumb"
           className={`flex min-w-0 items-center gap-2 text-sm ${dark ? "text-white/60" : "text-slate-500"} ${shadow}`}
