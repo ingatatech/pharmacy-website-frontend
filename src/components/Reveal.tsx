@@ -13,9 +13,15 @@ export function Reveal({
   className?: string;
 }) {
   const ref = useRef<HTMLDivElement>(null);
-  const [visible, setVisible] = useState(
-    () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches
-  );
+  // Starts false to match the server-rendered markup exactly. Reading
+  // matchMedia() in the initializer made the first client render disagree
+  // with the SSR HTML whenever the visitor has "reduce motion" switched on
+  // (server: false, client: true), which React reports as a hydration
+  // mismatch it cannot patch. That check was redundant anyway — the
+  // prefers-reduced-motion block in globals.css already forces .reveal
+  // visible with no transition, so the reduced-motion case is handled in
+  // CSS where it needs no hydration at all.
+  const [visible, setVisible] = useState(false);
 
   useEffect(() => {
     const node = ref.current;
