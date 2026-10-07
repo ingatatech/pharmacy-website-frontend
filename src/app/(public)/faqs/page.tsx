@@ -48,10 +48,16 @@ export default async function FaqsPage() {
       {faqs.length > 0 && (
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(structuredData) }} />
       )}
+      {/* Centre-aligned, with the breadcrumb cut to "FAQs". The heading
+          reads badly twice — PageHeader's default crumb echoes `title`
+          straight above itself, and the old "Help center" eyebrow was a third
+          way of saying the same thing. Title + one short line is the whole
+          header now. */}
       <PageHeader
-        eyebrow="Help center"
+        align="center"
+        crumb="FAQs"
         title="Frequently asked questions"
-        description="Answers to the questions we hear most about services, refills and our branches."
+        description="Answers to common questions about services, refills and branches."
       />
 
       <section className="bg-slate-50">

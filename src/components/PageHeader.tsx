@@ -27,6 +27,8 @@ export function PageHeader({
   image = "/images/page-bg.jpg",
   backHref,
   backLabel = "Back",
+  align = "left",
+  crumb,
 }: {
   eyebrow?: string;
   title: string;
@@ -35,12 +37,21 @@ export function PageHeader({
   image?: string;
   backHref?: string;
   backLabel?: string;
+  align?: "left" | "center";
+  /**
+   * Short label for the breadcrumb's current page. Defaults to `title`,
+   * which echoes the full heading straight above it — pass a short form
+   * ("FAQs") on headers where `title` is a sentence, otherwise the same
+   * words appear twice in four lines.
+   */
+  crumb?: string;
 }) {
   const dark = variant === "image" || variant === "pattern";
   // The "pattern" wash is much lighter than "image"'s near-opaque scrim
   // (matching the homepage Hero's own lighter treatment), so its text needs
   // the same shadow Hero uses to stay legible over the photo underneath.
   const shadow = variant === "pattern" ? "text-shadow-nav" : "";
+  const center = align === "center";
 
   return (
     <section className={`relative overflow-hidden border-b ${dark ? "border-teal-950" : "border-slate-200 bg-slate-50"}`}>
@@ -81,7 +92,7 @@ export function PageHeader({
         </div>
       )}
 
-      <div className="relative mx-auto max-w-6xl px-4 py-14 sm:px-6 md:py-20">
+      <div className={`relative mx-auto max-w-6xl px-4 py-14 sm:px-6 md:py-20 ${center ? "text-center" : ""}`}>
         {/* A real link to the parent listing, not router.back(). Back is
             unavailable when the page was reached directly — a shared or
             indexed URL, a refresh, a typed address — and would then either
@@ -99,7 +110,7 @@ export function PageHeader({
 
         <nav
           aria-label="Breadcrumb"
-          className={`flex min-w-0 items-center gap-2 text-sm ${dark ? "text-white/60" : "text-slate-500"} ${shadow}`}
+          className={`flex min-w-0 items-center gap-2 text-sm ${center ? "justify-center" : ""} ${dark ? "text-white/60" : "text-slate-500"} ${shadow}`}
         >
           <Link
             href="/"
@@ -109,12 +120,12 @@ export function PageHeader({
           </Link>
           <ChevronRight className="h-3.5 w-3.5 shrink-0" />
           <span className={`min-w-0 truncate ${dark ? "text-white" : "text-slate-900"}`}>
-            <T text={title} />
+            <T text={crumb ?? title} />
           </span>
         </nav>
 
         {eyebrow && (
-          <div className={`mt-6 flex items-center gap-2.5 ${shadow}`}>
+          <div className={`mt-6 flex items-center gap-2.5 ${center ? "justify-center" : ""} ${shadow}`}>
             {variant === "pattern" && (
               <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-white/15 text-emerald-300 ring-1 ring-white/25 backdrop-blur-sm">
                 <Pill className="h-4 w-4" strokeWidth={2} />
@@ -130,9 +141,13 @@ export function PageHeader({
         >
           <T text={title} />
         </h1>
-        {variant === "pattern" && <span aria-hidden className="mt-4 block h-1 w-14 rounded-full bg-gold" />}
+        {variant === "pattern" && (
+          <span aria-hidden className={`mt-4 block h-1 w-14 rounded-full bg-gold ${center ? "mx-auto" : ""}`} />
+        )}
         {description && (
-          <p className={`mt-4 max-w-2xl text-base leading-relaxed ${dark ? "text-white/70" : "text-slate-600"} ${shadow}`}>
+          <p
+            className={`mt-4 max-w-2xl text-base leading-relaxed ${center ? "mx-auto" : ""} ${dark ? "text-white/70" : "text-slate-600"} ${shadow}`}
+          >
             <T text={description} />
           </p>
         )}
