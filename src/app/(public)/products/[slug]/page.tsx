@@ -75,8 +75,14 @@ export default async function ProductDetailPage({
       <PageHeader
         eyebrow={product.category?.name || "Product"}
         title={product.name}
+        // "pattern" rather than the listing page's "image": its wash runs
+        // 25-55% teal instead of 80-95%, so the photo actually reads through
+        // instead of dissolving into a flat tint. The image prop is omitted
+        // on purpose to fall back to page-bg.jpg — the previous
+        // product-hero-bg.jpg was 331x220, which "fill" stretched roughly 6x
+        // across the hero and blur-[2px] then smeared into an unreadable
+        // mush, so the hero looked like it had no background at all.
         variant="pattern"
-        image="/images/product-hero-bg.jpg"
         backHref="/products"
         backLabel="All products"
       />

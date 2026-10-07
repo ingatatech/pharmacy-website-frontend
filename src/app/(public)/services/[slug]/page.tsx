@@ -57,9 +57,14 @@ export default async function ServiceDetailPage({
 
   return (
     <>
+      {/* Same hero treatment as the product detail pages: "pattern" gives the
+          photo a 25-55% teal wash so it actually reads through, where the
+          default "light" variant was a flat slate-50 block with no image at
+          all. image is left unset to fall back to page-bg.jpg. */}
       <PageHeader
         eyebrow={service.category?.name || "Service"}
         title={service.name}
+        variant="pattern"
         backHref="/services"
         backLabel="All services"
       />
