@@ -82,7 +82,13 @@ export function Navbar({ services = [] }: { services?: Service[] }) {
             : "bg-transparent"
         }`}
       >
-        <div className="mx-auto flex h-full max-w-6xl items-center justify-between px-4 sm:px-6">
+        {/* Full-width rather than the site's max-w-6xl centred container.
+            Centring left the profile circle stranded ~168px from the screen
+            edge on wide monitors — the (viewport - 1152px) / 2 gutter plus
+            px-6. Spreading edge to edge with px keeps the avatar close to the
+            right edge (and the logo to the left). Below 1152px max-w-6xl had
+            no effect anyway, so nothing moves on tablets or phones. */}
+        <div className="flex h-full items-center justify-between px-4 sm:px-6">
           <Link href="/" className="flex items-center" onClick={() => setMenuOpen(false)}>
             <span className="flex items-center rounded-md bg-white px-2.5 py-1.5">
               <Image
