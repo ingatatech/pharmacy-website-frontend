@@ -6,6 +6,8 @@ import { useTranslated } from "@/lib/language-context";
 
 const RADIUS = 19;
 const CIRCUMFERENCE = 2 * Math.PI * RADIUS;
+/** How far the page must scroll before the control fades in. */
+const REVEAL_AT = 120;
 
 export function ScrollToTop() {
   const [progress, setProgress] = useState(0);
@@ -17,11 +19,22 @@ export function ScrollToTop() {
       const scrollTop = window.scrollY;
       const docHeight = document.documentElement.scrollHeight - window.innerHeight;
       setProgress(docHeight > 0 ? Math.min(scrollTop / docHeight, 1) : 0);
-      setVisible(scrollTop > 480);
+      // Reveal after a small scroll, not the old 480px. That threshold was
+      // over a viewport and a half — the homepage is long enough to clear it
+      // easily, but on inner pages you could reach the footer without ever
+      // seeing the button, which is why it read as homepage-only. Capped to
+      // the page's own scrollable height so short pages reveal it too.
+      setVisible(docHeight > 0 && scrollTop >= Math.min(REVEAL_AT, docHeight));
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
+    // The reveal now depends on docHeight, which a resize changes without
+    // firing a scroll event.
+    window.addEventListener("resize", onScroll);
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
   }, []);
 
   return (
