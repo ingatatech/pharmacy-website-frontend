@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { ArrowRight, CheckCircle2 } from "lucide-react";
+import { ArrowRight, CheckCircle2, Clock, Mail, MapPin, Phone } from "lucide-react";
 import { apiFetch, ApiError } from "@/lib/api";
-import type { Service } from "@/types";
+import type { PharmacyLocation, Service, SiteSetting } from "@/types";
 import { PageHeader } from "@/components/PageHeader";
 import { serviceIcon } from "@/components/services/ServiceCard";
+import { groupOpeningHours } from "@/lib/opening-hours";
 import { T } from "@/lib/language-context";
 
 async function getService(slug: string): Promise<Service | null> {
@@ -15,6 +16,23 @@ async function getService(slug: string): Promise<Service | null> {
     if (error instanceof ApiError && error.status === 404) {
       return null;
     }
+    return null;
+  }
+}
+
+async function getLocations(): Promise<PharmacyLocation[]> {
+  try {
+    return await apiFetch<PharmacyLocation[]>("/api/locations?limit=50", { next: { revalidate: 300 } });
+  } catch {
+    return [];
+  }
+}
+
+async function getSiteSettings(): Promise<SiteSetting | null> {
+  try {
+    const settings = await apiFetch<SiteSetting>("/api/site-settings", { next: { revalidate: 300 } });
+    return settings?.id ? settings : null;
+  } catch {
     return null;
   }
 }
@@ -49,11 +67,28 @@ export default async function ServiceDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const service = await getService(slug);
+  const [service, locations, settings] = await Promise.all([
+    getService(slug),
+    getLocations(),
+    getSiteSettings(),
+  ]);
 
   if (!service) {
     notFound();
   }
+
+  // Branches that actually offer this service — the location model tags each
+  // branch with the slugs it carries, so this stays correct as branches are
+  // added or drop a service without any hard-coded slug check here.
+  const branches = locations.filter(
+    (location) => location.isActive && location.availableServices.includes(service.slug)
+  );
+  // Narrowed rather than asserted so the render below doesn't need `!`.
+  const branchesWithHours = branches.filter(
+    (branch): branch is PharmacyLocation & { openingHours: NonNullable<PharmacyLocation["openingHours"]> } =>
+      branch.openingHours !== null
+  );
+  const contact = settings?.phone || settings?.email || settings?.address;
 
   return (
     <>
@@ -135,6 +170,123 @@ export default async function ServiceDetailPage({
           </div>
         </div>
       </section>
+
+      {/* Location / operating hours / contact for this specific service. The
+          branch list is filtered by availableServices, so a service with no
+          branch carrying it renders only the contact card rather than an
+          empty "Location" heading. */}
+      {(branches.length > 0 || contact) && (
+        <section className="border-t border-slate-200 bg-white">
+          <div className="mx-auto max-w-6xl px-4 py-14 sm:px-6 md:py-16">
+            <h2 className="font-display text-2xl font-semibold text-slate-900">
+              <T text="Plan your visit" />
+            </h2>
+
+            <div className="mt-8 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+              {branches.length > 0 && (
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-teal-800">
+                    <MapPin className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
+                  </span>
+                  <h3 className="mt-4 font-display text-base font-semibold text-slate-900">
+                    <T text="Location" />
+                  </h3>
+                  <ul className="mt-3 space-y-4">
+                    {branches.map((branch) => (
+                      <li key={branch.id}>
+                        <Link
+                          href={`/locations/${branch.slug}`}
+                          className="text-sm font-medium text-slate-900 transition-colors duration-200 hover:text-teal-700"
+                        >
+                          {branch.branchName}
+                        </Link>
+                        <p className="mt-0.5 text-sm leading-relaxed text-slate-600">{branch.address}</p>
+                        {branch.telephone && (
+                          <a
+                            href={`tel:${branch.telephone}`}
+                            className="mt-0.5 block text-sm text-slate-600 transition-colors duration-200 hover:text-teal-700"
+                          >
+                            {branch.telephone}
+                          </a>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {branchesWithHours.length > 0 && (
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-teal-800">
+                    <Clock className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
+                  </span>
+                  <h3 className="mt-4 font-display text-base font-semibold text-slate-900">
+                    <T text="Operating hours" />
+                  </h3>
+                  <div className="mt-3 space-y-4">
+                    {branchesWithHours.map((branch) => (
+                      <div key={branch.id}>
+                        {branchesWithHours.length > 1 && (
+                          <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">
+                            {branch.branchName}
+                          </p>
+                        )}
+                        <ul className="mt-1 space-y-1">
+                          {groupOpeningHours(branch.openingHours).map((line) => (
+                            <li key={line} className="text-sm text-slate-600">
+                              {line}
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {contact && (
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 p-6">
+                  <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-white text-teal-800">
+                    <Phone className="h-5 w-5" strokeWidth={1.75} aria-hidden="true" />
+                  </span>
+                  <h3 className="mt-4 font-display text-base font-semibold text-slate-900">
+                    <T text="Contact information" />
+                  </h3>
+                  <ul className="mt-3 space-y-2">
+                    {settings?.phone && (
+                      <li>
+                        <a
+                          href={`tel:${settings.phone}`}
+                          className="text-sm text-slate-600 transition-colors duration-200 hover:text-teal-700"
+                        >
+                          {settings.phone}
+                        </a>
+                      </li>
+                    )}
+                    {settings?.email && (
+                      <li>
+                        <a
+                          href={`mailto:${settings.email}`}
+                          className="inline-flex items-center gap-1.5 text-sm text-slate-600 transition-colors duration-200 hover:text-teal-700"
+                        >
+                          <Mail className="h-4 w-4 shrink-0 text-teal-700" strokeWidth={1.75} aria-hidden="true" />
+                          {settings.email}
+                        </a>
+                      </li>
+                    )}
+                    {settings?.address && (
+                      <li className="flex items-start gap-1.5 text-sm leading-relaxed text-slate-600">
+                        <MapPin className="mt-0.5 h-4 w-4 shrink-0 text-teal-700" strokeWidth={1.75} aria-hidden="true" />
+                        {settings.address}
+                      </li>
+                    )}
+                  </ul>
+                </div>
+              )}
+            </div>
+          </div>
+        </section>
+      )}
     </>
   );
 }
