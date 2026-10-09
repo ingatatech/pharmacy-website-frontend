@@ -1,10 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import { ChevronLeft, ChevronRight, Pill } from "lucide-react";
+import { ChevronLeft, Pill } from "lucide-react";
 import { CapsuleMotif } from "./home/CapsuleMotif";
 import { T } from "@/lib/language-context";
 
-// The interior-page equivalent of the homepage Hero: a compact breadcrumb
+// The interior-page equivalent of the homepage Hero: a compact page
 // banner instead of the full-bleed dark hero, since only the homepage has
 // a dark image directly behind the header for the nav to float over (so
 // the "image" variant here sits below a solid nav bar rather than under a
@@ -28,7 +28,6 @@ export function PageHeader({
   backHref,
   backLabel = "Back",
   align = "left",
-  crumb,
 }: {
   eyebrow?: string;
   title: string;
@@ -38,13 +37,6 @@ export function PageHeader({
   backHref?: string;
   backLabel?: string;
   align?: "left" | "center";
-  /**
-   * Short label for the breadcrumb's current page. Defaults to `title`,
-   * which echoes the full heading straight above it — pass a short form
-   * ("FAQs") on headers where `title` is a sentence, otherwise the same
-   * words appear twice in four lines.
-   */
-  crumb?: string;
 }) {
   const dark = variant === "image" || variant === "pattern";
   // The "pattern" wash is much lighter than "image"'s near-opaque scrim
@@ -107,22 +99,6 @@ export function PageHeader({
             <T text={backLabel} />
           </Link>
         )}
-
-        <nav
-          aria-label="Breadcrumb"
-          className={`flex min-w-0 items-center gap-2 text-sm ${center ? "justify-center" : ""} ${dark ? "text-white/60" : "text-slate-500"} ${shadow}`}
-        >
-          <Link
-            href="/"
-            className={`shrink-0 transition-colors duration-200 ${dark ? "hover:text-white" : "hover:text-slate-900"}`}
-          >
-            <T text="Home" />
-          </Link>
-          <ChevronRight className="h-3.5 w-3.5 shrink-0" />
-          <span className={`min-w-0 truncate ${dark ? "text-white" : "text-slate-900"}`}>
-            <T text={crumb ?? title} />
-          </span>
-        </nav>
 
         {eyebrow && (
           <div className={`mt-6 flex items-center gap-2.5 ${center ? "justify-center" : ""} ${shadow}`}>
