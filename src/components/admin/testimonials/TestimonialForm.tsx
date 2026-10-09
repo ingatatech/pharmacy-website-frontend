@@ -18,6 +18,7 @@ export function TestimonialForm({ testimonial }: { testimonial?: Testimonial }) 
   const showToast = useToast();
   const [customerName, setCustomerName] = useState(testimonial?.customerName || "");
   const [customerCategory, setCustomerCategory] = useState(testimonial?.customerCategory || "");
+  const [starRating, setStarRating] = useState(testimonial?.starRating ?? 5);
   const [testimonialText, setTestimonialText] = useState(testimonial?.testimonialText || "");
   const [photoUrl, setPhotoUrl] = useState<string | null>(testimonial?.photoUrl ?? null);
   const [displayOrder, setDisplayOrder] = useState(testimonial?.displayOrder ?? 0);
@@ -32,6 +33,7 @@ export function TestimonialForm({ testimonial }: { testimonial?: Testimonial }) 
     const payload = {
       customerName,
       customerCategory: customerCategory || null,
+      starRating,
       testimonialText,
       photoUrl,
       displayOrder,
@@ -89,6 +91,24 @@ export function TestimonialForm({ testimonial }: { testimonial?: Testimonial }) 
           placeholder="e.g. Chronic-care customer"
           className={`mt-1.5 ${inputClass}`}
         />
+      </div>
+
+      <div>
+        <label htmlFor="starRating" className={labelClass}>
+          Star rating
+        </label>
+        <select
+          id="starRating"
+          value={starRating}
+          onChange={(e) => setStarRating(Number(e.target.value))}
+          className={`mt-1.5 w-36 ${inputClass}`}
+        >
+          {[5, 4, 3, 2, 1].map((value) => (
+            <option key={value} value={value}>
+              {value} {value === 1 ? "star" : "stars"}
+            </option>
+          ))}
+        </select>
       </div>
 
       <div>

@@ -108,6 +108,7 @@ export interface Testimonial {
   customerCategory: string | null;
   testimonialText: string;
   photoUrl: string | null;
+  starRating: number;
   displayOrder: number;
   isPublished: boolean;
   createdAt: string;
