@@ -1,6 +1,7 @@
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { TopContactBar } from "@/components/TopContactBar";
 import { ScrollProgressBar } from "@/components/ScrollProgressBar";
 import { CookieConsentBanner } from "@/components/CookieConsentBanner";
 import { Analytics } from "@/components/Analytics";
@@ -58,8 +59,9 @@ export default async function PublicLayout({ children }: { children: ReactNode }
     <>
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: jsonLd(structuredData) }} />
       <ScrollProgressBar />
+      <TopContactBar settings={settings} />
       <Navbar services={services} />
-      <main className="flex-1 pt-20">
+      <main className="flex-1 pt-[5.25rem] sm:pt-[5.75rem]">
         {settings?.announcementActive && settings.announcementMessage && (
           <AnnouncementBanner message={settings.announcementMessage} />
         )}
@@ -73,3 +75,4 @@ export default async function PublicLayout({ children }: { children: ReactNode }
     </>
   );
 }
+
