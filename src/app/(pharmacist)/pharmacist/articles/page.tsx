@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { CheckCircle2, XCircle } from "lucide-react";
+import { CheckCircle2, XCircle, Plus } from "lucide-react";
 import { ApiError, apiFetch } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import { timeAgo } from "@/lib/text";
@@ -49,7 +49,7 @@ export default function PharmacistArticlesPage() {
       setToReject(null);
       showToast(
         "success",
-        action === "approve" ? `Approved "${article.title}".` : `Sent "${article.title}" back to draft.`
+        action === "approve" ? `Approved and published "${article.title}".` : `Sent "${article.title}" back to draft.`
       );
       // Refetch rather than splicing: the approve/reject responses omit the
       // nested author/reviewer relations this table renders.
@@ -115,6 +115,13 @@ export default function PharmacistArticlesPage() {
           <h1 className="font-display text-2xl font-semibold text-slate-900">Articles</h1>
           <p className="mt-1 text-sm text-slate-500">Medical content awaiting your sign-off before publication.</p>
         </div>
+        <Link
+          href="/pharmacist/articles/new"
+          className="inline-flex items-center gap-2 rounded-md bg-teal-800 px-4 py-2.5 text-sm font-semibold text-white transition-colors duration-200 hover:bg-teal-900"
+        >
+          <Plus className="h-4 w-4" />
+          New article
+        </Link>
       </div>
 
       <div className="mt-4 flex flex-wrap gap-2">

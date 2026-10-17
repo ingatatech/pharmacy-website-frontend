@@ -32,7 +32,7 @@ export default function EditArticlePage() {
     <div>
       <h1 className="font-display text-2xl font-semibold text-slate-900">Edit article</h1>
       <div className="mt-6">
-        <ArticleForm article={article} onSaved={setArticle} />
+        <ArticleForm article={article} onSavedAction={setArticle} />
       </div>
     </div>
   );

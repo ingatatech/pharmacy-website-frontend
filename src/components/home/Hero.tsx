@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, type MouseEvent } from "react";
+import { useCallback, useEffect, useRef, useState, type MouseEvent } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -11,11 +11,29 @@ import {
   useSpring,
   useTransform,
 } from "framer-motion";
-import { ArrowRight, ShieldCheck } from "lucide-react";
-import { T } from "@/lib/language-context";
+import { ArrowRight, ChevronLeft, ChevronRight, ShieldCheck } from "lucide-react";
+import { T, useTranslated } from "@/lib/language-context";
 import { WordReveal } from "@/components/WordReveal";
 
 const EASE = [0.16, 1, 0.3, 1] as const;
+
+// ---------------------------------------------------------------------------
+// HERO TEXT SLIDES — the background photo stays fixed; only this copy slides.
+// The first slide is the admin-editable hero copy from Site Settings; add or
+// edit the extra slides below to change the rest of the rotation.
+// ---------------------------------------------------------------------------
+const EXTRA_SLIDES: { headline: string; subheading: string }[] = [
+  {
+    headline: "Medication guidance you can trust",
+    subheading: "Talk to a licensed pharmacist about your prescriptions, side effects and interactions.",
+  },
+  {
+    headline: "Your health, close to home",
+    subheading: "Refills, vaccinations and everyday care at a branch near you.",
+  },
+];
+
+const AUTOPLAY_MS = 6000;
 
 function fadeUp(delay: number) {
   return {
@@ -34,6 +52,36 @@ export function Hero({
 }) {
   const sectionRef = useRef<HTMLElement>(null);
   const prefersReducedMotion = useReducedMotion();
+
+  const slides = [{ headline, subheading }, ...EXTRA_SLIDES];
+  const count = slides.length;
+
+  const [active, setActive] = useState(0);
+  const [paused, setPaused] = useState(false);
+
+  const paginate = useCallback(
+    (direction: number) => {
+      setActive((i) => (i + direction + count) % count);
+    },
+    [count],
+  );
+
+  const goTo = useCallback(
+    (index: number) => setActive(((index % count) + count) % count),
+    [count],
+  );
+
+  // Auto-advance, paused on hover/focus and disabled entirely when the visitor
+  // has asked for reduced motion (the manual arrows/dots still work).
+  useEffect(() => {
+    if (prefersReducedMotion || paused || count <= 1) return;
+    const id = window.setInterval(() => setActive((i) => (i + 1) % count), AUTOPLAY_MS);
+    return () => window.clearInterval(id);
+  }, [prefersReducedMotion, paused, count]);
+
+  const prevLabel = useTranslated("Previous slide");
+  const nextLabel = useTranslated("Next slide");
+  const goToLabel = useTranslated("Go to slide");
 
   // Scroll-linked parallax: the trust card drifts down slightly slower
   // than the page scrolls past the hero, giving it a sense of depth.
@@ -59,15 +107,22 @@ export function Hero({
   function handleMouseLeave() {
     mouseX.set(0);
     mouseY.set(0);
+    setPaused(false);
   }
 
   return (
     <section
       ref={sectionRef}
       onMouseMove={handleMouseMove}
+      onMouseEnter={() => setPaused(true)}
       onMouseLeave={handleMouseLeave}
-      className="relative -mt-20 overflow-hidden"
+      onFocusCapture={() => setPaused(true)}
+      onBlurCapture={() => setPaused(false)}
+      className="relative -mt-20 overflow-hidden bg-teal-900"
+      aria-roledescription="carousel"
+      aria-label="Pharmacy highlights"
     >
+      {/* The background photo is fixed — only the copy over it slides. */}
       <Image
         src="/images/page-bg.jpg"
         alt=""
@@ -84,12 +139,33 @@ export function Hero({
 
       <div className="relative mx-auto max-w-6xl px-4 pb-20 pt-32 sm:px-6 sm:pb-24 sm:pt-36 lg:pb-28 lg:pt-40">
         <div className="max-w-3xl">
-          <h1 className="font-display text-5xl font-bold leading-[1.02] tracking-tight text-white text-shadow-nav sm:text-6xl lg:text-7xl">
-            <WordReveal text={headline} />
-          </h1>
-          <p className="mt-6 max-w-md text-base font-medium leading-relaxed text-white text-shadow-nav sm:text-lg">
-            <WordReveal text={subheading} delay={0.15} />
-          </p>
+          {/* All slides share one grid cell, so the tallest reserves the
+              height and the controls below never jump as copy changes. */}
+          <div className="grid">
+            {slides.map((slide, index) => {
+              const isActive = index === active;
+              const Heading = isActive ? "h1" : "p";
+              return (
+                <div
+                  key={index}
+                  aria-hidden={!isActive}
+                  className={`col-start-1 row-start-1 transition-[opacity,transform] duration-700 ease-out ${
+                    isActive
+                      ? "translate-x-0 opacity-100"
+                      : `pointer-events-none opacity-0 ${index < active ? "-translate-x-10" : "translate-x-10"}`
+                  }`}
+                >
+                  <Heading className="font-display text-5xl font-bold leading-[1.02] tracking-tight text-white text-shadow-nav sm:text-6xl lg:text-7xl">
+                    {isActive ? <WordReveal text={slide.headline} /> : slide.headline}
+                  </Heading>
+                  <p className="mt-6 max-w-md text-base font-medium leading-relaxed text-white text-shadow-nav sm:text-lg">
+                    {isActive ? <WordReveal text={slide.subheading} delay={0.15} /> : slide.subheading}
+                  </p>
+                </div>
+              );
+            })}
+          </div>
+
           <motion.div {...fadeUp(0.5)} className="mt-10 flex flex-wrap items-center gap-6">
             <Link
               href="/prescription-refill"
@@ -105,6 +181,45 @@ export function Hero({
               <T text="Browse services" />
             </Link>
           </motion.div>
+
+          {/* Slider controls: dots on the left, prev/next arrows on the right. */}
+          {count > 1 && (
+            <motion.div {...fadeUp(0.6)} className="mt-12 flex items-center gap-6">
+              <div className="flex items-center gap-2.5">
+                {slides.map((_, index) => (
+                  <button
+                    key={index}
+                    type="button"
+                    onClick={() => goTo(index)}
+                    aria-label={`${goToLabel} ${index + 1}`}
+                    aria-current={index === active}
+                    className={`h-2.5 rounded-full transition-all duration-300 ${
+                      index === active ? "w-7 bg-white" : "w-2.5 bg-white/50 hover:bg-white/80"
+                    }`}
+                  />
+                ))}
+              </div>
+
+              <div className="flex items-center gap-3">
+                <button
+                  type="button"
+                  onClick={() => paginate(-1)}
+                  aria-label={prevLabel}
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/40 text-white backdrop-blur-sm transition-colors duration-200 hover:bg-white/15"
+                >
+                  <ChevronLeft className="h-5 w-5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => paginate(1)}
+                  aria-label={nextLabel}
+                  className="flex h-10 w-10 items-center justify-center rounded-full border border-white/40 text-white backdrop-blur-sm transition-colors duration-200 hover:bg-white/15"
+                >
+                  <ChevronRight className="h-5 w-5" />
+                </button>
+              </div>
+            </motion.div>
+          )}
         </div>
       </div>
 

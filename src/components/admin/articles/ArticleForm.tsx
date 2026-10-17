@@ -16,7 +16,7 @@ const inputClass =
   "w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 placeholder:text-slate-400 transition-colors duration-200 focus:border-teal-600 focus:outline-none focus:ring-1 focus:ring-teal-600";
 const labelClass = "block text-sm font-medium text-slate-700";
 
-export function ArticleForm({ article, onSaved }: { article?: Article; onSaved?: (article: Article) => void }) {
+export function ArticleForm({ article, onSavedAction }: { article?: Article; onSavedAction?: (article: Article) => void }) {
   const { token, user } = useAuth();
   const router = useRouter();
   const showToast = useToast();
@@ -32,11 +32,9 @@ export function ArticleForm({ article, onSaved }: { article?: Article; onSaved?:
   const [workflowBusy, setWorkflowBusy] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
 
-  // This form is only rendered by admin-only routes, so a pharmacist_reviewer
-  // can never reach it — they review from /pharmacist/articles. The role check
-  // stays as a defence in depth rather than an access control.
-  const isAdmin = user?.role === "admin";
-  const readOnly = !isAdmin;
+  // Both admin and pharmacist_reviewer can now create and edit articles
+  const canEdit = user?.role === "admin" || user?.role === "pharmacist_reviewer";
+  const readOnly = !canEdit;
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -58,7 +56,7 @@ export function ArticleForm({ article, onSaved }: { article?: Article; onSaved?:
       if (article) {
         const updated = await apiFetch<Article>(`/api/articles/${article.id}`, { method: "PATCH", body: JSON.stringify(payload) }, token);
         showToast("success", "Article updated.");
-        onSaved?.(updated);
+        onSavedAction?.(updated);
       } else {
         const created = await apiFetch<Article>("/api/articles", { method: "POST", body: JSON.stringify(payload) }, token);
         showToast("success", "Article created as a draft.");
@@ -77,7 +75,7 @@ export function ArticleForm({ article, onSaved }: { article?: Article; onSaved?:
     try {
       const updated = await apiFetch<Article>(`/api/articles/${article.id}/${action}`, { method: "POST" }, token);
       showToast("success", "Article status updated.");
-      onSaved?.(updated);
+      onSavedAction?.(updated);
     } catch (error) {
       showToast("error", error instanceof ApiError ? error.message : "Action failed.");
     } finally {
@@ -97,7 +95,7 @@ export function ArticleForm({ article, onSaved }: { article?: Article; onSaved?:
             </span>
           </div>
           <div className="flex flex-wrap gap-2">
-            {isAdmin && article.status === "draft" && (
+            {canEdit && article.status === "draft" && (
               <button
                 type="button"
                 onClick={() => runWorkflowAction("submit-for-review")}
@@ -108,7 +106,7 @@ export function ArticleForm({ article, onSaved }: { article?: Article; onSaved?:
                 Submit for review
               </button>
             )}
-            {isAdmin && article.status === "approved" && (
+            {canEdit && article.status === "approved" && (
               <button
                 type="button"
                 onClick={() => runWorkflowAction("publish")}
