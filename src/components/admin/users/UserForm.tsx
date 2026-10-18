@@ -12,7 +12,6 @@ const inputClass =
 const labelClass = "block text-sm font-medium text-slate-700";
 
 const ROLES: { value: UserRole; label: string }[] = [
-  { value: "admin", label: "Admin" },
   { value: "pharmacist_reviewer", label: "Pharmacist Reviewer" },
   { value: "customer", label: "Customer" },
 ];
@@ -28,6 +27,7 @@ export function UserForm({ user }: { user?: User }) {
   const [saving, setSaving] = useState(false);
 
   const isSelf = user?.id === currentUser?.id;
+  const isAdminUser = user?.role === "admin";
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -36,7 +36,8 @@ export function UserForm({ user }: { user?: User }) {
 
     try {
       if (user) {
-        const payload: Record<string, string> = { fullName, email, role };
+        const payload: Record<string, string> = { fullName, email };
+        if (!isAdminUser) payload.role = role;
         if (password) payload.password = password;
         await apiFetch(`/api/admin/users/${user.id}`, { method: "PATCH", body: JSON.stringify(payload) }, token);
         showToast("success", "User updated.");
@@ -85,25 +86,36 @@ export function UserForm({ user }: { user?: User }) {
         />
       </div>
 
-      <div>
-        <label htmlFor="role" className={labelClass}>
-          Role
-        </label>
-        <select
-          id="role"
-          value={role}
-          onChange={(e) => setRole(e.target.value as UserRole)}
-          disabled={isSelf}
-          className={`mt-1.5 ${inputClass} disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400`}
-        >
-          {ROLES.map((r) => (
-            <option key={r.value} value={r.value}>
-              {r.label}
-            </option>
-          ))}
-        </select>
-        {isSelf && <p className="mt-1 text-xs text-slate-400">You can&apos;t change your own role.</p>}
-      </div>
+      {!isAdminUser && (
+        <div>
+          <label htmlFor="role" className={labelClass}>
+            Role
+          </label>
+          <select
+            id="role"
+            value={role}
+            onChange={(e) => setRole(e.target.value as UserRole)}
+            disabled={isSelf}
+            className={`mt-1.5 ${inputClass} disabled:cursor-not-allowed disabled:bg-slate-50 disabled:text-slate-400`}
+          >
+            {ROLES.map((r) => (
+              <option key={r.value} value={r.value}>
+                {r.label}
+              </option>
+            ))}
+          </select>
+          {isSelf && <p className="mt-1 text-xs text-slate-400">You can&apos;t change your own role.</p>}
+        </div>
+      )}
+      {isAdminUser && (
+        <div>
+          <label className={labelClass}>Role</label>
+          <div className="mt-1.5 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-600">
+            Admin
+          </div>
+          <p className="mt-1 text-xs text-slate-400">Admin accounts cannot change roles.</p>
+        </div>
+      )}
 
       <div className="flex justify-end gap-3 border-t border-slate-100 pt-5">
         <button
