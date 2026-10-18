@@ -1,7 +1,9 @@
 import Link from "next/link";
+import Image from "next/image";
 import { HeartPulse, Pill, Stethoscope, Syringe } from "lucide-react";
 import type { Service } from "@/types";
 import { T } from "@/lib/language-context";
+import { resolveUploadUrl } from "@/lib/api";
 
 export function serviceIcon(service: Service, className: string) {
   const text = `${service.name} ${service.shortDescription}`.toLowerCase();
@@ -30,9 +32,21 @@ export function ServiceCard({ service }: { service: Service }) {
       />
 
       <div className="relative z-10">
-        <div className="flex h-14 w-14 sm:h-20 sm:w-20 items-center justify-center rounded-2xl bg-slate-100 text-ink transition-colors duration-300 group-hover:bg-white">
-          {serviceIcon(service, "h-7 w-7 sm:h-9 sm:w-9")}
-        </div>
+        {service.imageUrl ? (
+          <div className="relative h-14 w-14 sm:h-20 sm:w-20 overflow-hidden rounded-2xl bg-slate-100 transition-colors duration-300 group-hover:bg-white">
+            <Image
+              src={resolveUploadUrl(service.imageUrl)}
+              alt={service.name}
+              fill
+              sizes="80px"
+              className="object-cover"
+            />
+          </div>
+        ) : (
+          <div className="flex h-14 w-14 sm:h-20 sm:w-20 items-center justify-center rounded-2xl bg-slate-100 text-ink transition-colors duration-300 group-hover:bg-white">
+            {serviceIcon(service, "h-7 w-7 sm:h-9 sm:w-9")}
+          </div>
+        )}
         <h3 className="mt-6 sm:mt-8 font-display text-xl sm:text-2xl font-semibold text-slate-900 transition-colors duration-300 group-hover:text-white">
           <T text={service.name} />
         </h3>
