@@ -1,4 +1,11 @@
-const API_URL = process.env.NEXT_PUBLIC_API_URL;
+// The backend base URL, read from either name for convenience.
+//
+// NEXT_PUBLIC_API_URL is the one that matters: this module is imported by
+// client components ("use client"), and Next.js only inlines NEXT_PUBLIC_*
+// variables into the browser bundle. A variable named NEXT_API_URL is read
+// fine during SSR/build, but is NOT available in the browser — so a
+// client-only build still needs NEXT_PUBLIC_API_URL to be set.
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? process.env.NEXT_API_URL;
 
 export class ApiError extends Error {
   status: number;

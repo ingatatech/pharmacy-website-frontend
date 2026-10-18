@@ -1,9 +1,11 @@
 import type { NextConfig } from "next";
 
 // Allows next/image to load Product/Service/Article images served by the
-// backend (e.g. /uploads/<file>) from whatever host NEXT_PUBLIC_API_URL
-// points at, in any environment.
-const apiOrigin = process.env.NEXT_PUBLIC_API_URL ? new URL(process.env.NEXT_PUBLIC_API_URL) : undefined;
+// backend (e.g. /uploads/<file>) from whatever host the API URL points at,
+// in any environment. This runs at build time on the server, so it reads
+// either name; only the browser-visible code needs the NEXT_PUBLIC_ prefix.
+const apiBase = process.env.NEXT_PUBLIC_API_URL ?? process.env.NEXT_API_URL;
+const apiOrigin = apiBase ? new URL(apiBase) : undefined;
 
 const nextConfig: NextConfig = {
   images: {
@@ -18,7 +20,7 @@ const nextConfig: NextConfig = {
       : [],
     // Next 16's SSRF guard refuses to optimize images whose hostname
     // resolves to a private/loopback IP — which "localhost" always does in
-    // local dev, since NEXT_PUBLIC_API_URL points at the backend on the
+    // local dev, since the API URL points at the backend on the
     // same machine. Safe here because remotePatterns above already scopes
     // optimization to that one, explicitly configured backend origin.
     dangerouslyAllowLocalIP: true,
