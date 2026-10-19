@@ -37,12 +37,12 @@ export function ArticleForm({ article, onSavedAction }: { article?: Article; onS
   const canEdit = user?.role === "admin" || user?.role === "pharmacist_reviewer";
   const readOnly = !canEdit;
   const isAdmin = user?.role === "admin";
+  const isPharmacist = user?.role === "pharmacist_reviewer";
 
-  // The backend lets an admin publish at any stage (they may have nobody else to
-  // approve their work), but any other role must wait for pharmacist sign-off —
-  // publishing too early would only come back as a 400.
+  // The backend lets both admin and pharmacist_reviewer publish at any stage
+  // (they are trusted to review their own work or collaborate directly).
   const canPublish = Boolean(
-    canEdit && article && article.status !== "published" && (isAdmin || article.status === "approved"),
+    canEdit && article && article.status !== "published" && (isAdmin || isPharmacist || article.status === "approved"),
   );
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
