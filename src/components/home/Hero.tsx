@@ -137,7 +137,7 @@ export function Hero({
           to near-black, while staying just dark enough for white text. */}
       <div className="absolute inset-0 bg-gradient-to-br from-teal-900/55 via-teal-800/40 to-teal-700/25" />
 
-      <div className="relative mx-auto max-w-6xl px-4 pb-20 pt-32 sm:px-6 sm:pb-24 sm:pt-36 lg:pb-28 lg:pt-40">
+      <div className="relative mx-auto max-w-6xl px-4 pb-8 pt-12 sm:px-6 sm:pb-10 sm:pt-16 lg:pb-12 lg:pt-20">
         <div className="max-w-3xl">
           {/* All slides share one grid cell, so the tallest reserves the
               height and the controls below never jump as copy changes. */}
@@ -155,10 +155,10 @@ export function Hero({
                       : `pointer-events-none opacity-0 ${index < active ? "-translate-x-10" : "translate-x-10"}`
                   }`}
                 >
-                  <Heading className="font-display text-5xl font-bold leading-[1.02] tracking-tight text-white text-shadow-nav sm:text-6xl lg:text-7xl">
+                  <Heading className="font-display text-3xl font-bold leading-[1.02] tracking-tight text-white text-shadow-nav sm:text-4xl lg:text-5xl">
                     {isActive ? <WordReveal text={slide.headline} /> : slide.headline}
                   </Heading>
-                  <p className="mt-6 max-w-md text-base font-medium leading-relaxed text-white text-shadow-nav sm:text-lg">
+                  <p className="mt-5 max-w-md text-sm font-medium leading-relaxed text-white text-shadow-nav">
                     {isActive ? <WordReveal text={slide.subheading} delay={0.15} /> : slide.subheading}
                   </p>
                 </div>
@@ -228,7 +228,7 @@ export function Hero({
       <motion.div
         {...fadeUp(0.65)}
         style={{ y: cardScrollY, x: cardX, rotateX: cardTiltY }}
-        className="absolute right-6 top-28 hidden rounded-2xl bg-white/95 p-4 shadow-xl backdrop-blur-md sm:right-10 sm:top-32 sm:block"
+        className="absolute right-6 top-16 hidden rounded-2xl bg-white/95 p-4 shadow-xl backdrop-blur-md sm:right-10 sm:top-20 sm:block"
       >
         <div className="flex items-center gap-3">
           <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-teal-100 text-teal-800">
