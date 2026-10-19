@@ -38,10 +38,9 @@ export default function AdminArticlesPage() {
 
   const rows = filter === "all" ? articles : articles.filter((a) => a.status === filter);
 
-  // Mirrors the backend: an admin may publish at any stage, everyone else has to
-  // wait for pharmacist sign-off (otherwise the request comes back as a 400).
-  const canPublish = (a: Article) =>
-    a.status !== "published" && (user?.role === "admin" || a.status === "approved");
+  // Mirrors the backend: either staff role may publish from any status, so the
+  // only state without a Publish button is one that is already live.
+  const canPublish = (a: Article) => a.status !== "published";
 
   async function publishArticle(article: Article) {
     if (!token) return;

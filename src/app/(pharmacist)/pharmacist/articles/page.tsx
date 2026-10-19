@@ -83,9 +83,8 @@ export default function PharmacistArticlesPage() {
     {
       header: "",
       className: "text-right",
-      // Matches the backend exactly: approve/reject accept only pending_review,
-      // and a pharmacist may publish anything already approved — so the buttons
-      // only ever appear for the status each one can act on.
+      // Matches the backend: approve/reject accept only pending_review, publish
+      // takes anything that is not live yet, and a live article just links out.
       cell: (a) => {
         if (a.status === "published") {
           return (
@@ -102,22 +101,9 @@ export default function PharmacistArticlesPage() {
           );
         }
 
-        if (a.status === "approved") {
-          return (
-            <div className="flex justify-end">
-              <button
-                type="button"
-                onClick={() => void runAction(a, "publish")}
-                disabled={busyId === a.id}
-                className="inline-flex h-8 items-center gap-1.5 rounded-md bg-emerald-600 px-2.5 text-xs font-semibold text-white transition-colors duration-150 hover:bg-emerald-700 disabled:opacity-50"
-              >
-                <CheckCircle2 className="h-3.5 w-3.5" />
-                {busyId === a.id ? "Publishing…" : "Publish"}
-              </button>
-            </div>
-          );
-        }
-
+        // Review decisions stay on pending_review; every other live-able state
+        // gets a Publish button, matching the backend, which lets either staff
+        // role publish from any status.
         if (a.status === "pending_review") {
           return (
             <div className="flex justify-end gap-2">
@@ -143,7 +129,19 @@ export default function PharmacistArticlesPage() {
           );
         }
 
-        return <span className="text-xs text-slate-300">—</span>;
+        return (
+          <div className="flex justify-end">
+            <button
+              type="button"
+              onClick={() => void runAction(a, "publish")}
+              disabled={busyId === a.id}
+              className="inline-flex h-8 items-center gap-1.5 rounded-md bg-emerald-600 px-2.5 text-xs font-semibold text-white transition-colors duration-150 hover:bg-emerald-700 disabled:opacity-50"
+            >
+              <CheckCircle2 className="h-3.5 w-3.5" />
+              {busyId === a.id ? "Publishing…" : "Publish"}
+            </button>
+          </div>
+        );
       },
     },
   ];
