@@ -83,8 +83,6 @@ export default async function ProductDetailPage({
         // across the hero and blur-[2px] then smeared into an unreadable
         // mush, so the hero looked like it had no background at all.
         variant="pattern"
-        backHref="/products"
-        backLabel="All products"
       />
 
       <section className="bg-slate-50">

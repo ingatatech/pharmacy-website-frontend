@@ -92,8 +92,6 @@ export default async function ArticleDetailPage({
       <PageHeader
         eyebrow={article.category || "Blog"}
         title={article.title}
-        backHref="/articles"
-        backLabel="All articles"
       />
 
       <section className="bg-slate-50">

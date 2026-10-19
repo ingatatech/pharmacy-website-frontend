@@ -62,8 +62,6 @@ export default async function TeamMemberDetailPage({
       <PageHeader
         eyebrow="Team"
         title={member.fullName}
-        backHref="/team"
-        backLabel="Our team"
       />
 
       <section className="bg-slate-50">

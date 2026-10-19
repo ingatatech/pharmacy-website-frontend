@@ -60,8 +60,6 @@ export default async function FaqDetailPage({
       <PageHeader
         eyebrow="FAQ"
         title={faq.question}
-        backHref="/faqs"
-        backLabel="All FAQs"
       />
 
       <section className="bg-slate-50">

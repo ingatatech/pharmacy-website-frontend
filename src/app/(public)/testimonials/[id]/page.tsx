@@ -51,8 +51,6 @@ export default async function TestimonialDetailPage({
       <PageHeader
         eyebrow="Testimonial"
         title={testimonial.customerName}
-        backHref="/testimonials"
-        backLabel="All testimonials"
       />
 
       <section className="bg-slate-50">

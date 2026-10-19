@@ -100,8 +100,6 @@ export default async function ServiceDetailPage({
         eyebrow={service.category?.name || "Service"}
         title={service.name}
         variant="pattern"
-        backHref="/services"
-        backLabel="All services"
       />
 
       <section className="bg-slate-50">
