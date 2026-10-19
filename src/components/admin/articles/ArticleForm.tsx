@@ -2,7 +2,8 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
-import { CheckCircle2, Eye, EyeOff, Send, XCircle } from "lucide-react";
+import { CheckCircle2, ExternalLink, Eye, EyeOff, Send, XCircle } from "lucide-react";
+import Link from "next/link";
 import { ApiError, apiFetch } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import { useToast } from "@/components/admin/Toast";
@@ -35,6 +36,14 @@ export function ArticleForm({ article, onSavedAction }: { article?: Article; onS
   // Both admin and pharmacist_reviewer can now create and edit articles
   const canEdit = user?.role === "admin" || user?.role === "pharmacist_reviewer";
   const readOnly = !canEdit;
+  const isAdmin = user?.role === "admin";
+
+  // The backend lets an admin publish at any stage (they may have nobody else to
+  // approve their work), but any other role must wait for pharmacist sign-off —
+  // publishing too early would only come back as a 400.
+  const canPublish = Boolean(
+    canEdit && article && article.status !== "published" && (isAdmin || article.status === "approved"),
+  );
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -74,7 +83,13 @@ export function ArticleForm({ article, onSavedAction }: { article?: Article; onS
     setWorkflowBusy(true);
     try {
       const updated = await apiFetch<Article>(`/api/articles/${article.id}/${action}`, { method: "POST" }, token);
-      showToast("success", "Article status updated.");
+      const messages: Record<typeof action, string> = {
+        "submit-for-review": "Sent for pharmacist review.",
+        approve: "Approved.",
+        reject: "Sent back to draft.",
+        publish: "Published — it is now live on the public site.",
+      };
+      showToast("success", messages[action]);
       onSavedAction?.(updated);
     } catch (error) {
       showToast("error", error instanceof ApiError ? error.message : "Action failed.");
@@ -106,7 +121,7 @@ export function ArticleForm({ article, onSavedAction }: { article?: Article; onS
                 Submit for review
               </button>
             )}
-            {canEdit && article.status === "approved" && (
+            {canPublish && (
               <button
                 type="button"
                 onClick={() => runWorkflowAction("publish")}
@@ -116,6 +131,17 @@ export function ArticleForm({ article, onSavedAction }: { article?: Article; onS
                 <CheckCircle2 className="h-3.5 w-3.5" />
                 Publish
               </button>
+            )}
+            {article.status === "published" && article.slug && (
+              <Link
+                href={`/articles/${article.slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-md border border-emerald-600 px-3 py-2 text-xs font-semibold text-emerald-700 transition-colors duration-200 hover:bg-emerald-50"
+              >
+                <ExternalLink className="h-3.5 w-3.5" />
+                View live
+              </Link>
             )}
           </div>
         </div>

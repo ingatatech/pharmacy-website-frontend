@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { Plus } from "lucide-react";
-import { apiFetch } from "@/lib/api";
+import { ApiError, apiFetch } from "@/lib/api";
 import { useAuth } from "@/lib/auth-context";
 import { useToast } from "@/components/admin/Toast";
 import { DataTable, type Column } from "@/components/admin/DataTable";
@@ -34,7 +34,30 @@ export default function AdminArticlesPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
+  const [busyId, setBusyId] = useState<string | null>(null);
+
   const rows = filter === "all" ? articles : articles.filter((a) => a.status === filter);
+
+  // Mirrors the backend: an admin may publish at any stage, everyone else has to
+  // wait for pharmacist sign-off (otherwise the request comes back as a 400).
+  const canPublish = (a: Article) =>
+    a.status !== "published" && (user?.role === "admin" || a.status === "approved");
+
+  async function publishArticle(article: Article) {
+    if (!token) return;
+    setBusyId(article.id);
+    try {
+      const updated = await apiFetch<Article>(`/api/articles/${article.id}/publish`, { method: "POST" }, token);
+      // Replace the row rather than patch it in place: the response carries the
+      // author/reviewer relations the same way the list endpoint does.
+      setArticles((prev) => prev.map((a) => (a.id === article.id ? updated : a)));
+      showToast("success", `"${article.title}" is now live on the public site.`);
+    } catch (error) {
+      showToast("error", error instanceof ApiError ? error.message : "Publish failed.");
+    } finally {
+      setBusyId(null);
+    }
+  }
 
   const columns: Column<Article>[] = [
     {
@@ -51,6 +74,40 @@ export default function AdminArticlesPage() {
     {
       header: "Updated",
       cell: (a) => new Date(a.updatedAt).toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" }),
+    },
+    {
+      header: "Actions",
+      cell: (a) => {
+        if (a.status === "published") {
+          return (
+            <Link
+              href={`/articles/${a.slug}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-xs font-medium text-emerald-700 hover:text-emerald-800"
+            >
+              View live
+            </Link>
+          );
+        }
+        if (canPublish(a)) {
+          return (
+            <button
+              type="button"
+              onClick={() => void publishArticle(a)}
+              disabled={busyId === a.id}
+              className="rounded-md bg-emerald-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors duration-200 hover:bg-emerald-700 disabled:opacity-60"
+            >
+              {busyId === a.id ? "Publishing…" : "Publish"}
+            </button>
+          );
+        }
+        return (
+          <Link href={`/admin/articles/${a.id}`} className="text-xs font-medium text-teal-700 hover:text-teal-800">
+            Open
+          </Link>
+        );
+      },
     },
   ];
 

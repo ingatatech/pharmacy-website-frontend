@@ -15,13 +15,13 @@ import type { Article } from "@/types";
 const STATUS_FILTERS = ["all", "pending_review", "approved", "published", "draft"] as const;
 
 /**
- * The pharmacist's read-only view of every article, with approve/reject on the
- * ones awaiting review.
+ * The pharmacist's review queue: sign-off (approve/reject) on the ones awaiting
+ * review, plus publishing once an article is approved.
  *
- * Deliberately not the admin Articles screen with buttons hidden: the backend
- * only lets a pharmacist_reviewer call list-all plus approve/reject, so the
- * edit/create/publish controls would all 403. Read plus sign-off is the whole
- * of what this role can do.
+ * Deliberately not the full admin Articles screen — the authoring controls live
+ * on the separate write-up screens — but publishing is part of this role: the
+ * backend lets a pharmacist_reviewer publish anything they (or another
+ * pharmacist) have already approved.
  */
 export default function PharmacistArticlesPage() {
   const { token } = useAuth();
@@ -41,18 +41,23 @@ export default function PharmacistArticlesPage() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [token]);
 
-  async function runAction(article: Article, action: "approve" | "reject") {
+  async function runAction(article: Article, action: "approve" | "reject" | "publish") {
     if (!token) return;
     setBusyId(article.id);
     try {
       await apiFetch<Article>(`/api/articles/${article.id}/${action}`, { method: "POST" }, token);
       setToReject(null);
-      showToast(
-        "success",
-        action === "approve" ? `Approved and published "${article.title}".` : `Sent "${article.title}" back to draft.`
-      );
-      // Refetch rather than splicing: the approve/reject responses omit the
-      // nested author/reviewer relations this table renders.
+      const messages = {
+        // Approving is NOT publishing: the article still needs a publish step,
+        // which is exactly why this queue offers both buttons.
+        approve: `Approved "${article.title}" — it is ready to publish.`,
+        reject: `Sent "${article.title}" back to draft.`,
+        publish: `"${article.title}" is now live on the public site.`,
+      } as const;
+      showToast("success", messages[action]);
+      // Refetch rather than splicing: a rejection sends the article back to
+      // draft and reordering (publish sorts by publishedAt) would otherwise
+      // need manual handling here.
       setArticles(await apiFetch<Article[]>("/api/articles/admin/all", {}, token));
     } catch (error) {
       showToast("error", error instanceof ApiError ? error.message : `Failed to ${action} this article.`);
@@ -78,33 +83,68 @@ export default function PharmacistArticlesPage() {
     {
       header: "",
       className: "text-right",
-      // Only pending_review items get the inline actions, matching the
-      // backend: both endpoints reject anything else with 400.
-      cell: (a) =>
-        a.status === "pending_review" ? (
-          <div className="flex justify-end gap-2">
-            <button
-              type="button"
-              onClick={() => setToReject(a)}
-              disabled={busyId === a.id}
-              className="inline-flex h-8 items-center gap-1.5 rounded-md border border-red-300 px-2.5 text-xs font-semibold text-red-600 transition-colors duration-150 hover:bg-red-50 disabled:opacity-50"
-            >
-              <XCircle className="h-3.5 w-3.5" />
-              Reject
-            </button>
-            <button
-              type="button"
-              onClick={() => void runAction(a, "approve")}
-              disabled={busyId === a.id}
-              className="inline-flex h-8 items-center gap-1.5 rounded-md bg-teal-700 px-2.5 text-xs font-semibold text-white transition-colors duration-150 hover:bg-teal-800 disabled:opacity-50"
-            >
-              <CheckCircle2 className="h-3.5 w-3.5" />
-              Approve
-            </button>
-          </div>
-        ) : (
-          <span className="text-xs text-slate-300">—</span>
-        ),
+      // Matches the backend exactly: approve/reject accept only pending_review,
+      // and a pharmacist may publish anything already approved — so the buttons
+      // only ever appear for the status each one can act on.
+      cell: (a) => {
+        if (a.status === "published") {
+          return (
+            <div className="flex justify-end">
+              <Link
+                href={`/articles/${a.slug}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-xs font-medium text-emerald-700 hover:text-emerald-800"
+              >
+                View live
+              </Link>
+            </div>
+          );
+        }
+
+        if (a.status === "approved") {
+          return (
+            <div className="flex justify-end">
+              <button
+                type="button"
+                onClick={() => void runAction(a, "publish")}
+                disabled={busyId === a.id}
+                className="inline-flex h-8 items-center gap-1.5 rounded-md bg-emerald-600 px-2.5 text-xs font-semibold text-white transition-colors duration-150 hover:bg-emerald-700 disabled:opacity-50"
+              >
+                <CheckCircle2 className="h-3.5 w-3.5" />
+                {busyId === a.id ? "Publishing…" : "Publish"}
+              </button>
+            </div>
+          );
+        }
+
+        if (a.status === "pending_review") {
+          return (
+            <div className="flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={() => setToReject(a)}
+                disabled={busyId === a.id}
+                className="inline-flex h-8 items-center gap-1.5 rounded-md border border-red-300 px-2.5 text-xs font-semibold text-red-600 transition-colors duration-150 hover:bg-red-50 disabled:opacity-50"
+              >
+                <XCircle className="h-3.5 w-3.5" />
+                Reject
+              </button>
+              <button
+                type="button"
+                onClick={() => void runAction(a, "approve")}
+                disabled={busyId === a.id}
+                className="inline-flex h-8 items-center gap-1.5 rounded-md bg-teal-700 px-2.5 text-xs font-semibold text-white transition-colors duration-150 hover:bg-teal-800 disabled:opacity-50"
+              >
+                <CheckCircle2 className="h-3.5 w-3.5" />
+                Approve
+              </button>
+            </div>
+          );
+        }
+
+        return <span className="text-xs text-slate-300">—</span>;
+      },
     },
   ];
 
