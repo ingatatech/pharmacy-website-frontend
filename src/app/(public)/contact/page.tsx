@@ -62,7 +62,7 @@ export default async function ContactPage({
         image="/images/bg.png"
       />
 
-      <section className="bg-slate-50">
+      <section className="bg-sage">
         <div className="mx-auto grid max-w-6xl gap-12 px-4 py-16 sm:px-6 md:grid-cols-[1.3fr_1fr] md:py-24">
           <ContactForm locations={locations} defaultBranch={branch} />
 

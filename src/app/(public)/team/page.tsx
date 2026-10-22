@@ -48,7 +48,7 @@ export default async function TeamPage() {
         variant="image"
       />
 
-      <section className="bg-slate-50">
+      <section className="bg-sage">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24">
           {team.length > 0 ? (
             <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">

@@ -63,7 +63,7 @@ export default async function WellnessPage() {
       />
 
       {wellnessServices.length > 0 && (
-        <section className="border-b border-slate-200 bg-slate-50">
+        <section className="border-b border-teal-100 bg-sage">
           <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24">
             <span className="text-sm font-medium text-teal-600">
               <T text="What we offer" />

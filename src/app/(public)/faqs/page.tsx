@@ -55,7 +55,7 @@ export default async function FaqsPage() {
         description="Answers to common questions about services, refills and branches."
       />
 
-      <section className="bg-slate-50">
+      <section className="bg-sage">
         <div className="mx-auto max-w-3xl px-4 py-16 sm:px-6 md:py-24">
           <FaqAccordion faqs={faqs} />
 

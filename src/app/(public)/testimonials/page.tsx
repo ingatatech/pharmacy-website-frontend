@@ -31,7 +31,7 @@ export default async function TestimonialsPage() {
         variant="image"
       />
 
-      <section className="bg-slate-50">
+      <section className="bg-sage">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24">
           {testimonials.length > 0 ? (
             <div className="grid gap-6 md:grid-cols-2">

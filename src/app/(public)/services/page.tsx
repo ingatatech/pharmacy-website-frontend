@@ -31,7 +31,7 @@ export default async function ServicesPage() {
         variant="image"
       />
 
-      <section className="bg-slate-50">
+      <section className="bg-sage">
         <div className="mx-auto max-w-6xl px-4 py-16 sm:px-6 md:py-24">
           {services.length === 0 ? (
             <p className="text-center text-sm text-slate-500">

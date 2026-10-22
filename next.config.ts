@@ -8,6 +8,19 @@ const apiBase = process.env.NEXT_PUBLIC_API_URL ?? process.env.NEXT_API_URL;
 const apiOrigin = apiBase ? new URL(apiBase) : undefined;
 
 const nextConfig: NextConfig = {
+  // Next.js only inlines NEXT_PUBLIC_* variables into the browser bundle, and
+  // the API calls in src/lib/api.ts run in client components ("use client").
+  // This project's convention is to name the variable NEXT_API_URL, so it is
+  // re-exported here under that name via the `env` option — the documented way
+  // to make a differently-named variable available to the browser.
+  //
+  // This is inlined at BUILD time: restart `npm run dev` after changing it, and
+  // on a host like Vercel set NEXT_API_URL (or NEXT_PUBLIC_API_URL) there and
+  // redeploy. NEXT_PUBLIC_API_URL still takes precedence when both are set, so
+  // nothing breaks if you use the standard name instead.
+  env: {
+    NEXT_API_URL: apiBase ?? "",
+  },
   images: {
     remotePatterns: apiOrigin
       ? [

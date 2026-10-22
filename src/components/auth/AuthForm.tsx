@@ -49,7 +49,16 @@ export function AuthForm({
       onSuccess(result.user);
     } catch (error) {
       setStatus("error");
-      setErrorMessage(error instanceof ApiError ? error.message : "Something went wrong. Please try again.");
+      if (error instanceof ApiError) {
+        // Hide configuration issues from end users and show a generic message.
+        if (error.status === 0 || error.message.includes("NEXT_PUBLIC_API_URL")) {
+          setErrorMessage("Something went wrong. Please try again.");
+        } else {
+          setErrorMessage(error.message);
+        }
+      } else {
+        setErrorMessage("Something went wrong. Please try again.");
+      }
     }
   }
 
