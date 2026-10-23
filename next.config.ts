@@ -1,9 +1,10 @@
 import type { NextConfig } from "next";
 
 // Allows next/image to load Product/Service/Article images served by the
-// backend (e.g. /uploads/<file>) from whatever host the API URL points at,
-// in any environment. This runs at build time on the server, so it reads
-// either name; only the browser-visible code needs the NEXT_PUBLIC_ prefix.
+// backend from whatever host the API URL points at, in any environment, plus
+// Cloudinary, which now hosts every uploaded image. This runs at build time on
+// the server, so it reads either name; only the browser-visible code needs the
+// NEXT_PUBLIC_ prefix.
 const apiBase = process.env.NEXT_PUBLIC_API_URL ?? process.env.NEXT_API_URL;
 const apiOrigin = apiBase ? new URL(apiBase) : undefined;
 
@@ -22,15 +23,23 @@ const nextConfig: NextConfig = {
     NEXT_API_URL: apiBase ?? "",
   },
   images: {
-    remotePatterns: apiOrigin
-      ? [
-          {
-            protocol: apiOrigin.protocol.replace(":", "") as "http" | "https",
-            hostname: apiOrigin.hostname,
-            port: apiOrigin.port,
-          },
-        ]
-      : [],
+    remotePatterns: [
+      // Cloudinary serves all uploaded images (secure_url URLs).
+      {
+        protocol: "https",
+        hostname: "res.cloudinary.com",
+      },
+      // The backend origin, for any image URL that still points at the API.
+      ...(apiOrigin
+        ? [
+            {
+              protocol: apiOrigin.protocol.replace(":", "") as "http" | "https",
+              hostname: apiOrigin.hostname,
+              port: apiOrigin.port,
+            },
+          ]
+        : []),
+    ],
     // Next 16's SSRF guard refuses to optimize images whose hostname
     // resolves to a private/loopback IP — which "localhost" always does in
     // local dev, since the API URL points at the backend on the
