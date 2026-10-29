@@ -19,6 +19,7 @@ const STATIC_ROUTES = [
   "/articles",
   "/faqs",
   "/locations",
+  "/schedule",
   "/prescription-refill",
   "/contact",
   "/privacy-policy",

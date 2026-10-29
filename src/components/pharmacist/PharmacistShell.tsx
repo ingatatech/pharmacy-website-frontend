@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import {
+  CalendarDays,
   ClipboardList,
   LayoutDashboard,
   ListChecks,
@@ -27,6 +28,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: PHARMACIST_HOME, label: "Dashboard", icon: LayoutDashboard },
   { href: `${PHARMACIST_HOME}/articles`, label: "Review Queue", icon: ListChecks },
   { href: `${PHARMACIST_HOME}/refills`, label: "Refill Requests", icon: ClipboardList },
+  { href: `${PHARMACIST_HOME}/schedule`, label: "My Schedule", icon: CalendarDays },
   { href: `${PHARMACIST_HOME}/inquiries`, label: "Inquiries", icon: MessageSquare },
   { href: `${PHARMACIST_HOME}/branch`, label: "My Branch", icon: MapPin },
 ];

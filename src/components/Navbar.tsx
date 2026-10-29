@@ -70,13 +70,14 @@ export function Navbar({ services = [] }: { services?: Service[] }) {
       ],
     },
     { href: "/locations", label: "Find a Pharmacy" },
+    { href: "/schedule", label: "Pharmacist Schedule" },
     { href: "/contact", label: "Contact" },
   ];
 
   return (
     <>
       <header
-        className={`fixed inset-x-0 top-0 z-50 h-20 backdrop-blur-md transition-[background-color,box-shadow] duration-300 supports-[backdrop-filter]:bg-teal-900/25 ${
+        className={`fixed inset-x-0 top-0 z-50 h-20 backdrop-blur-md transition-[background-color,box-shadow] duration-300 ${
           solid
             ? "bg-white/90 shadow-sm shadow-slate-900/5 supports-[backdrop-filter]:bg-white/80"
             : "bg-transparent"
@@ -102,18 +103,14 @@ export function Navbar({ services = [] }: { services?: Service[] }) {
             </span>
           </Link>
 
-          <nav className="mt-1.5 hidden items-center gap-6 lg:flex xl:gap-9">
+          <nav className="mt-1.5 hidden items-center gap-4 lg:flex xl:gap-7">
             {navLinks.map((link) => {
               const active = isActive(link.href);
               const hasDropdown = (link.dropdown?.length ?? 0) > 0;
               const labelClasses = `relative inline-flex items-center gap-1 rounded-sm py-2 text-sm font-bold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold after:absolute after:-bottom-[1px] after:left-0 after:h-[2px] after:rounded-full after:bg-gold after:transition-all after:content-[''] ${
-                solid
-                  ? active
-                    ? "text-slate-900 after:w-full"
-                    : "text-slate-600 after:w-0 hover:text-slate-900 hover:after:w-full"
-                  : active
-                    ? "text-white text-shadow-nav after:w-full"
-                    : "text-white text-shadow-nav after:w-0 hover:after:w-full"
+                active
+                  ? "text-ink after:w-full"
+                  : "text-slate-600 after:w-0 hover:text-ink hover:after:w-full"
               }`;
               const labelInner = (
                 <>
@@ -185,18 +182,16 @@ export function Navbar({ services = [] }: { services?: Service[] }) {
               distinct groups (links landing near the middle) instead of
               bunching links and Login together at the right edge. */}
           <div className="hidden items-center gap-1 lg:flex">
-            <LanguageSwitcher solid={solid} />
+            <LanguageSwitcher />
             {ready && user ? (
-              <span className={solid ? "text-slate-700" : "text-white text-shadow-nav"}>
+              <span className="text-ink">
                 <UserMenu user={user} />
               </span>
             ) : (
               <button
                 type="button"
                 onClick={() => setAuthOpen(true)}
-                className={`rounded-sm text-sm font-bold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
-                  solid ? "text-slate-600 hover:text-slate-900" : "text-white text-shadow-nav"
-                }`}
+                className="rounded-sm text-sm font-bold text-slate-600 transition-colors duration-200 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
               >
                 <T text="Log in" />
               </button>
@@ -205,9 +200,7 @@ export function Navbar({ services = [] }: { services?: Service[] }) {
 
           <button
             type="button"
-            className={`rounded-md p-2 transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 lg:hidden ${
-              solid ? "text-slate-700" : "text-white"
-            }`}
+            className="rounded-md p-2 text-ink transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-emerald-500 lg:hidden"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
             aria-expanded={menuOpen}
             onClick={() => setMenuOpen((open) => !open)}
@@ -223,9 +216,7 @@ export function Navbar({ services = [] }: { services?: Service[] }) {
               animate={{ height: "auto", opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.25, ease: [0.16, 1, 0.3, 1] }}
-              className={`overflow-hidden border-t lg:hidden ${
-                solid ? "border-slate-200 bg-white" : "border-white/10 bg-teal-900"
-              }`}
+              className="overflow-hidden border-t border-slate-200 bg-white lg:hidden"
             >
               <div className="px-4 pb-6 pt-2">
                 <ul className="flex flex-col">
@@ -239,13 +230,9 @@ export function Navbar({ services = [] }: { services?: Service[] }) {
                             href={link.href}
                             aria-current={active ? "page" : undefined}
                             className={`block border-l-2 py-3 pl-3 text-sm font-semibold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
-                              solid
-                                ? active
-                                  ? "border-gold text-slate-900"
-                                  : "border-transparent text-slate-600 hover:text-slate-900"
-                                : active
-                                  ? "border-gold text-white"
-                                  : "border-transparent text-white"
+                              active
+                                ? "border-gold text-ink"
+                                : "border-transparent text-slate-600 hover:text-ink"
                             }`}
                             onClick={() => setMenuOpen(false)}
                           >
@@ -253,11 +240,7 @@ export function Navbar({ services = [] }: { services?: Service[] }) {
                           </Link>
                         ) : (
                           // Same grouping-label treatment as the desktop nav.
-                          <span
-                            className={`block border-l-2 border-transparent py-3 pl-3 text-sm font-semibold ${
-                              solid ? "text-slate-900" : "text-white"
-                            }`}
-                          >
+                          <span className="block border-l-2 border-transparent py-3 pl-3 text-sm font-semibold text-ink">
                             <T text={link.label} />
                           </span>
                         )}
@@ -268,20 +251,12 @@ export function Navbar({ services = [] }: { services?: Service[] }) {
                             would be dead on mobile — nothing to tap, and its
                             four destinations unreachable. */}
                         {hasDropdown && (
-                          <ul
-                            className={`mb-1 ml-3 border-l pl-3 ${
-                              solid ? "border-slate-200" : "border-white/10"
-                            }`}
-                          >
+                          <ul className="mb-1 ml-3 border-l border-slate-200 pl-3">
                             {link.dropdown!.map((item) => (
                               <li key={item.href}>
                                 <Link
                                   href={item.href}
-                                  className={`block py-2 text-sm transition-colors duration-200 ${
-                                    solid
-                                      ? "text-slate-600 hover:text-slate-900"
-                                      : "text-white/75 hover:text-white"
-                                  }`}
+                                  className="block py-2 text-sm text-slate-600 transition-colors duration-200 hover:text-ink"
                                   onClick={() => setMenuOpen(false)}
                                 >
                                   <T text={item.label} />
@@ -294,12 +269,8 @@ export function Navbar({ services = [] }: { services?: Service[] }) {
                     );
                   })}
                 </ul>
-                <div
-                  className={`mt-3 flex flex-col gap-3 border-t pt-4 ${
-                    solid ? "border-slate-200" : "border-white/10"
-                  }`}
-                >
-                  <MobileLanguageSwitcher solid={solid} />
+                <div className="mt-3 flex flex-col gap-3 border-t border-slate-200 pt-4">
+                  <MobileLanguageSwitcher />
                   {ready && user ? (
                     <>
                       <div className="flex items-center gap-3 pb-1">
@@ -307,17 +278,17 @@ export function Navbar({ services = [] }: { services?: Service[] }) {
                           {initials(user.fullName)}
                         </span>
                         <div className="min-w-0">
-                          <p className={`truncate text-sm font-semibold ${solid ? "text-slate-900" : "text-white"}`}>
+                          <p className="truncate text-sm font-semibold text-ink">
                             {user.fullName}
                           </p>
-                          <p className={`truncate text-xs ${solid ? "text-slate-500" : "text-white/60"}`}>
+                          <p className="truncate text-xs text-slate-500">
                             {user.email}
                           </p>
                         </div>
                       </div>
                       <Link
                         href="/account"
-                        className={`flex items-center gap-2.5 text-sm ${solid ? "text-slate-600 hover:text-slate-900" : "text-white"}`}
+                        className="flex items-center gap-2.5 text-sm text-slate-600 hover:text-ink"
                         onClick={() => setMenuOpen(false)}
                       >
                         <User className="h-4 w-4" strokeWidth={1.75} />
@@ -325,7 +296,7 @@ export function Navbar({ services = [] }: { services?: Service[] }) {
                       </Link>
                       <Link
                         href="/account/settings"
-                        className={`flex items-center gap-2.5 text-sm ${solid ? "text-slate-600 hover:text-slate-900" : "text-white"}`}
+                        className="flex items-center gap-2.5 text-sm text-slate-600 hover:text-ink"
                         onClick={() => setMenuOpen(false)}
                       >
                         <Settings className="h-4 w-4" strokeWidth={1.75} />
@@ -348,7 +319,7 @@ export function Navbar({ services = [] }: { services?: Service[] }) {
                   ) : (
                     <button
                       type="button"
-                      className={`text-left text-sm ${solid ? "text-slate-600 hover:text-slate-900" : "text-white"}`}
+                      className="text-left text-sm text-slate-600 hover:text-ink"
                       onClick={() => {
                         setMenuOpen(false);
                         setAuthOpen(true);

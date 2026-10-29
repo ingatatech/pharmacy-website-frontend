@@ -6,6 +6,7 @@ import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import {
   Archive,
+  CalendarDays,
   ClipboardList,
   FileText,
   Folder,
@@ -44,6 +45,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: "/admin/articles", label: "Articles", icon: FileText },
   { href: "/admin/locations", label: "Locations", icon: MapPin },
   { href: "/admin/team", label: "Team", icon: UserCircle },
+  { href: "/admin/schedule", label: "Schedule", icon: CalendarDays },
   { href: "/admin/pharmacists", label: "Pharmacists", icon: Stethoscope },
   { href: "/admin/faqs", label: "FAQs", icon: ListChecks },
   { href: "/admin/testimonials", label: "Testimonials", icon: Quote },

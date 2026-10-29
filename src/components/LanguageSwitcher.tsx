@@ -12,16 +12,14 @@ const LANGUAGES: { code: Language; label: string }[] = [
 
 // Desktop: hover-reveals-a-white-panel dropdown, same mechanic as the
 // Services/Blog nav dropdowns and UserMenu.
-export function LanguageSwitcher({ solid }: { solid: boolean }) {
+export function LanguageSwitcher() {
   const { language, setLanguage } = useLanguage();
 
   return (
     <div className="relative group">
       <button
         type="button"
-        className={`flex items-center gap-1.5 rounded-full py-1.5 pl-2.5 pr-3 text-sm font-bold transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold ${
-          solid ? "text-slate-600 hover:text-slate-900" : "text-white text-shadow-nav"
-        }`}
+        className="flex items-center gap-1.5 rounded-full py-1.5 pl-2.5 pr-3 text-sm font-bold text-slate-600 transition-colors duration-200 hover:text-ink focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
         aria-label="Change language"
       >
         <Globe className="h-4 w-4" strokeWidth={1.75} />
@@ -54,13 +52,13 @@ export function LanguageSwitcher({ solid }: { solid: boolean }) {
 
 // Mobile: hover dropdowns don't work on touch, so this is a plain inline
 // two-button toggle instead, matching the mobile menu's other controls.
-export function MobileLanguageSwitcher({ solid }: { solid: boolean }) {
+export function MobileLanguageSwitcher() {
   const { language, setLanguage } = useLanguage();
 
   return (
     <div className="flex items-center gap-2.5">
-      <Globe className={`h-4 w-4 ${solid ? "text-slate-500" : "text-white/70"}`} strokeWidth={1.75} />
-      <div className={`flex overflow-hidden rounded-full border ${solid ? "border-slate-300" : "border-white/30"}`}>
+      <Globe className="h-4 w-4 text-slate-500" strokeWidth={1.75} />
+      <div className="flex overflow-hidden rounded-full border border-slate-300">
         {LANGUAGES.map((lang) => (
           <button
             key={lang.code}
@@ -70,9 +68,7 @@ export function MobileLanguageSwitcher({ solid }: { solid: boolean }) {
             className={`px-3 py-1 text-xs font-semibold transition-colors duration-200 ${
               language === lang.code
                 ? "bg-teal-700 text-white"
-                : solid
-                  ? "text-slate-600 hover:text-slate-900"
-                  : "text-white hover:bg-white/10"
+                : "text-slate-600 hover:text-ink"
             }`}
           >
             {lang.code.toUpperCase()}

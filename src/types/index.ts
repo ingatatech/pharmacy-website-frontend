@@ -153,6 +153,37 @@ export interface TeamMember {
   location?: Pick<PharmacyLocation, "id" | "branchName"> | null;
 }
 
+export interface ScheduleBranchRef {
+  id: string;
+  branchName: string;
+  slug?: string;
+}
+
+export interface SchedulePersonRef {
+  id: string;
+  fullName: string;
+  role: string;
+  credentials: string | null;
+  photoUrl: string | null;
+}
+
+/** One recurring weekly shift, 0 = Sunday … 6 = Saturday. */
+export interface PharmacistShift {
+  id: string;
+  dayOfWeek: number;
+  startTime: string;
+  endTime: string;
+  note: string | null;
+  // Admin responses include these; the public DTO trims them and relies on
+  // the nested `location` / `teamMember` objects instead.
+  teamMemberId?: string;
+  locationId?: string;
+  isActive?: boolean;
+  createdAt?: string;
+  teamMember?: SchedulePersonRef | TeamMember | null;
+  location?: ScheduleBranchRef | PharmacyLocation | null;
+}
+
 export type ContactInquiryStatus = "new" | "in_progress" | "resolved";
 export type ContactInquiryType = "general" | "health" | "product" | "service";
 
